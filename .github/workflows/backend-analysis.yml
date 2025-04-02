@@ -24,13 +24,17 @@
 # Feel free to take a look at our documentation (https://docs.sonarqube.org/latest/analysis/github-integration/)
 # or reach out to our community forum if you need some help (https://community.sonarsource.com/c/sq/10)
 
-name: SonarQube analysis
+name: Backend SonarQube analysis
 
 on:
   push:
     branches: [ "master" ]
+    paths:
+      - "backend/**" 
   pull_request:
     branches: [ "master" ]
+    paths:
+      - "backend/**" 
   workflow_dispatch:
 
 permissions:
@@ -65,4 +69,4 @@ jobs:
           args: >
             -Dsonar.projectKey=domiotek_ztp
             -Dsonar.organization=domiotek
-            -Dsonar.java.binaries=backend/build/classes/java/main
+            -Dsonar.java.binaries=backend/target/classes
