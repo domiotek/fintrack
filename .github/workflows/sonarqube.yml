@@ -53,6 +53,7 @@ jobs:
 
       - name: Build Project (Maven)
         run: mvn clean verify
+        working-directory: backend
         
       - name: Analyze with SonarQube
         uses: SonarSource/sonarqube-scan-action@v5
@@ -64,4 +65,4 @@ jobs:
           args: >
             -Dsonar.projectKey=domiotek_ztp
             -Dsonar.organization=domiotek
-            -Dsonar.java.binaries=target/classes
+            -Dsonar.java.binaries=backend/build/classes/java/main
