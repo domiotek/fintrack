@@ -2,11 +2,11 @@ name: Java Backend workflow
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master", "workflows-dev" ]
     paths:
       - "backend/**" 
   pull_request:
-    branches: [ "master" ]
+    branches: [ "master", "workflows-dev" ]
     paths:
       - "backend/**" 
   workflow_dispatch:
