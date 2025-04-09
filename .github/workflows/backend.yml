@@ -35,9 +35,11 @@ jobs:
         run: mvn clean compile
         working-directory: backend
 
-      - name: Set build path output
-        id: set-path
-        run: echo "build-path=backend/target" >> "$GITHUB_OUTPUT"
+      - name: Upload compiled backend
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-compiled
+          path: backend/target/
 
   Test:
     runs-on: ubuntu-latest
@@ -72,6 +74,12 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '21'
+          
+      - name: Download compiled backend
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-compiled
+          path: backend/target
 
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v5
