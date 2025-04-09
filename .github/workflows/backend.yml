@@ -1,0 +1,86 @@
+name: Java Backend workflow
+
+on:
+  push:
+    branches: [ "master" ]
+    paths:
+      - "backend/**" 
+  pull_request:
+    branches: [ "master" ]
+    paths:
+      - "backend/**" 
+  workflow_dispatch:
+
+permissions:
+  pull-requests: read
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    outputs:
+      build-artifacts-path: ${{ steps.set-path.outputs.build-path }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Build Project (Maven)
+        run: mvn clean compile
+        working-directory: backend
+
+      - name: Set build path output
+        id: set-path
+        run: echo "build-path=backend/target" >> "$GITHUB_OUTPUT"
+
+  Test:
+    runs-on: ubuntu-latest
+    needs: Build
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Run Tests
+        run: mvn test
+        working-directory: backend
+
+  Analysis:
+    runs-on: ubuntu-latest
+    needs: [Build, Test]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        with:
+          args: >
+            -Dsonar.projectKey=domiotek_ztp
+            -Dsonar.organization=domiotek
+            -Dsonar.java.binaries=backend/target/classes
