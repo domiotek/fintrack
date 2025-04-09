@@ -1,0 +1,108 @@
+name: Angular frontend workflow
+
+on:
+  push:
+    branches: ["master", "workflows-dev"]
+    paths:
+      - "front"
+  pull_request:
+    branches: ["master", "workflows-dev"]
+    paths:
+      - "front"
+  workflow_dispatch:
+
+permissions:
+  pull-requests: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: |
+          cd front
+          npm ci
+          
+      - name: Run linting
+        run: |
+          cd front
+          npm run lint
+          
+      - name: Run Prettier check
+        run: |
+          cd front
+          npx prettier --check .
+
+  test:
+    runs-on: ubuntu-latest
+    needs: lint
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: |
+          cd front
+          npm ci
+
+      - name: Run tests
+        run: |
+          cd front
+          npm run test -- --watch=false --browsers=ChromeHeadless
+          
+      - name: Upload coverage as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: front/coverage/lcov-report/index-lcov-report.xml
+
+  analysis:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: |
+          cd front
+          npm ci
+          
+      - name: Download coverage artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: coverage-report
+
+      - name: Run SonarQube analysis
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        with:
+          args: >
+            -Dsonar.projectKey=domiotek_ztp
+            -Dsonar.organization=domiotek
+            -Dsonar.sources=front/src
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov-report/index-lcov-report.xml
