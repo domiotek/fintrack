@@ -19,25 +19,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Cache Docker layers
-        uses: actions/cache@v4
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-docker-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-docker-
-            
-      - name: Docker Setup Compose
-        uses: docker/setup-compose-action@v1.2.0
-
-      - name: Build and test Docker Compose
-        run: |
-          docker-compose -f docker-compose.yml build
-          docker-compose -f docker-compose.yml up -d
-
-      - name: Shutdown containers
-        run: docker-compose -f docker-compose.yml down
+        
+      - name: Build containers
+        uses: hoverkraft-tech/compose-action@v0.0.0
