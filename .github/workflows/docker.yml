@@ -30,6 +30,9 @@ jobs:
           key: ${{ runner.os }}-docker-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-docker-
+            
+      - name: Docker Setup Compose
+        uses: docker/setup-compose-action@v1.2.0
 
       - name: Build and test Docker Compose
         run: |
