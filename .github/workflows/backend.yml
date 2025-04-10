@@ -1,4 +1,4 @@
-name: Java Backend workflow
+name: Java Backend
 
 on:
   push:
