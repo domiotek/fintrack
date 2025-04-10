@@ -1,4 +1,4 @@
-name: Docker Contenerization
+name: Docker Containerization
 
 on:
   push:
@@ -13,7 +13,7 @@ on:
 
 jobs:
   Build:
-    name: Build and Launch
+    name: Compose-up
     runs-on: ubuntu-latest
 
     steps:
