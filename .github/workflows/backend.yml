@@ -2,13 +2,13 @@ name: Java Backend workflow
 
 on:
   push:
-    branches: [ "master", "workflows-dev" ]
+    branches: ["master", "workflows-dev"]
     paths:
-      - "backend/**" 
+      - "backend/**"
   pull_request:
-    branches: [ "master", "workflows-dev" ]
+    branches: ["master", "workflows-dev"]
     paths:
-      - "backend/**" 
+      - "backend/**"
   workflow_dispatch:
 
 permissions:
@@ -28,8 +28,8 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
-          java-version: '21'
+          distribution: "temurin"
+          java-version: "21"
 
       - name: Build Project (Maven)
         run: mvn clean compile
@@ -53,8 +53,8 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
-          java-version: '21'
+          distribution: "temurin"
+          java-version: "21"
 
       - name: Run Tests
         run: mvn test
@@ -72,9 +72,9 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
-          java-version: '21'
-          
+          distribution: "temurin"
+          java-version: "21"
+
       - name: Download compiled backend
         uses: actions/download-artifact@v4
         with:
