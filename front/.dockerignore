@@ -1,0 +1,10 @@
+node_modules
+dist
+.angular
+.vscode
+.DS_Store
+Thumbs.db
+.editorconfig
+.gitignore
+.prettierrc
+settings.json
