@@ -66,11 +66,11 @@ jobs:
           cd front
           npm run test -- --watch=false --browsers=ChromeHeadless
           
-      - name: Upload coverage as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-report
-          path: front/coverage/lcov-report/index-lcov-report.xml
+      # - name: Upload coverage as artifact
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: coverage-report
+      #     path: front/coverage/lcov-report/index-lcov-report.xml
 
   Analysis:
     runs-on: ubuntu-latest
@@ -90,10 +90,10 @@ jobs:
           cd front
           npm ci
           
-      - name: Download coverage artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: coverage-report
+      # - name: Download coverage artifact
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: coverage-report
 
       - name: Run SonarQube analysis
         uses: SonarSource/sonarqube-scan-action@v5
@@ -106,4 +106,7 @@ jobs:
             -Dsonar.projectKey=domiotek_ztp
             -Dsonar.organization=domiotek
             -Dsonar.sources=front/src
-            -Dsonar.javascript.lcov.reportPaths=coverage/lcov-report/index-lcov-report.xml
+
+
+          
+            # -Dsonar.javascript.lcov.reportPaths=coverage/lcov-report/index-lcov-report.xml
