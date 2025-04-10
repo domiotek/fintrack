@@ -4,11 +4,11 @@ on:
   push:
     branches: ["master", "workflows-dev"]
     paths:
-      - "front"
+      - "front/**"
   pull_request:
     branches: ["master", "workflows-dev"]
     paths:
-      - "front"
+      - "front/**"
   workflow_dispatch:
 
 permissions:
