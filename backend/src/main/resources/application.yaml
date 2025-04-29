@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: fintrack
+
+  datasource:
+    username: ${SPRING_DB_USERNAME:postgres}
+    password: ${SPRING_DB_PASSWORD:postgres}
+    url: ${SPRING_DB_URL:jdbc:postgresql://localhost:5432/fintrack}
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: true
+
+  threads:
+    virtual:
+      enabled: true
