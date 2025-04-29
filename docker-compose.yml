@@ -15,7 +15,14 @@ services:
       - app_data:/var/lib/postgresql/data
     networks:
       - fintrack_network
-
+  fintrack_redis:
+    image: redis:6.2-alpine
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning
+    volumes:
+      - redis:/data
   fintrack_api:
     build:
       context: backend
@@ -49,6 +56,8 @@ services:
 
 volumes:
   app_data:
+    driver: local
+  redis:
     driver: local
 
 networks:
