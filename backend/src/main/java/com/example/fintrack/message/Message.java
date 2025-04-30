@@ -2,14 +2,17 @@ package com.example.fintrack.message;
 
 import com.example.fintrack.chat.Chat;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Data
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 @Table(name="messages")
 public class Message {
 
@@ -33,5 +36,10 @@ public class Message {
         if (o == null || getClass() != o.getClass()) return false;
         Message message = (Message) o;
         return Objects.equals(id, message.id) && Objects.equals(lastReadMessages, message.lastReadMessages) && Objects.equals(chat, message.chat) && Objects.equals(value, message.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, lastReadMessages, chat, value);
     }
 }

@@ -2,12 +2,15 @@ package com.example.fintrack.friend;
 
 import com.example.fintrack.user.User;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.util.Objects;
 
 @Entity
-@Data
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 @Table(name = "friends")
 public class Friend {
 
@@ -32,5 +35,10 @@ public class Friend {
         if (o == null || getClass() != o.getClass()) return false;
         Friend friend1 = (Friend) o;
         return isAccepted == friend1.isAccepted && Objects.equals(id, friend1.id) && Objects.equals(user, friend1.user) && Objects.equals(friend, friend1.friend);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, user, friend, isAccepted);
     }
 }

@@ -2,13 +2,16 @@ package com.example.fintrack.message;
 
 import com.example.fintrack.user.User;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.util.Date;
 import java.util.Objects;
 
 @Entity
-@Data
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 @Table(name="last_read_message")
 public class LastReadMessage {
 
@@ -33,5 +36,10 @@ public class LastReadMessage {
         if (o == null || getClass() != o.getClass()) return false;
         LastReadMessage that = (LastReadMessage) o;
         return Objects.equals(id, that.id) && Objects.equals(message, that.message) && Objects.equals(user, that.user) && Objects.equals(readTime, that.readTime);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, message, user, readTime);
     }
 }
