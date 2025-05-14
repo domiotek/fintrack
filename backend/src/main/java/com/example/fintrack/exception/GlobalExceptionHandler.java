@@ -1,4 +1,4 @@
-package com.example.fintrack.handler;
+package com.example.fintrack.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -6,13 +6,13 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import static com.example.fintrack.handler.BusinessErrorCodes.BAD_CREDENTIALS;
+import static com.example.fintrack.exception.BusinessErrorCodes.BAD_CREDENTIALS;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
     @ExceptionHandler(ExceptionResponse.class)
     public ResponseEntity<BusinessErrorCodes> handleException(ExceptionResponse ex) {
-
         return ResponseEntity
                 .status(ex.getBusinessErrorCode().getHttpStatus())
                 .body(
@@ -32,7 +32,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionResponse> handleException(Exception ex) {
         // log the exception
-        ex.printStackTrace();
+//        ex.printStackTrace();
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(

@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-import static com.example.fintrack.handler.BusinessErrorCodes.*;
+import static com.example.fintrack.exception.BusinessErrorCodes.*;
 import static com.example.fintrack.security.enums.TokenType.ACCESS;
 import static com.example.fintrack.security.enums.TokenType.REFRESH;
 import static java.util.Objects.isNull;

@@ -1,4 +1,4 @@
-package com.example.fintrack.handler;
+package com.example.fintrack.exception;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;

@@ -1,7 +1,7 @@
 package com.example.fintrack.security.filters;
 
-import com.example.fintrack.handler.BusinessErrorCodes;
-import com.example.fintrack.handler.ExpiredTokenException;
+import com.example.fintrack.exception.BusinessErrorCodes;
+import com.example.fintrack.exception.ExpiredTokenException;
 import com.example.fintrack.security.service.JwtService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -24,7 +24,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Arrays;
 
-import static com.example.fintrack.handler.BusinessErrorCodes.ACCESS_TOKEN_EXPIRED;
+import static com.example.fintrack.exception.BusinessErrorCodes.ACCESS_TOKEN_EXPIRED;
 import static com.example.fintrack.security.enums.TokenType.ACCESS;
 import static java.util.Objects.isNull;
 import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON;

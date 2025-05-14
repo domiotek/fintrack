@@ -1,6 +1,6 @@
 package com.example.fintrack.security.service;
 
-import com.example.fintrack.handler.ExpiredTokenException;
+import com.example.fintrack.exception.ExpiredTokenException;
 import com.example.fintrack.security.enums.TokenType;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import static com.example.fintrack.handler.BusinessErrorCodes.INVALID_TOKEN;
+import static com.example.fintrack.exception.BusinessErrorCodes.INVALID_TOKEN;
 import static com.example.fintrack.security.enums.TokenType.ACCESS;
 import static com.example.fintrack.security.enums.TokenType.REFRESH;
 
