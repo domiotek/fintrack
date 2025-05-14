@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   fintrack_database:
     image: postgres:latest
@@ -13,6 +11,17 @@ services:
       - "5432:5432"
     volumes:
       - app_data:/var/lib/postgresql/data
+    networks:
+      - fintrack_network
+
+  fintrack_cache_database:
+    image: redis/redis-stack-server:latest
+    container_name: fintrack_cache_database
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - app_cache_data:/data
     networks:
       - fintrack_network
 
@@ -49,6 +58,8 @@ services:
 
 volumes:
   app_data:
+    driver: local
+  app_cache_data:
     driver: local
 
 networks:
