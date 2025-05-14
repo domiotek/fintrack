@@ -54,7 +54,7 @@ public class AuthenticationController {
 
     @PostMapping("/refresh")
     public ResponseEntity<Void> refresh(HttpServletRequest request, HttpServletResponse response) {
-        TokenDto tokens = authenticationService.refresh(request, response);
+        TokenDto tokens = authenticationService.refresh(request);
 
         ResponseCookie accessTokenCookie = ResponseCookie.from("access_token", tokens.accessToken())
                 .httpOnly(true)
