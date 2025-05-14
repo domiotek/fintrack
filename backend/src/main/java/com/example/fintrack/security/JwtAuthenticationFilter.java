@@ -1,4 +1,4 @@
-package com.example.fintrack.security.filters;
+package com.example.fintrack.security;
 
 import com.example.fintrack.exception.BusinessErrorCodes;
 import com.example.fintrack.exception.ExpiredTokenException;
@@ -24,14 +24,14 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Arrays;
 
-import static com.example.fintrack.exception.BusinessErrorCodes.ACCESS_TOKEN_EXPIRED;
-import static com.example.fintrack.security.enums.TokenType.ACCESS;
+import static com.example.fintrack.security.TokenType.ACCESS;
 import static java.util.Objects.isNull;
 import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON;
 
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
 
@@ -41,9 +41,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
-
-        if (request.getServletPath().contains(
-                "/api/auth/register") ||
+        if (request.getServletPath().contains("/api/auth/register") ||
                 request.getServletPath().contains("/api/auth/login") ||
                 request.getServletPath().contains("/api/auth/refresh") ||
                 request.getServletPath().contains("/api/auth/logout") ||
@@ -56,7 +54,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         Cookie[] cookies = request.getCookies();
-
         if (isNull(cookies)) {
             filterChain.doFilter(request, response);
             return;
@@ -68,29 +65,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 .findFirst()
                 .orElse(null);
 
-        final String userEmail;
-
         if (accessToken == null) {
             filterChain.doFilter(request, response);
             return;
         }
 
         try {
-            userEmail = jwtService.extractEmail(accessToken, ACCESS);
-
+            String userEmail = jwtService.extractEmail(accessToken, ACCESS);
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails user = this.userDetailsService.loadUserByUsername(userEmail);
+                UserDetails user = userDetailsService.loadUserByUsername(userEmail);
 
                 if (jwtService.isTokenValid(accessToken, user)) {
-                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                            user,
-                            null,
-                            user.getAuthorities()
-                    );
+                    UsernamePasswordAuthenticationToken authToken =
+                            new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
 
-                    authToken.setDetails(
-                            new WebAuthenticationDetailsSource().buildDetails(request)
-                    );
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
@@ -98,15 +87,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 filterChain.doFilter(request, response);
             }
         } catch (ExpiredJwtException | ExpiredTokenException e) {
-            handleError(ACCESS_TOKEN_EXPIRED, response);
+            handleError(response);
         }
     }
 
-    private void handleError(BusinessErrorCodes error, HttpServletResponse response) throws IOException {
+    private void handleError(HttpServletResponse response) throws IOException {
         response.resetBuffer();
-        response.setStatus(error.getHttpStatus().value());
+        response.setStatus(BusinessErrorCodes.ACCESS_TOKEN_EXPIRED.getHttpStatus().value());
         response.setHeader(HttpHeaders.CONTENT_TYPE, String.valueOf(APPLICATION_JSON));
-        response.getOutputStream().print(new ObjectMapper().writeValueAsString(error));
+        response.getOutputStream().print(new ObjectMapper().writeValueAsString(BusinessErrorCodes.ACCESS_TOKEN_EXPIRED));
         response.flushBuffer();
     }
 }

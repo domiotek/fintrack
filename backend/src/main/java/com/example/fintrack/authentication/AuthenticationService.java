@@ -12,10 +12,8 @@ import com.example.fintrack.user.UserRepository;
 import io.jsonwebtoken.Header;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,8 +24,8 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 import static com.example.fintrack.exception.BusinessErrorCodes.*;
-import static com.example.fintrack.security.enums.TokenType.ACCESS;
-import static com.example.fintrack.security.enums.TokenType.REFRESH;
+import static com.example.fintrack.security.TokenType.ACCESS;
+import static com.example.fintrack.security.TokenType.REFRESH;
 import static java.util.Objects.isNull;
 
 @Service
@@ -68,17 +66,14 @@ public class AuthenticationService {
     @Transactional
     public TokenDto login(LoginRequestDto loginRequestDto) {
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequestDto.email(),
-                        loginRequestDto.password()
-                )
+                new UsernamePasswordAuthenticationToken(loginRequestDto.email(), loginRequestDto.password())
         );
 
         User user = userRepository.findUserByEmail(loginRequestDto.email())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        var accessToken = jwtService.generateToken(user, ACCESS);
-        var refreshToken = jwtService.generateToken(user, REFRESH);
+        String accessToken = jwtService.generateToken(user, ACCESS);
+        String refreshToken = jwtService.generateToken(user, REFRESH);
 
         return TokenDto.builder()
                 .accessToken(accessToken)
@@ -86,7 +81,7 @@ public class AuthenticationService {
                 .build();
     }
 
-    public TokenDto refresh(HttpServletRequest request, HttpServletResponse response) {
+    public TokenDto refresh(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
 
         if (isNull(cookies)) {
