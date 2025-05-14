@@ -1,9 +1,8 @@
-package com.example.fintrack.auth.controller;
+package com.example.fintrack.authentication;
 
-import com.example.fintrack.auth.api.LoginRequest;
-import com.example.fintrack.auth.api.RegisterRequest;
-import com.example.fintrack.auth.api.Token;
-import com.example.fintrack.auth.service.AuthenticationService;
+import com.example.fintrack.authentication.dto.LoginRequestDto;
+import com.example.fintrack.authentication.dto.RegisterRequestDto;
+import com.example.fintrack.authentication.dto.TokenDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -19,29 +18,28 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthenticationController {
-    private final AuthenticationService authService;
+
+    private final AuthenticationService authenticationService;
 
     @PostMapping("/register")
-    public ResponseEntity<Void> register(@RequestBody RegisterRequest request) {
-
-        authService.register(request);
+    public ResponseEntity<Void> register(@RequestBody RegisterRequestDto registerRequestDto) {
+        authenticationService.register(registerRequestDto);
 
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Void> login(@RequestBody LoginRequest request, HttpServletResponse response) {
+    public ResponseEntity<Void> login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
+        TokenDto tokens = authenticationService.login(loginRequestDto);
 
-        Token tokens = authService.login(request);
-
-        ResponseCookie accessTokenCookie = ResponseCookie.from("access_token", tokens.getAccessToken())
+        ResponseCookie accessTokenCookie = ResponseCookie.from("access_token", tokens.accessToken())
                 .httpOnly(true)
                 .secure(true)
                 .path("/")
                 .maxAge(24 * 60 * 60) // 24h
                 .build();
 
-        ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh_token", tokens.getRefreshToken())
+        ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh_token", tokens.refreshToken())
                 .httpOnly(true)
                 .secure(true)
                 .path("/")
@@ -56,9 +54,9 @@ public class AuthenticationController {
 
     @PostMapping("/refresh")
     public ResponseEntity<Void> refresh(HttpServletRequest request, HttpServletResponse response) {
-        Token tokens = authService.refresh(request, response);
+        TokenDto tokens = authenticationService.refresh(request, response);
 
-        ResponseCookie accessTokenCookie = ResponseCookie.from("access_token", tokens.getAccessToken())
+        ResponseCookie accessTokenCookie = ResponseCookie.from("access_token", tokens.accessToken())
                 .httpOnly(true)
                 .secure(true)
                 .path("/")

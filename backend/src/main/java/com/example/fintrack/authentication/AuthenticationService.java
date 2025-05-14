@@ -1,8 +1,8 @@
-package com.example.fintrack.auth.service;
+package com.example.fintrack.authentication;
 
-import com.example.fintrack.auth.api.LoginRequest;
-import com.example.fintrack.auth.api.RegisterRequest;
-import com.example.fintrack.auth.api.Token;
+import com.example.fintrack.authentication.dto.LoginRequestDto;
+import com.example.fintrack.authentication.dto.RegisterRequestDto;
+import com.example.fintrack.authentication.dto.TokenDto;
 import com.example.fintrack.currency.Currency;
 import com.example.fintrack.currency.CurrencyRepository;
 import com.example.fintrack.security.service.JwtService;
@@ -32,7 +32,8 @@ import static java.util.Objects.isNull;
 
 @Service
 @RequiredArgsConstructor
-public class AuthenticationServiceImpl implements AuthenticationService {
+public class AuthenticationService {
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
@@ -40,13 +41,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
     private final CurrencyRepository currencyRepository;
+    private final HttpServletRequest httpServletRequest;
 
-    @Autowired
-    private HttpServletRequest httpServletRequest;
-
-    @Override
-    public void register(RegisterRequest request) {
-        if (userRepository.existsByEmail(request.getEmail())) {
+    public void register(RegisterRequestDto registerRequestDto) {
+        if (userRepository.existsByEmail(registerRequestDto.email())) {
             throw ALREADY_EXISTS.getError();
         }
 
@@ -57,39 +55,38 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
 
         var user = User.builder()
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .firstName(request.getFirstName())
-                .lastName(request.getLastName())
+                .email(registerRequestDto.email())
+                .password(passwordEncoder.encode(registerRequestDto.password()))
+                .firstName(registerRequestDto.firstName())
+                .lastName(registerRequestDto.lastName())
                 .currency(defaultCurrency.get())
                 .build();
 
         userRepository.save(user);
     }
 
-    @Override
     @Transactional
-    public Token login(LoginRequest request) {
+    public TokenDto login(LoginRequestDto loginRequestDto) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
+                        loginRequestDto.email(),
+                        loginRequestDto.password()
                 )
         );
 
-        User user = userRepository.findUserByEmail(request.getEmail())
+        User user = userRepository.findUserByEmail(loginRequestDto.email())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         var accessToken = jwtService.generateToken(user, ACCESS);
         var refreshToken = jwtService.generateToken(user, REFRESH);
 
-        return Token.builder()
+        return TokenDto.builder()
                 .accessToken(accessToken)
-                .refreshToken(refreshToken).build();
+                .refreshToken(refreshToken)
+                .build();
     }
 
-    @Override
-    public Token refresh(HttpServletRequest request, HttpServletResponse response) {
+    public TokenDto refresh(HttpServletRequest request, HttpServletResponse response) {
         Cookie[] cookies = request.getCookies();
 
         if (isNull(cookies)) {
@@ -129,7 +126,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         String newAccessToken = jwtService.generateToken(user, ACCESS);
 
-        return Token.builder()
+        return TokenDto.builder()
                 .accessToken(newAccessToken)
                 .build();
     }
@@ -143,6 +140,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 return false;
             }
         }
+
         return true;
     }
 
