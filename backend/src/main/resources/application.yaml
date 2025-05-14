@@ -16,6 +16,10 @@ spring:
     virtual:
       enabled: true
 
+springdoc:
+  swagger-ui:
+    operationsSorter: method
+
 application:
   security:
     access-jwt:
