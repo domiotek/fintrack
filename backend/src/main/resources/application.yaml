@@ -15,3 +15,17 @@ spring:
   threads:
     virtual:
       enabled: true
+
+springdoc:
+  swagger-ui:
+    operationsSorter: method
+
+application:
+  security:
+    access-jwt:
+      secret-key: 4158465a2f6a272c253b4468423246663f3c4a7951673a544c452e2c4d36465c
+      expiration: 600000 # 10 minutes
+    #      expiration: 3600000 // 1 hour
+    refresh-jwt:
+      secret-key: 294C4D868F5CC153E538D5DD921B1612263C3D700EF1662E6C89903DE0FF3F9F
+      expiration: 2592000000
