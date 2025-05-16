@@ -12,7 +12,8 @@ import java.util.Objects;
 @ToString
 @RequiredArgsConstructor
 @Table(name="user_chat")
-public class UserChatConnection {
+public class UserChat {
+
     @Id
     @GeneratedValue
     private Long id;
@@ -29,7 +30,7 @@ public class UserChatConnection {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        UserChatConnection that = (UserChatConnection) o;
+        UserChat that = (UserChat) o;
         return Objects.equals(id, that.id) && Objects.equals(chat, that.chat) && Objects.equals(user, that.user);
     }
 
