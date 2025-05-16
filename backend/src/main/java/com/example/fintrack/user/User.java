@@ -1,7 +1,9 @@
 package com.example.fintrack.user;
 
-import com.example.fintrack.chat.UserChatConnection;
+import com.example.fintrack.bill.Bill;
+import com.example.fintrack.chat.UserChat;
 import com.example.fintrack.event.Event;
+import com.example.fintrack.event.UserEvent;
 import com.example.fintrack.message.LastReadMessage;
 import com.example.fintrack.order.Order;
 import com.example.fintrack.payment.Payment;
@@ -49,15 +51,19 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy =  "user")
     @ToString.Exclude
-    Set<UserChatConnection> chats;
+    private Set<UserChat> chats;
 
     @OneToMany(mappedBy = "user")
     @ToString.Exclude
-    Set<LastReadMessage> lastReadMessages;
+    private Set<LastReadMessage> lastReadMessages;
 
-    @ManyToMany
+    @OneToMany(mappedBy = "user")
     @ToString.Exclude
-    private Set<Event> events;
+    private Set<UserEvent> events;
+
+    @OneToMany(mappedBy = "user")
+    @ToString.Exclude
+    private Set<Bill> bills;
 
     @ManyToMany
     @JoinTable(
@@ -90,21 +96,6 @@ public class User implements UserDetails {
     private String password;
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof User user)) return false;
-        return Objects.equals(id, user.id) && Objects.equals(currency, user.currency) &&
-                Objects.equals(payments, user.payments) && Objects.equals(firstName, user.firstName) &&
-                Objects.equals(lastName, user.lastName) && Objects.equals(email, user.email) &&
-                Objects.equals(password, user.password);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, currency, payments, firstName, lastName, email, password);
-    }
-
-    @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of();
     }
@@ -132,5 +123,20 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User user)) return false;
+        return Objects.equals(id, user.id) && Objects.equals(currency, user.currency) &&
+                Objects.equals(payments, user.payments) && Objects.equals(firstName, user.firstName) &&
+                Objects.equals(lastName, user.lastName) && Objects.equals(email, user.email) &&
+                Objects.equals(password, user.password);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, currency, payments, firstName, lastName, email, password);
     }
 }
