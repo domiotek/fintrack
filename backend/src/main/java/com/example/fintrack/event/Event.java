@@ -27,6 +27,7 @@ public class Event {
     private Currency currency;
 
     @OneToMany(mappedBy = "event")
+    @ToString.Exclude
     private Set<UserEvent> users;
 
     @Column(nullable = false)

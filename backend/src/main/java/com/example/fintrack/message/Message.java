@@ -23,6 +23,7 @@ public class Message {
     private Long id;
 
     @OneToMany(mappedBy = "message")
+    @ToString.Exclude
     private Set<LastReadMessage> lastReadMessages;
 
     @ManyToOne
