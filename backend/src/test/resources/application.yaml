@@ -16,6 +16,11 @@ spring:
     virtual:
       enabled: true
 
+  data:
+    redis:
+      repositories:
+        enabled: false
+
 application:
   security:
     access-jwt:

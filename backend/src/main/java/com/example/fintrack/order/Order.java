@@ -1,5 +1,6 @@
 package com.example.fintrack.order;
 
+import com.example.fintrack.bill.Bill;
 import com.example.fintrack.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -22,12 +23,16 @@ public class Order {
     @GeneratedValue
     private Long id;
 
+    @Column(nullable = false)
+    private BigDecimal value;
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(nullable = false)
-    private BigDecimal value;
+    @ManyToOne
+    @JoinColumn(name = "bill_id", nullable = false)
+    private Bill bill;
 
     @Override
     public boolean equals(Object o) {
