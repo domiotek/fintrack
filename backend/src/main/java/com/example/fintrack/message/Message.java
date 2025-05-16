@@ -2,9 +2,11 @@ package com.example.fintrack.message;
 
 import com.example.fintrack.chat.Chat;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 

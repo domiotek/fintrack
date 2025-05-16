@@ -5,7 +5,10 @@ import com.example.fintrack.currency.Currency;
 import com.example.fintrack.event.Event;
 import com.example.fintrack.user.User;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.Objects;

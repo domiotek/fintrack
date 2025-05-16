@@ -3,7 +3,10 @@ package com.example.fintrack.category;
 import com.example.fintrack.bill.Bill;
 import com.example.fintrack.user.User;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.util.Objects;
 import java.util.Set;
