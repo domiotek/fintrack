@@ -24,7 +24,7 @@ public class Order {
     private Long id;
 
     @Column(nullable = false)
-    private BigDecimal value;
+    private BigDecimal amount;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -38,11 +38,11 @@ public class Order {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Order order)) return false;
-        return Objects.equals(id, order.id) && Objects.equals(user, order.user) && Objects.equals(value, order.value);
+        return Objects.equals(id, order.id) && Objects.equals(user, order.user) && Objects.equals(amount, order.amount);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, user, value);
+        return Objects.hash(id, user, amount);
     }
 }
