@@ -1,14 +1,13 @@
 package com.example.fintrack.user;
 
 import com.example.fintrack.bill.Bill;
+import com.example.fintrack.category.Category;
 import com.example.fintrack.chat.UserChat;
-import com.example.fintrack.event.Event;
+import com.example.fintrack.currency.Currency;
 import com.example.fintrack.event.UserEvent;
 import com.example.fintrack.message.LastReadMessage;
 import com.example.fintrack.order.Order;
 import com.example.fintrack.payment.Payment;
-import com.example.fintrack.category.Category;
-import com.example.fintrack.currency.Currency;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
