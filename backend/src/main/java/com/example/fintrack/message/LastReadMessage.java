@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -31,7 +31,7 @@ public class LastReadMessage {
     private User user;
 
     @Column(nullable = false)
-    private Date readTime;
+    private LocalDateTime readTime;
 
     @Override
     public boolean equals(Object o) {

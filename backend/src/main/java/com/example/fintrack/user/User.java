@@ -26,7 +26,6 @@ import java.util.Set;
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
 @Builder
 @Accessors(chain = true)
 public class User implements UserDetails {
