@@ -31,18 +31,19 @@ public class Message {
     private Chat chat;
 
     @Column(nullable = false)
-    private String value;
+    private String content;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Message message = (Message) o;
-        return Objects.equals(id, message.id) && Objects.equals(lastReadMessages, message.lastReadMessages) && Objects.equals(chat, message.chat) && Objects.equals(value, message.value);
+        return Objects.equals(id, message.id) && Objects.equals(lastReadMessages, message.lastReadMessages) &&
+                Objects.equals(chat, message.chat) && Objects.equals(content, message.content);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, lastReadMessages, chat, value);
+        return Objects.hash(id, lastReadMessages, chat, content);
     }
 }
