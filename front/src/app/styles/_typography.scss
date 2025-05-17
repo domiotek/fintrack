@@ -1,0 +1,51 @@
+@use './_variables' as vars;
+
+p {
+  font-size: 1rem;
+  font-style: normal;
+  line-height: 1.25rem;
+}
+
+.dark-blue-1 {
+  color: vars.$dark-blue-1;
+}
+
+.dark-blue-2 {
+  color: vars.$dark-blue-2;
+}
+
+.light-blue-1 {
+  color: vars.$light-blue-1;
+}
+
+.light-blue-2 {
+  color: vars.$light-blue-2;
+}
+
+.gray-blue {
+  color: vars.$gray-blue;
+}
+
+.gray {
+  color: vars.$gray;
+}
+
+.light-gray-1 {
+  color: vars.$light-gray-1;
+}
+
+.light-gray-2 {
+  color: vars.$light-gray-2;
+}
+
+.green {
+  color: vars.$green;
+}
+
+.red {
+  color: vars.$red;
+}
+
+.yellow {
+  color: vars.$yellow;
+}
