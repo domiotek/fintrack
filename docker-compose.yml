@@ -40,6 +40,7 @@ services:
       SPRING_CACHE_DB_HOST: "fintrack_cache_database"
     depends_on:
       - fintrack_database
+      - fintrack_cache_database
     networks:
       - fintrack_network
 
