@@ -57,4 +57,5 @@ public class Currency {
     public int hashCode() {
         return Objects.hash(id, rates, users, bills, events, name, code);
     }
+
 }

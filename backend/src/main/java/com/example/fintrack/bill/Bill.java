@@ -66,4 +66,5 @@ public class Bill {
     public int hashCode() {
         return Objects.hash(id, currency, category, event, user, paidBy, name, date, value);
     }
+
 }
