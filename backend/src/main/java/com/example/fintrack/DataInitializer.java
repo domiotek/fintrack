@@ -48,14 +48,24 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) {
         Currency currency1 = new Currency();
-        currency1.setName("PLN");
+        currency1.setName("Polish Złoty");
+        currency1.setCode("PLN");
         Currency currency2 = new Currency();
-        currency2.setName("EUR");
+        currency2.setName("Euro");
+        currency2.setCode("EUR");
         Currency currency3 = new Currency();
-        currency3.setName("USD");
+        currency3.setName("United States dollar");
+        currency3.setCode("USD");
         Currency currency4 = new Currency();
-        currency4.setName("GBP");
-        currencyRepository.saveAll(List.of(currency1, currency2, currency3, currency4));
+        currency4.setName("Pound sterling");
+        currency4.setCode("GBP");
+        Currency currency5 = new Currency();
+        currency5.setName("Swiss franc");
+        currency5.setCode("CHF");
+        Currency currency6 = new Currency();
+        currency6.setName("Czech koruna");
+        currency6.setCode("CZK");
+        currencyRepository.saveAll(List.of(currency1, currency2, currency3, currency4, currency5, currency6));
 
         User user1 = new User();
         user1.setFirstName("abc");

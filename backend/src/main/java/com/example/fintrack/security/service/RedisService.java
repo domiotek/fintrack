@@ -17,7 +17,6 @@ public class RedisService {
 
     public void saveToken(String email, String token, TokenType tokenType) {
         if (tokenType == TokenType.REFRESH) {
-            System.out.printf("Adding refresh token to redis for email %s%n", email);
             redisTemplate.opsForValue().set(tokenType + "_" + email, token, REFRESH_EXPIRATION, TimeUnit.DAYS);
         }
     }

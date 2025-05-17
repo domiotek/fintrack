@@ -5,6 +5,7 @@ public record RegisterRequestDto(
         String password,
         String confirmPassword,
         String firstName,
-        String lastName
+        String lastName,
+        Long currencyId
 ) {
 }
