@@ -48,14 +48,14 @@ public class Bill {
     private LocalDateTime date;
 
     @Column(nullable = false)
-    private double value;
+    private double amount;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Bill bill = (Bill) o;
-        return Double.compare(value, bill.value) == 0 && Objects.equals(id, bill.id) &&
+        return Double.compare(amount, bill.amount) == 0 && Objects.equals(id, bill.id) &&
                 Objects.equals(currency, bill.currency) && Objects.equals(category, bill.category) &&
                 Objects.equals(event, bill.event) && Objects.equals(user, bill.user) &&
                 Objects.equals(paidBy, bill.paidBy) && Objects.equals(name, bill.name) &&
@@ -64,7 +64,7 @@ public class Bill {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, currency, category, event, user, paidBy, name, date, value);
+        return Objects.hash(id, currency, category, event, user, paidBy, name, date, amount);
     }
 
 }
