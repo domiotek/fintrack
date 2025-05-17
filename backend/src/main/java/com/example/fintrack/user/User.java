@@ -1,10 +1,9 @@
 package com.example.fintrack.user;
 
+import com.example.fintrack.bill.Bill;
 import com.example.fintrack.chat.UserChatConnection;
 import com.example.fintrack.event.Event;
 import com.example.fintrack.message.LastReadMessage;
-import com.example.fintrack.order.Order;
-import com.example.fintrack.payment.Payment;
 import com.example.fintrack.category.Category;
 import com.example.fintrack.currency.Currency;
 import jakarta.persistence.*;
@@ -39,14 +38,6 @@ public class User implements UserDetails {
     @ToString.Exclude
     private Set<Category> categories;
 
-    @OneToMany(mappedBy = "user")
-    @ToString.Exclude
-    private Set<Payment> payments;
-
-    @OneToMany(mappedBy = "user")
-    @ToString.Exclude
-    private Set<Order> orders;
-
     @OneToMany(mappedBy =  "user")
     @ToString.Exclude
     Set<UserChatConnection> chats;
@@ -54,6 +45,14 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user")
     @ToString.Exclude
     Set<LastReadMessage> lastReadMessages;
+
+    @OneToMany(mappedBy = "user")
+    @ToString.Exclude
+    private Set<Bill> bills;
+
+    @OneToMany(mappedBy = "paidBy")
+    @ToString.Exclude
+    private Set<Bill> paidBills;
 
     @ManyToMany
     @ToString.Exclude
@@ -92,16 +91,21 @@ public class User implements UserDetails {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof User user)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
         return Objects.equals(id, user.id) && Objects.equals(currency, user.currency) &&
-                Objects.equals(payments, user.payments) && Objects.equals(firstName, user.firstName) &&
-                Objects.equals(lastName, user.lastName) && Objects.equals(email, user.email) &&
-                Objects.equals(password, user.password);
+                Objects.equals(categories, user.categories) && Objects.equals(chats, user.chats) &&
+                Objects.equals(lastReadMessages, user.lastReadMessages) && Objects.equals(bills, user.bills) &&
+                Objects.equals(paidBills, user.paidBills) && Objects.equals(events, user.events) &&
+                Objects.equals(friends, user.friends) && Objects.equals(friendOf, user.friendOf) &&
+                Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) &&
+                Objects.equals(email, user.email) && Objects.equals(password, user.password);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, currency, payments, firstName, lastName, email, password);
+        return Objects.hash(id, currency, categories, chats, lastReadMessages, bills, paidBills,
+                events, friends, friendOf, firstName, lastName, email, password);
     }
 
     @Override
