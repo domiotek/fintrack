@@ -37,8 +37,10 @@ services:
       SPRING_DB_URL: jdbc:postgresql://fintrack_database:5432/fintrack
       SPRING_DB_USERNAME: postgres
       SPRING_DB_PASSWORD: postgres
+      SPRING_CACHE_DB_HOST: "fintrack_cache_database"
     depends_on:
       - fintrack_database
+      - fintrack_cache_database
     networks:
       - fintrack_network
 
