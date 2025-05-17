@@ -1,7 +1,10 @@
 package com.example.fintrack.category;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -24,7 +27,7 @@ public class Limit {
     private Category category;
 
     @Column(nullable = false)
-    private BigDecimal value;
+    private BigDecimal amount;
 
     @Column(nullable = false)
     private LocalDateTime startDateTime;
@@ -36,12 +39,12 @@ public class Limit {
         if (this == o) return true;
         if (!(o instanceof Limit limit)) return false;
         return Objects.equals(id, limit.id) && Objects.equals(category, limit.category) &&
-                Objects.equals(value, limit.value) && Objects.equals(startDateTime, limit.startDateTime) &&
+                Objects.equals(amount, limit.amount) && Objects.equals(startDateTime, limit.startDateTime) &&
                 Objects.equals(endDateTime, limit.endDateTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, category, value, startDateTime, endDateTime);
+        return Objects.hash(id, category, amount, startDateTime, endDateTime);
     }
 }

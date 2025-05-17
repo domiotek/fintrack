@@ -1,9 +1,11 @@
 package com.example.fintrack.chat;
 
 import com.example.fintrack.message.Message;
-import com.example.fintrack.user.User;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.util.List;
 import java.util.Objects;
@@ -16,13 +18,14 @@ import java.util.Set;
 @RequiredArgsConstructor
 @Table(name="chats")
 public class Chat {
+
     @Id
     @GeneratedValue
     private Long id;
 
     @OneToMany(mappedBy = "chat")
     @ToString.Exclude
-    Set<UserChatConnection> users;
+    Set<UserChat> users;
 
     @OneToMany(mappedBy = "chat")
     @ToString.Exclude

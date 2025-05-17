@@ -3,11 +3,18 @@ package com.example.fintrack.bill;
 import com.example.fintrack.category.Category;
 import com.example.fintrack.currency.Currency;
 import com.example.fintrack.event.Event;
+import com.example.fintrack.order.Order;
+import com.example.fintrack.payment.Payment;
+import com.example.fintrack.user.User;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -29,14 +36,26 @@ public class Bill {
     private Category category;
 
     @ManyToOne
-    @JoinColumn(name = "event_id", nullable = false)
+    @JoinColumn(name = "event_id")
     private Event event;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column(nullable = false)
     private String name;
 
     @Column(nullable = false)
     private LocalDateTime date;
+
+    @OneToMany(mappedBy = "bill")
+    @ToString.Exclude
+    private Set<Order> orders;
+
+    @OneToMany(mappedBy = "bill")
+    @ToString.Exclude
+    private Set<Payment> payments;
 
     @Override
     public boolean equals(Object o) {

@@ -2,7 +2,10 @@ package com.example.fintrack.chat;
 
 import com.example.fintrack.user.User;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.util.Objects;
 
@@ -12,7 +15,8 @@ import java.util.Objects;
 @ToString
 @RequiredArgsConstructor
 @Table(name="user_chat")
-public class UserChatConnection {
+public class UserChat {
+
     @Id
     @GeneratedValue
     private Long id;
@@ -29,7 +33,7 @@ public class UserChatConnection {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        UserChatConnection that = (UserChatConnection) o;
+        UserChat that = (UserChat) o;
         return Objects.equals(id, that.id) && Objects.equals(chat, that.chat) && Objects.equals(user, that.user);
     }
 

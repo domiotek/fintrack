@@ -2,7 +2,10 @@ package com.example.fintrack.friend;
 
 import com.example.fintrack.user.User;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.util.Objects;
 
@@ -24,7 +27,7 @@ public class Friend {
 
     @ManyToOne
     @JoinColumn(name="user_friend_id", nullable=false)
-    private Friend friend;
+    private User friend;
 
     @Column(nullable = false)
     private boolean isAccepted = false;
@@ -34,7 +37,8 @@ public class Friend {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Friend friend1 = (Friend) o;
-        return isAccepted == friend1.isAccepted && Objects.equals(id, friend1.id) && Objects.equals(user, friend1.user) && Objects.equals(friend, friend1.friend);
+        return isAccepted == friend1.isAccepted && Objects.equals(id, friend1.id) &&
+                Objects.equals(user, friend1.user) && Objects.equals(friend, friend1.friend);
     }
 
     @Override

@@ -1,9 +1,11 @@
 package com.example.fintrack.event;
 
 import com.example.fintrack.currency.Currency;
-import com.example.fintrack.user.User;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -24,14 +26,9 @@ public class Event {
     @JoinColumn(name = "currency_id", nullable = false)
     private Currency currency;
 
-    @ManyToMany
-    @JoinTable(
-            name = "event_user",
-            joinColumns = @JoinColumn(name = "event_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
+    @OneToMany(mappedBy = "event")
     @ToString.Exclude
-    private Set<User> users;
+    private Set<UserEvent> users;
 
     @Column(nullable = false)
     private String name;
