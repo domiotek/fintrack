@@ -18,7 +18,8 @@ Project created for _Zaawansowane Technologie Programowania_ class on Cracow Uni
 
 ### Technology stack
 
-- Java 21 with Maven Spring Boot
+- Java 21
+- Spring Boot 3
 - PostgreSQL
 - Docker
 - Node.js
@@ -83,5 +84,6 @@ To make changes in this project you will need to set-up your environment.
    npm start
    ```
 6. Navigate to `http://localhost:4200` to visit the application.
+7. Navigate to `http://localhost:8080/swagger-ui/index.html` to visit swagger ui.
 
 This is showcase, for development use proper IDEs like **IntelliJ IDEA** for backend and **Visual Studio Code** for frontend.
