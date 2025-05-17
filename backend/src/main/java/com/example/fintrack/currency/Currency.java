@@ -42,16 +42,19 @@ public class Currency {
     @Column(nullable = false, unique = true)
     private String name;
 
+    @Column(nullable = false, unique = true)
+    private String code;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Currency currency)) return false;
-        return Objects.equals(id, currency.id) && Objects.equals(rates, currency.rates) &&
-                Objects.equals(users, currency.users) && Objects.equals(name, currency.name);
+        return Objects.equals(id, currency.id) && Objects.equals(name, currency.name)
+                && Objects.equals(code, currency.code);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, rates, users, name);
+        return Objects.hash(id, name, code);
     }
 }

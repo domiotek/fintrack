@@ -46,18 +46,15 @@ public class AuthenticationService {
             throw ALREADY_EXISTS.getError();
         }
 
-        Optional<Currency> defaultCurrency = currencyRepository.findByName("PLN");
+        Currency currency = currencyRepository.findById(registerRequestDto.currencyId())
+                .orElseThrow(CURRENCY_NOT_FOUND::getError);
 
-        if (defaultCurrency.isEmpty()) {
-            throw CURRENCY_NOT_FOUND.getError();
-        }
-
-        var user = User.builder()
+        User user = User.builder()
                 .email(registerRequestDto.email())
                 .password(passwordEncoder.encode(registerRequestDto.password()))
                 .firstName(registerRequestDto.firstName())
                 .lastName(registerRequestDto.lastName())
-                .currency(defaultCurrency.get())
+                .currency(currency)
                 .build();
 
         userRepository.save(user);
