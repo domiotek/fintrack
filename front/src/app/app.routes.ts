@@ -8,25 +8,36 @@ export const routes: Routes = [
     redirectTo: 'dashboard',
   },
   {
-    path: 'login',
-    loadComponent: () => import('./features/auth/pages/login/login.component').then((m) => m.LoginComponent),
-    canActivate: [authGuard],
-  },
-  {
-    path: 'register',
-    loadComponent: () => import('./features/auth/pages/register/register.component').then((m) => m.RegisterComponent),
-    canActivate: [authGuard],
-  },
-  {
-    path: 'remind-password',
+    path: '',
     loadComponent: () =>
-      import('./features/auth/pages/remind-password/remind-password.component').then((m) => m.RemindPasswordComponent),
-    canActivate: [authGuard],
-  },
-  {
-    path: 'activate/:token',
-    loadComponent: () => import('./features/auth/pages/activate/activate.component').then((m) => m.ActivateComponent),
-    canActivate: [authGuard],
+      import('./features/auth/components/auth-layout/auth-layout.component').then((m) => m.AuthLayoutComponent),
+    children: [
+      {
+        path: 'login',
+        loadComponent: () => import('./features/auth/pages/login/login.component').then((m) => m.LoginComponent),
+        canActivate: [authGuard],
+      },
+      {
+        path: 'register',
+        loadComponent: () =>
+          import('./features/auth/pages/register/register.component').then((m) => m.RegisterComponent),
+        canActivate: [authGuard],
+      },
+      {
+        path: 'remind-password',
+        loadComponent: () =>
+          import('./features/auth/pages/remind-password/remind-password.component').then(
+            (m) => m.RemindPasswordComponent,
+          ),
+        canActivate: [authGuard],
+      },
+      {
+        path: 'activate/:token',
+        loadComponent: () =>
+          import('./features/auth/pages/activate/activate.component').then((m) => m.ActivateComponent),
+        canActivate: [authGuard],
+      },
+    ],
   },
   {
     path: 'dashboard',

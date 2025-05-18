@@ -1,0 +1,31 @@
+@use '../../../../styles/variables' as *;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 4em 1em 1em;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+
+  button {
+    margin-top: 2em;
+  }
+
+  p {
+    font-size: 0.85em;
+  }
+}
+
+.bottom-nav {
+  font-size: 0.85em;
+  margin-top: 2em;
+}
+
+form button {
+  align-self: flex-end;
+}

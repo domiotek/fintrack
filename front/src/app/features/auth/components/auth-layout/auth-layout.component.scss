@@ -1,0 +1,53 @@
+@use '../../../../styles/variables' as *;
+
+:host {
+  display: block;
+  min-height: 100%;
+  padding: 1em 0;
+  background-color: $dark-blue-1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+main {
+  max-width: 90%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 90%;
+  gap: 2em;
+
+  img {
+    max-width: 124px;
+  }
+
+  hr {
+    width: 70%;
+  }
+
+  mat-card {
+    flex-basis: 50%;
+  }
+}
+
+@media (width > 1024px) {
+  main {
+    flex-direction: row;
+    height: 50%;
+    gap: 5em;
+
+    hr {
+      width: 1px;
+      height: 60vh;
+    }
+    img {
+      max-width: 192px;
+    }
+
+    mat-card {
+      min-width: 488px;
+    }
+  }
+}

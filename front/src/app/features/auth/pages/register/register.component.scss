@@ -1,0 +1,44 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 60vh;
+  flex: 1;
+  padding: 4em 0.5em 1em;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+
+  button {
+    margin-top: 2em;
+  }
+}
+
+.layout-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+
+  section {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+  }
+}
+
+.bottom-nav {
+  font-size: 0.85em;
+  margin-top: 2em;
+}
+
+@media (width > 526px) {
+  .layout-container {
+    flex-direction: row;
+  }
+
+  form button {
+    align-self: flex-end;
+  }
+}

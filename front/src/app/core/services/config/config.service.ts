@@ -42,7 +42,7 @@ export class ConfigService {
 
   getConfig(): Observable<ConfigResponse> {
     return new Observable<ConfigResponse>((observer) => {
-      const shouldFail = false;
+      const shouldFail = true;
       if (shouldFail) {
         observer.error(new Error('Simulated HTTP error'));
       } else {
