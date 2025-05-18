@@ -6,8 +6,6 @@ import com.example.fintrack.chat.UserChat;
 import com.example.fintrack.currency.Currency;
 import com.example.fintrack.event.UserEvent;
 import com.example.fintrack.message.LastReadMessage;
-import com.example.fintrack.order.Order;
-import com.example.fintrack.payment.Payment;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -42,14 +40,6 @@ public class User implements UserDetails {
     @ToString.Exclude
     private Set<Category> categories;
 
-    @OneToMany(mappedBy = "user")
-    @ToString.Exclude
-    private Set<Payment> payments;
-
-    @OneToMany(mappedBy = "user")
-    @ToString.Exclude
-    private Set<Order> orders;
-
     @OneToMany(mappedBy =  "user")
     @ToString.Exclude
     private Set<UserChat> chats;
@@ -65,6 +55,10 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user")
     @ToString.Exclude
     private Set<Bill> bills;
+
+    @OneToMany(mappedBy = "paidBy")
+    @ToString.Exclude
+    private Set<User> paidBills;
 
     @ManyToMany
     @JoinTable(
@@ -95,6 +89,9 @@ public class User implements UserDetails {
 
     @Column(nullable = false)
     private String password;
+
+    @Column(nullable = false)
+    private double amount;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -131,13 +128,13 @@ public class User implements UserDetails {
         if (this == o) return true;
         if (!(o instanceof User user)) return false;
         return Objects.equals(id, user.id) && Objects.equals(currency, user.currency) &&
-                Objects.equals(payments, user.payments) && Objects.equals(firstName, user.firstName) &&
+                Objects.equals(firstName, user.firstName) &&
                 Objects.equals(lastName, user.lastName) && Objects.equals(email, user.email) &&
                 Objects.equals(password, user.password);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, currency, payments, firstName, lastName, email, password);
+        return Objects.hash(id, currency, firstName, lastName, email, password);
     }
 }
