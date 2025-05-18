@@ -3,8 +3,6 @@ package com.example.fintrack.bill;
 import com.example.fintrack.category.Category;
 import com.example.fintrack.currency.Currency;
 import com.example.fintrack.event.Event;
-import com.example.fintrack.order.Order;
-import com.example.fintrack.payment.Payment;
 import com.example.fintrack.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -43,24 +41,21 @@ public class Bill {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @ManyToOne
+    @JoinColumn(name = "paid_by")
+    private User paidBy;
+
     @Column(nullable = false)
     private String name;
 
     @Column(nullable = false)
     private LocalDateTime date;
 
-    @OneToMany(mappedBy = "bill")
-    @ToString.Exclude
-    private Set<Order> orders;
-
-    @OneToMany(mappedBy = "bill")
-    @ToString.Exclude
-    private Set<Payment> payments;
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Bill bill)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
+        Bill bill = (Bill) o;
         return Objects.equals(id, bill.id) && Objects.equals(currency, bill.currency) &&
                 Objects.equals(category, bill.category) && Objects.equals(event, bill.event) &&
                 Objects.equals(name, bill.name) && Objects.equals(date, bill.date);
