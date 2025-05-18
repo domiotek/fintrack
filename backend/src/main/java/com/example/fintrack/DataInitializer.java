@@ -14,10 +14,6 @@ import com.example.fintrack.event.UserEvent;
 import com.example.fintrack.event.UserEventRepository;
 import com.example.fintrack.friend.Friend;
 import com.example.fintrack.friend.FriendRepository;
-import com.example.fintrack.order.Order;
-import com.example.fintrack.order.OrderRepository;
-import com.example.fintrack.payment.Payment;
-import com.example.fintrack.payment.PaymentRepository;
 import com.example.fintrack.user.User;
 import com.example.fintrack.user.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -41,8 +37,6 @@ public class DataInitializer implements CommandLineRunner {
     private final EventRepository eventRepository;
     private final UserEventRepository userEventRepository;
     private final BillRepository billRepository;
-    private final OrderRepository orderRepository;
-    private final PaymentRepository paymentRepository;
     private final FriendRepository friendRepository;
 
     @Override
@@ -238,57 +232,5 @@ public class DataInitializer implements CommandLineRunner {
         bill6.setCurrency(currency1);
         bill6.setUser(user3);
         billRepository.saveAll(List.of(bill1, bill2, bill3, bill4, bill5, bill6));
-
-        Order order1 = new Order();
-        order1.setAmount(BigDecimal.valueOf(100));
-        order1.setBill(bill1);
-        order1.setUser(user1);
-        Order order2 = new Order();
-        order2.setAmount(BigDecimal.valueOf(300));
-        order2.setBill(bill2);
-        order2.setUser(user1);
-        Order order3 = new Order();
-        order3.setAmount(BigDecimal.valueOf(200));
-        order3.setBill(bill3);
-        order3.setUser(user1);
-        Order order4 = new Order();
-        order4.setAmount(BigDecimal.valueOf(400));
-        order4.setBill(bill4);
-        order4.setUser(user2);
-        Order order5 = new Order();
-        order5.setAmount(BigDecimal.valueOf(100));
-        order5.setBill(bill5);
-        order5.setUser(user2);
-        Order order6 = new Order();
-        order6.setAmount(BigDecimal.valueOf(100));
-        order6.setBill(bill6);
-        order6.setUser(user3);
-        orderRepository.saveAll(List.of(order1, order2, order3, order4, order5, order6));
-
-        Payment payment1 = new Payment();
-        payment1.setAmount(BigDecimal.valueOf(100));
-        payment1.setBill(bill1);
-        payment1.setUser(user1);
-        Payment payment2 = new Payment();
-        payment2.setAmount(BigDecimal.valueOf(200));
-        payment2.setBill(bill2);
-        payment2.setUser(user1);
-        Payment payment3 = new Payment();
-        payment3.setAmount(BigDecimal.valueOf(400));
-        payment3.setBill(bill3);
-        payment3.setUser(user1);
-        Payment payment4 = new Payment();
-        payment4.setAmount(BigDecimal.valueOf(300));
-        payment4.setBill(bill4);
-        payment4.setUser(user2);
-        Payment payment5 = new Payment();
-        payment5.setAmount(BigDecimal.valueOf(200));
-        payment5.setBill(bill5);
-        payment5.setUser(user2);
-        Payment payment6 = new Payment();
-        payment6.setAmount(BigDecimal.valueOf(300));
-        payment6.setBill(bill6);
-        payment6.setUser(user3);
-        paymentRepository.saveAll(List.of(payment1, payment2, payment3, payment4, payment5, payment6));
     }
 }
