@@ -7,11 +7,12 @@ import { LoginRequest } from '../../models/auth/login-request.model';
 import { ConfigResponse } from '../../models/auth/config-response.model';
 import { ConfigService } from '../config/config.service';
 import { RegisterRequest } from '../../models/auth/register-request.model';
+import { BaseApiService } from '../base-api.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class AuthService {
+export class AuthService extends BaseApiService {
   private readonly apiUrl = `${environment.apiUrl}/auth`;
 
   private readonly http = inject(HttpClient);
@@ -40,19 +41,11 @@ export class AuthService {
     return this.http.post<void>(`${this.apiUrl}/logout`, {}).pipe(tap(() => this.appStateStore.logout()));
   }
 
-  getErrorMessage(errorCode: number): string {
-    switch (errorCode) {
-      case 302:
-        return 'Niepoprawny email lub hasło';
-      case 303:
-        return 'Takie konto już istnieje';
-      case 100:
-      case 300:
-      case 301:
-      case 304:
-        return 'Błąd przy próbie uwierzytelnienia. Pomocne może być usunięcie plików cookies i ponowienie operacji';
-      default:
-        return 'Wystąpił nieznany błąd';
-    }
+  sendPasswordReset(email: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/password-reset`, { email });
+  }
+
+  activateAccount(token: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/activate`, { token });
   }
 }

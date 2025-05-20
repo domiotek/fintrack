@@ -1,0 +1,34 @@
+.message-container {
+  min-height: 6em;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+
+  button {
+    margin-top: 2em;
+  }
+
+  p {
+    font-size: 0.85em;
+  }
+}
+
+.bottom-nav {
+  font-size: 0.85em;
+  margin-top: 2em;
+}
+
+.progress-bar {
+  position: absolute;
+  top: 0.5em;
+  left: 0;
+}
+
+@media (width > 526px) {
+  form button {
+    align-self: flex-end;
+  }
+}

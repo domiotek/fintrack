@@ -1,18 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ErrorHolderComponent } from './error-holder.component';
+import { AlertPanelComponent } from './alert-panel.component';
 
 describe('ErrorHolderComponent', () => {
-  let component: ErrorHolderComponent;
-  let fixture: ComponentFixture<ErrorHolderComponent>;
+  let component: AlertPanelComponent;
+  let fixture: ComponentFixture<AlertPanelComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ErrorHolderComponent]
-    })
-    .compileComponents();
+      imports: [AlertPanelComponent],
+    }).compileComponents();
 
-    fixture = TestBed.createComponent(ErrorHolderComponent);
+    fixture = TestBed.createComponent(AlertPanelComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

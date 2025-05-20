@@ -1,17 +1,18 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AuthService } from '../../../../core/services/auth/auth.service';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
+import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
-import { RouterLink } from '@angular/router';
-import { AuthService } from '../../../../core/services/auth/auth.service';
 import { AlertPanelComponent } from '../../../../shared/components/alert-panel/alert-panel.component';
 import { RoutingService } from '../../../../core/services/routing/routing.service';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+
 @Component({
-  selector: 'app-login',
+  selector: 'app-reset-password',
   imports: [
     MatCardModule,
     MatFormFieldModule,
@@ -23,51 +24,34 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     AlertPanelComponent,
     MatProgressBarModule,
   ],
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss', '../../styles/common.style.scss'],
+  templateUrl: './reset-password.component.html',
+  styleUrls: ['./reset-password.component.scss', '../../styles/common.style.scss'],
 })
-export class LoginComponent implements OnInit {
-  loginForm = new FormGroup({
+export class ResetPasswordComponent {
+  resetPasswordForm = new FormGroup({
     email: new FormControl('', { validators: [Validators.required, Validators.email] }),
-    password: new FormControl('', { validators: [Validators.required] }),
   });
 
   errorCode = signal<number | null>(null);
   submitting = signal(false);
-  prevPage = signal<'register' | 'reset-password' | 'account-activated' | null>(null);
 
   authService = inject(AuthService);
   routingService = inject(RoutingService);
 
-  ngOnInit(): void {
-    const referral = this.routingService.getAndConsumeNavigationState()['ref'];
-
-    switch (referral) {
-      case 'register':
-      case 'reset-password':
-        this.prevPage.set(referral);
-        break;
-    }
-  }
-
   onSubmit() {
-    if (!this.loginForm.valid) return;
+    if (!this.resetPasswordForm.valid) return;
 
     this.errorCode.set(null);
     this.submitting.set(true);
 
-    const loginData = {
-      email: this.loginForm.value.email as string,
-      password: this.loginForm.value.password as string,
-    };
-
-    this.authService.login(loginData).subscribe({
+    this.authService.sendPasswordReset(this.resetPasswordForm.value.email!).subscribe({
       error: (err) => {
         this.errorCode.set(err.error.code);
         this.submitting.set(false);
       },
       complete: () => {
         this.submitting.set(false);
+        this.routingService.navigate(['/login'], { ref: 'reset-password' });
       },
     });
   }

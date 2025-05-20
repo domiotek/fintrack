@@ -1,9 +1,11 @@
 <mat-form-field appearance="outline">
   <mat-label>{{ label() }}</mat-label>
-  <mat-select formControlName="currency" name="currency" required>
+  <mat-select [formControl]="internalControl" name="currency" required>
     @for (currency of currencies; track currency.id) {
       <mat-option [value]="currency.id">{{ currency.name }} ({{ currency.code }})</mat-option>
     }
   </mat-select>
-  <mat-error *ngIf="registerForm.get('currency')?.hasError('required')"> Waluta jest wymagana </mat-error>
+  @if (internalControl.hasError('required')) {
+    <mat-error>Waluta jest wymagana</mat-error>
+  }
 </mat-form-field>

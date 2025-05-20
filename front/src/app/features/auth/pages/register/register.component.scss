@@ -6,16 +6,6 @@
   padding: 4em 0.5em 1em;
 }
 
-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1em;
-
-  button {
-    margin-top: 2em;
-  }
-}
-
 .layout-container {
   display: flex;
   flex-direction: column;
@@ -26,11 +16,6 @@ form {
     flex-direction: column;
     gap: 1em;
   }
-}
-
-.bottom-nav {
-  font-size: 0.85em;
-  margin-top: 2em;
 }
 
 @media (width > 526px) {

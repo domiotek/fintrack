@@ -1,1 +1,24 @@
-<p>activate works!</p>
+@if (submitting()) {
+  <mat-progress-bar class="progress-bar" mode="indeterminate"></mat-progress-bar>
+
+  <mat-card-header>
+    <mat-card-title>Trwa próba aktywacji...</mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="pending-content">
+    <p class="pending-message">Daj nam chwilę, Twoje konto powinno być gotowe lada chwila.</p>
+  </mat-card-content>
+} @else {
+  <mat-card-header>
+    <mat-card-title>Coś poszło nie tak</mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="error-content">
+    <app-alert-panel severity="error">
+      {{ authService.getErrorMessage(this.errorCode()!) }}
+    </app-alert-panel>
+
+    <p>Nie udało się aktywować konta. Proszę spróbować ponownie.</p>
+    <button type="button" mat-flat-button (click)="activateAccount()" [disabled]="submitting()">
+      Spróbuj ponownie
+    </button>
+  </mat-card-content>
+}

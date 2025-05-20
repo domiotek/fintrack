@@ -1,0 +1,46 @@
+@use '../../../styles/variables' as *;
+
+.message {
+  padding: 1em;
+  border-radius: 0.5em;
+  font-size: 0.85em;
+  width: 100%;
+  margin: 1.5em 0;
+
+  background: rgba($blue, 0.2);
+  border: solid 1px $blue;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+
+  mat-icon {
+    color: $blue;
+    flex-shrink: 0;
+  }
+}
+
+.error {
+  background: rgba($red, 0.1);
+  border-color: $red;
+
+  mat-icon {
+    color: $red;
+  }
+}
+
+.warning {
+  background: rgba($yellow, 0.1);
+  border-color: $yellow;
+
+  mat-icon {
+    color: $yellow;
+  }
+}
+
+.success {
+  background: rgba($green, 0.1);
+  border-color: $green;
+  mat-icon {
+    color: $green;
+  }
+}

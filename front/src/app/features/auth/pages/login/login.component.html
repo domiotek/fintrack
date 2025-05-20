@@ -1,9 +1,30 @@
+@if (submitting()) {
+  <mat-progress-bar class="progress-bar" mode="indeterminate"></mat-progress-bar>
+}
+
 <mat-card-header>
   <mat-card-title>Zaloguj się</mat-card-title>
 </mat-card-header>
 <mat-card-content>
   <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-    <app-error-holder [visible]="loginError()">{{ authService.getErrorMessage(this.errorCode()) }}</app-error-holder>
+    <div class="message-container">
+      @if (this.errorCode() !== null) {
+        <app-alert-panel severity="error">{{ authService.getErrorMessage(this.errorCode()!) }}</app-alert-panel>
+      }
+
+      @if (prevPage() !== null) {
+        <app-alert-panel severity="success">
+          @if (prevPage() === 'register') {
+            Rejestracja zakończona pomyślnie. Możesz się teraz zalogować.
+          } @else if (prevPage() === 'reset-password') {
+            Na podany adres email wysłano wiadomość z linkiem do resetowania hasła.
+          } @else if (prevPage() === 'account-activated') {
+            Konto zostało aktywowane. Możesz się teraz zalogować.
+          }
+        </app-alert-panel>
+      }
+    </div>
+
     <mat-form-field appearance="outline">
       <mat-label for="email">Email</mat-label>
       <input
@@ -31,9 +52,9 @@
       />
       <mat-error *ngIf="loginForm.get('password')?.hasError('required')"> Hasło jest wymagane </mat-error>
     </mat-form-field>
-    <p>Problemy z logowaniem? <a routerLink="/remind-password">Odzyskaj hasło</a></p>
+    <p>Problemy z logowaniem? <a routerLink="/reset-password">Odzyskaj hasło</a></p>
 
-    <button mat-flat-button color="primary" type="submit">Zaloguj się</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="submitting()">Zaloguj się</button>
   </form>
   <p class="bottom-nav">Nie masz konta? <a routerLink="/register">Zarejestruj się</a></p>
 </mat-card-content>

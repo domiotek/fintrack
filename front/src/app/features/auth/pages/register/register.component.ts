@@ -6,10 +6,13 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { RouterLink } from '@angular/router';
-import { ErrorHolderComponent } from '../../components/error-holder/error-holder.component';
+import { AlertPanelComponent } from '../../../../shared/components/alert-panel/alert-panel.component';
 import { AuthService } from '../../../../core/services/auth/auth.service';
 import { MatSelectModule } from '@angular/material/select';
 import { RegisterRequest } from '../../../../core/models/auth/register-request.model';
+import { CurrencySelectorComponent } from '../../../../shared/components/currency-selector/currency-selector.component';
+import { RoutingService } from '../../../../core/services/routing/routing.service';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @Component({
   selector: 'app-register',
@@ -22,10 +25,12 @@ import { RegisterRequest } from '../../../../core/models/auth/register-request.m
     ReactiveFormsModule,
     MatButtonModule,
     RouterLink,
-    ErrorHolderComponent,
+    AlertPanelComponent,
+    CurrencySelectorComponent,
+    MatProgressBarModule,
   ],
   templateUrl: './register.component.html',
-  styleUrl: './register.component.scss',
+  styleUrls: ['../../styles/common.style.scss', './register.component.scss'],
 })
 export class RegisterComponent {
   registerForm = new FormGroup({
@@ -46,32 +51,34 @@ export class RegisterComponent {
     currency: new FormControl('', { validators: [Validators.required] }),
   });
 
-  registerError = signal(false);
-  errorCode = signal(0);
+  errorCode = signal<number | null>(null);
+  submitting = signal(false);
 
   authService = inject(AuthService);
+  routingService = inject(RoutingService);
 
   onSubmit() {
-    if (this.registerForm.valid) {
-      const registerData: RegisterRequest = {
-        email: this.registerForm.value.email as string,
-        password: this.registerForm.value.password as string,
-        confirmPassword: this.registerForm.value.repeatPassword as string,
-        firstName: this.registerForm.value.name as string,
-        lastName: this.registerForm.value.surname as string,
-        currency: this.registerForm.value.currency as string,
-      };
+    if (!this.registerForm.valid) return;
 
-      this.authService.register(registerData).subscribe({
-        next: () => {
-          this.registerError.set(false);
-        },
-        error: (err) => {
-          this.registerError.set(true);
-          this.errorCode.set(err.error.code);
-          console.log(err);
-        },
-      });
-    }
+    this.submitting.set(true);
+    const registerData: RegisterRequest = {
+      email: this.registerForm.value.email as string,
+      password: this.registerForm.value.password as string,
+      confirmPassword: this.registerForm.value.repeatPassword as string,
+      firstName: this.registerForm.value.name as string,
+      lastName: this.registerForm.value.surname as string,
+      currency: this.registerForm.value.currency as string,
+    };
+
+    this.authService.register(registerData).subscribe({
+      complete: () => {
+        this.routingService.navigate(['/login'], { ref: 'reset-password' });
+        this.submitting.set(false);
+      },
+      error: (err) => {
+        this.errorCode.set(err.error.code);
+        this.submitting.set(false);
+      },
+    });
   }
 }

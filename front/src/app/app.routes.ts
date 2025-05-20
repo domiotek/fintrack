@@ -10,7 +10,7 @@ export const routes: Routes = [
   {
     path: '',
     loadComponent: () =>
-      import('./features/auth/components/auth-layout/auth-layout.component').then((m) => m.AuthLayoutComponent),
+      import('./core/components/auth-layout/auth-layout.component').then((m) => m.AuthLayoutComponent),
     children: [
       {
         path: 'login',
@@ -24,11 +24,15 @@ export const routes: Routes = [
         canActivate: [authGuard],
       },
       {
-        path: 'remind-password',
+        path: 'reset-password',
         loadComponent: () =>
-          import('./features/auth/pages/remind-password/remind-password.component').then(
-            (m) => m.RemindPasswordComponent,
-          ),
+          import('./features/auth/pages/reset-password/reset-password.component').then((m) => m.ResetPasswordComponent),
+        canActivate: [authGuard],
+      },
+      {
+        path: 'activate',
+        loadComponent: () =>
+          import('./features/auth/pages/activate/activate.component').then((m) => m.ActivateComponent),
         canActivate: [authGuard],
       },
       {

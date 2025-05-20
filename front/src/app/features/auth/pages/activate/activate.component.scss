@@ -1,0 +1,19 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 4em 1em 1em;
+  min-height: 355px;
+}
+
+.pending-content {
+  p {
+    margin-top: 2em;
+  }
+}
+
+.error-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25em;
+}
