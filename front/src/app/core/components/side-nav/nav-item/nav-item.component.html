@@ -1,0 +1,11 @@
+<a
+  mat-list-item
+  [routerLink]="[item().route]"
+  routerLinkActive
+  #rla="routerLinkActive"
+  [activated]="rla.isActive"
+  (click)="onClick()"
+>
+  <mat-icon class="white" aria-hidden="false" matListItemIcon fontSet="material-icons">{{ item().icon }}</mat-icon>
+  <span matListItemTitle class="white">{{ item().title }}</span>
+</a>

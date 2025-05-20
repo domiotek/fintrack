@@ -50,37 +50,45 @@ export const routes: Routes = [
     ],
   },
   {
-    path: 'dashboard',
+    path: '',
     loadComponent: () =>
-      import('./features/dashboard/pages/dashboard/dashboard.component').then((m) => m.DashboardComponent),
-    canActivate: [authGuard],
-  },
-  {
-    path: 'stats',
-    loadComponent: () =>
-      import('./features/statistics/pages/statistics/statistics.component').then((m) => m.StatisticsComponent),
-    canActivate: [authGuard],
-  },
-  {
-    path: 'settings',
-    loadComponent: () =>
-      import('./features/settings/pages/settings/settings.component').then((m) => m.SettingsComponent),
-    canActivate: [authGuard],
-  },
-  {
-    path: 'events',
-    loadComponent: () => import('./features/events/pages/events/events.component').then((m) => m.EventsComponent),
-    canActivate: [authGuard],
-  },
-  {
-    path: 'friends',
-    loadComponent: () => import('./features/friends/pages/friends/friends.component').then((m) => m.FriendsComponent),
-    canActivate: [authGuard],
-  },
-  {
-    path: 'categories',
-    loadComponent: () =>
-      import('./features/categories/pages/categories/categories.component').then((m) => m.CategoriesComponent),
-    canActivate: [authGuard],
+      import('./core/components/main-layout/main-layout.component').then((m) => m.MainLayoutComponent),
+    children: [
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./features/dashboard/pages/dashboard/dashboard.component').then((m) => m.DashboardComponent),
+        canActivate: [authGuard],
+      },
+      {
+        path: 'stats',
+        loadComponent: () =>
+          import('./features/statistics/pages/statistics/statistics.component').then((m) => m.StatisticsComponent),
+        canActivate: [authGuard],
+      },
+      {
+        path: 'settings',
+        loadComponent: () =>
+          import('./features/settings/pages/settings/settings.component').then((m) => m.SettingsComponent),
+        canActivate: [authGuard],
+      },
+      {
+        path: 'events',
+        loadComponent: () => import('./features/events/pages/events/events.component').then((m) => m.EventsComponent),
+        canActivate: [authGuard],
+      },
+      {
+        path: 'friends',
+        loadComponent: () =>
+          import('./features/friends/pages/friends/friends.component').then((m) => m.FriendsComponent),
+        canActivate: [authGuard],
+      },
+      {
+        path: 'categories',
+        loadComponent: () =>
+          import('./features/categories/pages/categories/categories.component').then((m) => m.CategoriesComponent),
+        canActivate: [authGuard],
+      },
+    ],
   },
 ];
