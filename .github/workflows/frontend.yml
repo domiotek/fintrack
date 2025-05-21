@@ -1,4 +1,4 @@
-name: Angular frontend workflow
+name: Angular frontend
 
 on:
   push:
@@ -26,18 +26,18 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Install dependencies
         run: |
           cd front
           npm ci
-          
+
       - name: Run linting
         run: |
           cd front
           npm run lint
-          
+
       - name: Run Prettier check
         run: |
           cd front
@@ -54,7 +54,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Install dependencies
         run: |
@@ -65,7 +65,7 @@ jobs:
         run: |
           cd front
           npm run test -- --watch=false --browsers=ChromeHeadless
-          
+
       # - name: Upload coverage as artifact
       #   uses: actions/upload-artifact@v4
       #   with:
@@ -83,13 +83,13 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Install dependencies
         run: |
           cd front
           npm ci
-          
+
       # - name: Download coverage artifact
       #   uses: actions/download-artifact@v4
       #   with:
@@ -108,5 +108,5 @@ jobs:
             -Dsonar.sources=front/src
 
 
-          
+
             # -Dsonar.javascript.lcov.reportPaths=coverage/lcov-report/index-lcov-report.xml

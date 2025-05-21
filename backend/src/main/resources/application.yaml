@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: fintrack
+
+  datasource:
+    username: ${SPRING_DB_USERNAME:postgres}
+    password: ${SPRING_DB_PASSWORD:postgres}
+    url: ${SPRING_DB_URL:jdbc:postgresql://localhost:5432/fintrack}
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: true
+
+  threads:
+    virtual:
+      enabled: true
+
+  data:
+    redis:
+      repositories:
+        enabled: false
+
+springdoc:
+  swagger-ui:
+    operationsSorter: method
+
+application:
+  security:
+    access-jwt:
+      secret-key: 4158465a2f6a272c253b4468423246663f3c4a7951673a544c452e2c4d36465c
+      expiration: 600000 # 10 minutes
+    #      expiration: 3600000 // 1 hour
+    refresh-jwt:
+      secret-key: 294C4D868F5CC153E538D5DD921B1612263C3D700EF1662E6C89903DE0FF3F9F
+      expiration: 2592000000

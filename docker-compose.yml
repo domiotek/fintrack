@@ -1,0 +1,69 @@
+services:
+  fintrack_database:
+    image: postgres:latest
+    container_name: fintrack_database
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: fintrack
+    ports:
+      - "5432:5432"
+    volumes:
+      - app_data:/var/lib/postgresql/data
+    networks:
+      - fintrack_network
+
+  fintrack_cache_database:
+    image: redis/redis-stack-server:latest
+    container_name: fintrack_cache_database
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - app_cache_data:/data
+    networks:
+      - fintrack_network
+
+  fintrack_api:
+    build:
+      context: backend
+      dockerfile: Dockerfile
+    container_name: fintrack_api
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DB_URL: jdbc:postgresql://fintrack_database:5432/fintrack
+      SPRING_DB_USERNAME: postgres
+      SPRING_DB_PASSWORD: postgres
+      SPRING_CACHE_DB_HOST: "fintrack_cache_database"
+    depends_on:
+      - fintrack_database
+      - fintrack_cache_database
+    networks:
+      - fintrack_network
+
+  fintrack_app:
+    build:
+      context: front
+      dockerfile: Dockerfile
+    container_name: fintrack_app
+    environment:
+      API_URL: http://fintrack_api:8080
+    ports:
+      - "80:80"
+    networks:
+      - fintrack_network
+    depends_on:
+      - fintrack_api
+
+volumes:
+  app_data:
+    driver: local
+  app_cache_data:
+    driver: local
+
+networks:
+  fintrack_network:
+    driver: bridge

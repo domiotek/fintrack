@@ -9,5 +9,4 @@ class FintrackApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-
 }
