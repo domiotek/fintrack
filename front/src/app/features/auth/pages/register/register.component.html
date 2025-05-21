@@ -1,6 +1,4 @@
-@if (submitting()) {
-  <mat-progress-bar class="progress-bar" mode="indeterminate"></mat-progress-bar>
-}
+<app-form-progress-bar [active]="submitting()"></app-form-progress-bar>
 
 <mat-card-header>
   <mat-card-title>Utwórz konto</mat-card-title>
@@ -31,35 +29,7 @@
             Proszę podać poprawny adres email
           </mat-error>
         </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label for="password">Hasło</mat-label>
-          <input
-            matInput
-            formControlName="password"
-            type="password"
-            name="password"
-            placeholder="Wprowadź hasło"
-            required
-          />
-          <mat-error *ngIf="registerForm.get('password')?.hasError('required')"> Hasło jest wymagane </mat-error>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label for="repeat-password">Powtórz hasło</mat-label>
-          <input
-            matInput
-            formControlName="repeatPassword"
-            type="password"
-            name="repeat-password"
-            placeholder="Wprowadź hasło"
-            required
-          />
-          <mat-error *ngIf="registerForm.get('repeatPassword')?.hasError('required')"> Hasło jest wymagane </mat-error>
-          <mat-error *ngIf="registerForm.get('repeatPassword')?.hasError('passwordMismatch')">
-            Hasła różnią się
-          </mat-error>
-        </mat-form-field>
+        <app-password-input [parentForm]="registerForm"></app-password-input>
       </section>
       <section>
         <mat-form-field appearance="outline">
@@ -89,7 +59,7 @@
           />
           <mat-error *ngIf="registerForm.get('surname')?.hasError('required')"> Nazwisko jest wymagane </mat-error>
         </mat-form-field>
-        <app-currency-selector [formControl]="$any(registerForm.get('currency'))"></app-currency-selector>
+        <app-currency-selector [parentForm]="registerForm"></app-currency-selector>
       </section>
     </div>
 

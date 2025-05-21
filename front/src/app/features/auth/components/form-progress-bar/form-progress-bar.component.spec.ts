@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AlertPanelComponent } from './alert-panel.component';
+import { FormProgressBarComponent } from './form-progress-bar.component';
 import { provideExperimentalZonelessChangeDetection } from '@angular/core';
 
-describe('AlertPanelComponent', () => {
-  let component: AlertPanelComponent;
-  let fixture: ComponentFixture<AlertPanelComponent>;
+describe('FormProgressBarComponent', () => {
+  let component: FormProgressBarComponent;
+  let fixture: ComponentFixture<FormProgressBarComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AlertPanelComponent],
+      imports: [FormProgressBarComponent],
       providers: [provideExperimentalZonelessChangeDetection()],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(AlertPanelComponent);
+    fixture = TestBed.createComponent(FormProgressBarComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

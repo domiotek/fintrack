@@ -12,7 +12,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { RegisterRequest } from '../../../../core/models/auth/register-request.model';
 import { CurrencySelectorComponent } from '../../../../shared/components/currency-selector/currency-selector.component';
 import { RoutingService } from '../../../../core/services/routing/routing.service';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { FormProgressBarComponent } from '../../components/form-progress-bar/form-progress-bar.component';
+import { PasswordInputComponent } from '../../../../shared/components/password-input/password-input.component';
 
 @Component({
   selector: 'app-register',
@@ -27,7 +28,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     RouterLink,
     AlertPanelComponent,
     CurrencySelectorComponent,
-    MatProgressBarModule,
+    FormProgressBarComponent,
+    PasswordInputComponent,
   ],
   templateUrl: './register.component.html',
   styleUrls: ['../../styles/common.style.scss', './register.component.scss'],
@@ -35,17 +37,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 export class RegisterComponent {
   registerForm = new FormGroup({
     email: new FormControl('', { validators: [Validators.required, Validators.email] }),
-    password: new FormControl('', { validators: [Validators.required] }),
-    repeatPassword: new FormControl('', {
-      validators: [
-        Validators.required,
-        (control) => {
-          const password = control.parent?.get('password')?.value;
-          const repeatPassword = control.value;
-          return password === repeatPassword ? null : { passwordMismatch: true };
-        },
-      ],
-    }),
+    password: new FormControl(''),
+    repeatPassword: new FormControl(''),
     name: new FormControl('', { validators: [Validators.required] }),
     surname: new FormControl('', { validators: [Validators.required] }),
     currency: new FormControl('', { validators: [Validators.required] }),

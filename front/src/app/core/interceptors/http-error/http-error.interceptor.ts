@@ -25,6 +25,7 @@ export const httpErrorInterceptor: HttpInterceptorFn = (req, next) => {
       }
 
       if (isDevMode()) {
+        // eslint-disable-next-line no-console
         console.log('Error occurred:', errorBody?.message);
       }
 

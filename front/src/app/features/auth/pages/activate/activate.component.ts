@@ -2,15 +2,15 @@ import { AfterViewInit, Component, inject, signal } from '@angular/core';
 import { AuthService } from '../../../../core/services/auth/auth.service';
 import { RoutingService } from '../../../../core/services/routing/routing.service';
 import { MatCardModule } from '@angular/material/card';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { AlertPanelComponent } from '../../../../shared/components/alert-panel/alert-panel.component';
 import { MatButtonModule } from '@angular/material/button';
 import { ActivatedRoute } from '@angular/router';
 import { ApiErrorCode } from '../../../../core/models/error-codes.enum';
+import { FormProgressBarComponent } from '../../components/form-progress-bar/form-progress-bar.component';
 
 @Component({
   selector: 'app-activate',
-  imports: [MatCardModule, MatProgressBarModule, MatButtonModule, AlertPanelComponent],
+  imports: [MatCardModule, MatButtonModule, AlertPanelComponent, FormProgressBarComponent],
   templateUrl: './activate.component.html',
   styleUrls: ['./activate.component.scss', '../../styles/common.style.scss'],
 })

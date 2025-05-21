@@ -1,6 +1,4 @@
-@if (submitting()) {
-  <mat-progress-bar class="progress-bar" mode="indeterminate"></mat-progress-bar>
-}
+<app-form-progress-bar [active]="submitting()"></app-form-progress-bar>
 
 <mat-card-header>
   <mat-card-title>Zaloguj się</mat-card-title>
@@ -16,8 +14,10 @@
         <app-alert-panel severity="success">
           @if (prevPage() === 'register') {
             Rejestracja zakończona pomyślnie. Możesz się teraz zalogować.
-          } @else if (prevPage() === 'reset-password') {
+          } @else if (prevPage() === 'reset-password-sent') {
             Na podany adres email wysłano wiadomość z linkiem do resetowania hasła.
+          } @else if (prevPage() === 'reset-password') {
+            Hasło zostało zmienione. Możesz się teraz zalogować.
           } @else if (prevPage() === 'account-activated') {
             Konto zostało aktywowane. Możesz się teraz zalogować.
           }

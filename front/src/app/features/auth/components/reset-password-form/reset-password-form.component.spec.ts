@@ -1,40 +1,42 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ActivateComponent } from './activate.component';
-import { provideExperimentalZonelessChangeDetection } from '@angular/core';
+import { ResetPasswordFormComponent } from './reset-password-form.component';
+import { provideExperimentalZonelessChangeDetection, signal } from '@angular/core';
+import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth/auth.service';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { AppStateStore } from '../../../../core/store/app-state.store';
-import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { of } from 'rxjs';
+import { AppStateStore } from '../../../../core/store/app-state.store';
 
-describe('ActivateComponent', () => {
-  let component: ActivateComponent;
-  let fixture: ComponentFixture<ActivateComponent>;
+describe('ResetPasswordFormComponent', () => {
+  let component: ResetPasswordFormComponent;
+  let fixture: ComponentFixture<ResetPasswordFormComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ActivateComponent],
+      imports: [ResetPasswordFormComponent],
       providers: [
         provideExperimentalZonelessChangeDetection(),
-        AuthService,
-        AppStateStore,
         {
           provide: ActivatedRoute,
           useValue: {
-            snapshot: { params: {}, queryParams: {}, paramMap: new Map() },
+            snapshot: { params: {}, queryParams: {} },
             paramMap: of(convertToParamMap({})),
             queryParamMap: of(convertToParamMap({})),
           },
         },
+        AuthService,
+        AppStateStore,
         provideHttpClient(),
         provideHttpClientTesting(),
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ActivateComponent);
+    fixture = TestBed.createComponent(ResetPasswordFormComponent);
     component = fixture.componentInstance;
+
+    component.submitting = signal(false);
     fixture.detectChanges();
   });
 

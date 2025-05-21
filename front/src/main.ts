@@ -5,6 +5,7 @@ import { isDevMode } from '@angular/core';
 
 bootstrapApplication(AppComponent, appConfig).catch((err) => {
   if (isDevMode()) {
+    // eslint-disable-next-line no-console
     console.error('Error during bootstrap:', err);
   }
 });

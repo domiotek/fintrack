@@ -42,7 +42,11 @@ export class AuthService extends BaseApiService {
   }
 
   sendPasswordReset(email: string): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/password-reset`, { email });
+    return this.http.post<void>(`${this.apiUrl}/send-password-reset`, { email });
+  }
+
+  resetPassword(token: string, newPassword: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/password-reset/confirm`, { token, newPassword });
   }
 
   activateAccount(token: string): Observable<void> {

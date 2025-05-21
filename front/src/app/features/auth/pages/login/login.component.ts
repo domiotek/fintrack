@@ -9,7 +9,7 @@ import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth/auth.service';
 import { AlertPanelComponent } from '../../../../shared/components/alert-panel/alert-panel.component';
 import { RoutingService } from '../../../../core/services/routing/routing.service';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { FormProgressBarComponent } from '../../components/form-progress-bar/form-progress-bar.component';
 @Component({
   selector: 'app-login',
   imports: [
@@ -21,7 +21,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     MatButtonModule,
     RouterLink,
     AlertPanelComponent,
-    MatProgressBarModule,
+    FormProgressBarComponent,
   ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss', '../../styles/common.style.scss'],
@@ -34,7 +34,7 @@ export class LoginComponent implements OnInit {
 
   errorCode = signal<number | null>(null);
   submitting = signal(false);
-  prevPage = signal<'register' | 'reset-password' | 'account-activated' | null>(null);
+  prevPage = signal<'register' | 'reset-password-sent' | 'reset-password' | 'account-activated' | null>(null);
 
   authService = inject(AuthService);
   routingService = inject(RoutingService);
@@ -44,7 +44,9 @@ export class LoginComponent implements OnInit {
 
     switch (referral) {
       case 'register':
+      case 'reset-password-sent':
       case 'reset-password':
+      case 'account-activated':
         this.prevPage.set(referral);
         break;
     }
