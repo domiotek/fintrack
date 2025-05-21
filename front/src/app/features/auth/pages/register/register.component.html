@@ -12,55 +12,49 @@
     </div>
 
     <div class="layout-container">
-      <section>
-        <mat-form-field appearance="outline">
-          <mat-label for="email">Email</mat-label>
-          <input
-            matInput
-            formControlName="email"
-            name="email"
-            type="email"
-            required
-            placeholder="Wprowadź Email"
-            title="Email"
-          />
-          <mat-error *ngIf="registerForm.get('email')?.hasError('required')"> Email jest wymagany </mat-error>
-          <mat-error *ngIf="registerForm.get('email')?.hasError('email')">
-            Proszę podać poprawny adres email
-          </mat-error>
-        </mat-form-field>
-        <app-password-input [parentForm]="registerForm"></app-password-input>
-      </section>
-      <section>
-        <mat-form-field appearance="outline">
-          <mat-label for="name">Imię</mat-label>
-          <input
-            matInput
-            formControlName="name"
-            name="name"
-            type="text"
-            required
-            placeholder="Wprowadź Imię"
-            title="Imię"
-          />
-          <mat-error *ngIf="registerForm.get('name')?.hasError('required')"> Imię jest wymagane </mat-error>
-        </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label for="email">Email</mat-label>
+        <input
+          matInput
+          formControlName="email"
+          name="email"
+          type="email"
+          required
+          placeholder="Wprowadź Email"
+          title="Email"
+        />
+        <mat-error *ngIf="registerForm.get('email')?.hasError('required')"> Email jest wymagany </mat-error>
+        <mat-error *ngIf="registerForm.get('email')?.hasError('email')"> Proszę podać poprawny adres email </mat-error>
+      </mat-form-field>
+      <app-password-input [parentForm]="registerForm"></app-password-input>
+      <mat-form-field appearance="outline">
+        <mat-label for="name">Imię</mat-label>
+        <input
+          matInput
+          formControlName="name"
+          name="name"
+          type="text"
+          required
+          placeholder="Wprowadź Imię"
+          title="Imię"
+        />
+        <mat-error *ngIf="registerForm.get('name')?.hasError('required')"> Imię jest wymagane </mat-error>
+      </mat-form-field>
 
-        <mat-form-field appearance="outline">
-          <mat-label for="surname">Nazwisko</mat-label>
-          <input
-            matInput
-            formControlName="surname"
-            name="surname"
-            type="text"
-            required
-            placeholder="Wprowadź Nazwisko"
-            title="Nazwisko"
-          />
-          <mat-error *ngIf="registerForm.get('surname')?.hasError('required')"> Nazwisko jest wymagane </mat-error>
-        </mat-form-field>
-        <app-currency-selector [parentForm]="registerForm"></app-currency-selector>
-      </section>
+      <mat-form-field appearance="outline">
+        <mat-label for="surname">Nazwisko</mat-label>
+        <input
+          matInput
+          formControlName="surname"
+          name="surname"
+          type="text"
+          required
+          placeholder="Wprowadź Nazwisko"
+          title="Nazwisko"
+        />
+        <mat-error *ngIf="registerForm.get('surname')?.hasError('required')"> Nazwisko jest wymagane </mat-error>
+      </mat-form-field>
+      <app-currency-selector [parentForm]="registerForm"></app-currency-selector>
     </div>
 
     <button mat-flat-button color="primary" type="submit" [disabled]="submitting()">Zarejestruj się</button>

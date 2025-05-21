@@ -11,7 +11,7 @@
 }
 
 main {
-  max-width: 90%;
+  width: 90%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -29,6 +29,7 @@ main {
 
   mat-card {
     flex-basis: 50%;
+    width: 100%;
   }
 }
 
@@ -36,6 +37,8 @@ main {
   main {
     flex-direction: row;
     height: 50%;
+    width: auto;
+    max-width: 90%;
     gap: 5em;
 
     hr {
@@ -47,7 +50,8 @@ main {
     }
 
     mat-card {
-      min-width: 488px;
+      width: 720px;
+      max-width: 720px;
     }
   }
 }

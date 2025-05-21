@@ -7,20 +7,33 @@
 }
 
 .layout-container {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
   gap: 1em;
 
-  section {
-    display: flex;
-    flex-direction: column;
-    gap: 1em;
+  mat-form-field {
+    height: fit-content;
   }
 }
 
 @media (width > 526px) {
   .layout-container {
-    flex-direction: row;
+    grid-template-columns: repeat(2, 1fr);
+
+    mat-form-field:has(input[name='email']) {
+      grid-column: 1 / 1;
+      grid-row: 1 / 1;
+    }
+
+    mat-form-field:has(input[name='name']) {
+      grid-column: 2 / 2;
+      grid-row: 1 / 1;
+    }
+
+    mat-form-field:has(input[name='surname']) {
+      grid-column: 2 / 2;
+      grid-row: 2 / 2;
+    }
   }
 
   form button {
