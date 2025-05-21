@@ -2,7 +2,6 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { CommonModule } from '@angular/common';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { SendResetPasswordFormComponent } from '../../components/send-reset-password-form/send-reset-password-form.component';
 import { ResetPasswordFormComponent } from '../../components/reset-password-form/reset-password-form.component';
 import { FormProgressBarComponent } from '../../components/form-progress-bar/form-progress-bar.component';

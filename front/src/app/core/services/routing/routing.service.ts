@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 export class RoutingService {
   private navigationState: Record<string, unknown> = {};
 
-  private router = inject(Router);
+  private readonly router = inject(Router);
 
   navigate(url: any[], state?: Record<string, unknown>): void {
     this.navigationState = state || {};

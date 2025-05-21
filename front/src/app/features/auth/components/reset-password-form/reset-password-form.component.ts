@@ -1,5 +1,5 @@
 import { Component, inject, Input, signal, WritableSignal } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../../../core/services/auth/auth.service';
 import { RoutingService } from '../../../../core/services/routing/routing.service';
 import { AlertPanelComponent } from '../../../../shared/components/alert-panel/alert-panel.component';

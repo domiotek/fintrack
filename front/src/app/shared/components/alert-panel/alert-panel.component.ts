@@ -13,15 +13,15 @@ export class AlertPanelComponent {
 
   get icon() {
     switch (this.severity()) {
-      case 'info':
-      default:
-        return 'info';
       case 'error':
         return 'error';
       case 'warning':
         return 'warning';
       case 'success':
         return 'check_circle';
+      case 'info':
+      default:
+        return 'info';
     }
   }
 }

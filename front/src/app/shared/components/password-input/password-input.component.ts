@@ -38,7 +38,7 @@ export class PasswordInputComponent implements OnInit {
       Validators.minLength(8),
       Validators.pattern(
         // eslint-disable-next-line max-len
-        /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()\-=_+\[\]{};:'",<>.?/])[A-Za-z\d!@#$%^&*()\-=_+\[\]{};:'",<>.?/]+$/,
+        /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()\-=_+[\]{};:'",<>.?/])[A-Za-z\d!@#$%^&*()\-=_+[\]{};:'",<>.?/]+$/,
       ),
     ]);
 
