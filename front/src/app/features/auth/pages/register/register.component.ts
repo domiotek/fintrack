@@ -60,12 +60,12 @@ export class RegisterComponent {
       confirmPassword: this.registerForm.value.repeatPassword as string,
       firstName: this.registerForm.value.name as string,
       lastName: this.registerForm.value.surname as string,
-      currency: this.registerForm.value.currency as string,
+      currencyId: this.registerForm.value.currency as string,
     };
 
     this.authService.register(registerData).subscribe({
       complete: () => {
-        this.routingService.navigate(['/login'], { ref: 'reset-password' });
+        this.routingService.navigate(['/login'], { ref: 'register' });
         this.submitting.set(false);
       },
       error: (err) => {
