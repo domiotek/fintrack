@@ -70,6 +70,7 @@ export class LoginComponent implements OnInit {
       },
       complete: () => {
         this.submitting.set(false);
+        this.routingService.navigate(['/dashboard']);
       },
     });
   }

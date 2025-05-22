@@ -25,7 +25,9 @@ describe('SendResetPasswordFormComponent', () => {
 
     fixture = TestBed.createComponent(SendResetPasswordFormComponent);
     component = fixture.componentInstance;
-    component.submitting = signal(false);
+
+    fixture.componentRef.setInput('submitting', false);
+
     fixture.detectChanges();
   });
 

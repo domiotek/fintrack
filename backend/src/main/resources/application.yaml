@@ -5,7 +5,7 @@ spring:
   datasource:
     username: ${SPRING_DB_USERNAME:postgres}
     password: ${SPRING_DB_PASSWORD:postgres}
-    url: ${SPRING_DB_URL:jdbc:postgresql://localhost:5432/fintrack}
+    url: ${SPRING_DB_URL:jdbc:postgresql://localhost:5433/fintrack}
 
   jpa:
     hibernate:

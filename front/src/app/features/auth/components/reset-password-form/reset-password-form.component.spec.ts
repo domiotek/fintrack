@@ -36,7 +36,9 @@ describe('ResetPasswordFormComponent', () => {
     fixture = TestBed.createComponent(ResetPasswordFormComponent);
     component = fixture.componentInstance;
 
-    component.submitting = signal(false);
+    fixture.componentRef.setInput('submitting', false);
+    fixture.componentRef.setInput('token', '');
+
     fixture.detectChanges();
   });
 

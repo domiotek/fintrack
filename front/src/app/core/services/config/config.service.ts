@@ -10,30 +10,14 @@ import { Currency } from '../../models/currency/currency.model';
   providedIn: 'root',
 })
 export class ConfigService {
-  private readonly apiUrl = `${environment.apiUrl}/auth`;
+  private readonly apiUrl = `${environment.apiUrl}`;
 
   private readonly http = inject(HttpClient);
 
   private readonly appStateStore = inject(AppStateStore);
 
   getCurrencyList(): Observable<Currency[]> {
-    return of<Currency[]>([
-      {
-        id: 1,
-        code: 'PLN',
-        name: 'Polski Złoty',
-      },
-      {
-        id: 2,
-        code: 'USD',
-        name: 'Dolar amerykański',
-      },
-      {
-        id: 3,
-        code: 'EUR',
-        name: 'Euro',
-      },
-    ]).pipe(
+    return this.http.get<Currency[]>(`${this.apiUrl}/currencies`).pipe(
       tap((res) => {
         this.appStateStore.setCurrenciesList(res);
       }),
@@ -41,23 +25,7 @@ export class ConfigService {
   }
 
   getConfig(): Observable<ConfigResponse> {
-    return new Observable<ConfigResponse>((observer) => {
-      const shouldFail = true;
-      if (shouldFail) {
-        observer.error(new Error('Simulated HTTP error'));
-      } else {
-        observer.next({
-          email: 'test',
-          firstName: 'test',
-          currency: {
-            id: 1,
-            code: 'PLN',
-            name: 'Polski Złoty',
-          },
-        });
-        observer.complete();
-      }
-    }).pipe(
+    return this.http.get<ConfigResponse>(`${this.apiUrl}/users/config`).pipe(
       tap((config) => {
         this.appStateStore.setAppState({
           email: config.email,
