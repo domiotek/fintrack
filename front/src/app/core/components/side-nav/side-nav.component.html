@@ -1,0 +1,38 @@
+@if (isMobile()) {
+  <mat-toolbar>
+    <button mat-icon-button (click)="toggleMenu()">
+      <mat-icon class="white" aria-hidden="false" matListItemIcon fontSet="material-icons">menu</mat-icon>
+    </button>
+    <span matListItemTitle class="white header">FinTrack</span>
+  </mat-toolbar>
+}
+<mat-sidenav-container autosize [style.height]="isMobile() ? 'calc(100% - 64px)' : '100%'">
+  <mat-sidenav [mode]="isMobile() ? 'over' : 'side'" [opened]="isOpened()" [style.width]="navWidth()">
+    <mat-nav-list class="custom-list">
+      <div [ngStyle]="{ 'margin-top': isMobile() ? '36px' : '0px' }">
+        @if (!isMobile()) {
+          <div class="header-container">
+            <button mat-icon-button (click)="toggleMenu()">
+              <mat-icon class="white" aria-hidden="false" matListItemIcon fontSet="material-icons">menu</mat-icon>
+            </button>
+            <span matListItemTitle class="white header">FinTrack</span>
+          </div>
+        }
+        @for (item of navItems(); track item) {
+          <app-nav-item [item]="item" (itemClicked)="onItemClicked()" />
+        }
+      </div>
+      <div>
+        <app-nav-item [item]="settingsItem" (itemClicked)="onItemClicked()" />
+        <a mat-list-item (click)="logout()">
+          <mat-icon aria-hidden="false" matListItemIcon fontSet="material-icons">logout</mat-icon>
+          <span matListItemTitle>Wyloguj</span>
+        </a>
+      </div>
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content class="content">
+    <app-header-bar [title]="pageTitle()" />
+    <ng-content />
+  </mat-sidenav-content>
+</mat-sidenav-container>

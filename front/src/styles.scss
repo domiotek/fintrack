@@ -18,6 +18,22 @@ html {
   );
 } /* You can add global styles to this file, and also import other style files */
 
+:root {
+  --mdc-list-list-item-hover-label-text-color: white;
+  --mdc-list-list-item-focus-label-text-color: white;
+  --mdc-list-list-item-label-text-font: 'Inter', sans-serif;
+  --mdc-list-list-item-leading-icon-color: white;
+  --mdc-list-list-item-hover-leading-icon-color: white;
+  --mdc-list-list-item-focus-icon-color: white;
+  --mat-list-active-indicator-color: #19376d;
+  --mat-list-active-indicator-shape: 0;
+}
+
+mat-sidenav,
+mat-toolbar {
+  --mdc-list-list-item-label-text-color: white;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;

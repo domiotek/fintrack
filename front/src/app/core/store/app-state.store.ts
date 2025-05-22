@@ -20,12 +20,15 @@ export class AppStateStore extends ComponentStore<AppState> {
   }));
 
   readonly logout = this.updater((state) => {
-    const emptyState: AppState = { ...EMPTY_APP_STATE, currencyList: state.currencyList };
-
-    return { ...state, emptyState };
+    return {
+      ...EMPTY_APP_STATE,
+      currencyList: state.currencyList,
+    };
   });
 
   readonly appState$ = this.select((state) => state);
+
+  readonly userName$ = this.select((state) => state?.firstName);
 
   readonly currencyList$ = this.select((state) => state.currencyList);
 }
