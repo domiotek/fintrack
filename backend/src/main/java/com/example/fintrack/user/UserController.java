@@ -19,7 +19,7 @@ public class UserController {
         return ResponseEntity.ok().body(userService.test());
     }
 
-    @GetMapping("/profile-info")
+    @GetMapping("/config")
     public ResponseEntity<UserProfileDto> profile() {
         return ResponseEntity.ok().body(userService.profile());
     }

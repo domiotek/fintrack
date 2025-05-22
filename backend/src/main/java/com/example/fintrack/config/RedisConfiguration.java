@@ -8,7 +8,7 @@ import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
 @Configuration
-public class RedisConfig {
+public class RedisConfiguration {
 
     @Value("${SPRING_CACHE_DB_HOST:localhost}")
     private String host;

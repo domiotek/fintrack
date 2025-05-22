@@ -31,7 +31,8 @@ public class SecurityFilterChainConfiguration {
                                 "/swagger-resources/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
-                                "/ws/**"
+                                "/ws/**",
+                                "/currencies/**"
                         )
                         .permitAll()
                         .anyRequest()

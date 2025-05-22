@@ -29,18 +29,18 @@ public class Rate {
     private LocalDate date;
 
     @Column(nullable = false)
-    private BigDecimal value;
+    private BigDecimal amount;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Rate rate)) return false;
         return Objects.equals(id, rate.id) && Objects.equals(currency, rate.currency) &&
-                Objects.equals(date, rate.date) && Objects.equals(value, rate.value);
+                Objects.equals(date, rate.date) && Objects.equals(amount, rate.amount);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, currency, date, value);
+        return Objects.hash(id, currency, date, amount);
     }
 }
