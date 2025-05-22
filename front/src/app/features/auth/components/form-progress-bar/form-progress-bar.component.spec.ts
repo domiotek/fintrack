@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RemindPasswordComponent } from './remind-password.component';
+import { FormProgressBarComponent } from './form-progress-bar.component';
 import { provideExperimentalZonelessChangeDetection } from '@angular/core';
 
-describe('RemindPasswordComponent', () => {
-  let component: RemindPasswordComponent;
-  let fixture: ComponentFixture<RemindPasswordComponent>;
+describe('FormProgressBarComponent', () => {
+  let component: FormProgressBarComponent;
+  let fixture: ComponentFixture<FormProgressBarComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RemindPasswordComponent],
+      imports: [FormProgressBarComponent],
       providers: [provideExperimentalZonelessChangeDetection()],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(RemindPasswordComponent);
+    fixture = TestBed.createComponent(FormProgressBarComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

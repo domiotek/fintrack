@@ -1,0 +1,42 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 60vh;
+  flex: 1;
+  padding: 4em 0.5em 1em;
+}
+
+.layout-container {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 1em;
+
+  mat-form-field {
+    height: fit-content;
+  }
+}
+
+@media (width > 526px) {
+  .layout-container {
+    grid-template-columns: repeat(2, 1fr);
+
+    mat-form-field:has(input[name='email']) {
+      grid-column: 1 / 1;
+      grid-row: 1 / 1;
+    }
+
+    mat-form-field:has(input[name='name']) {
+      grid-column: 2 / 2;
+      grid-row: 1 / 1;
+    }
+
+    mat-form-field:has(input[name='surname']) {
+      grid-column: 2 / 2;
+      grid-row: 2 / 2;
+    }
+  }
+
+  form button {
+    align-self: flex-end;
+  }
+}
