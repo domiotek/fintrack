@@ -4,7 +4,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
+import { MatInputModule } from '@angular/material/input';
 import { RouterLink } from '@angular/router';
 import { AlertPanelComponent } from '../../../../shared/components/alert-panel/alert-panel.component';
 import { AuthService } from '../../../../core/services/auth/auth.service';
@@ -20,7 +20,7 @@ import { PasswordInputComponent } from '../../../../shared/components/password-i
   imports: [
     MatCardModule,
     MatFormFieldModule,
-    MatInput,
+    MatInputModule,
     MatSelectModule,
     CommonModule,
     ReactiveFormsModule,
@@ -69,7 +69,7 @@ export class RegisterComponent {
         this.submitting.set(false);
       },
       error: (err) => {
-        this.errorCode.set(err.error.code);
+        this.errorCode.set(err.error?.code);
         this.submitting.set(false);
       },
     });

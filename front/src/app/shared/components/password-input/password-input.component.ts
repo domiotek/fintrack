@@ -2,13 +2,13 @@ import { Component, computed, input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-password-input',
   templateUrl: './password-input.component.html',
   styleUrls: ['../../../features/auth/styles/common.style.scss', './password-input.component.scss'],
-  imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatInput],
+  imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule],
 })
 export class PasswordInputComponent implements OnInit {
   parentForm = input<FormGroup>();

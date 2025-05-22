@@ -1,4 +1,4 @@
-import { Component, inject, Input, signal, WritableSignal } from '@angular/core';
+import { Component, inject, input, model, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../../../core/services/auth/auth.service';
 import { RoutingService } from '../../../../core/services/routing/routing.service';
@@ -21,11 +21,9 @@ export class ResetPasswordFormComponent {
 
   errorCode = signal<number | null>(null);
 
-  @Input({ required: true })
-  submitting!: WritableSignal<boolean>;
+  submitting = model.required<boolean>();
 
-  @Input({ required: true })
-  token!: string;
+  token = input.required<string>();
 
   authService = inject(AuthService);
   routingService = inject(RoutingService);
@@ -36,9 +34,9 @@ export class ResetPasswordFormComponent {
     this.errorCode.set(null);
     this.submitting.set(true);
 
-    this.authService.resetPassword(this.token, this.resetPasswordForm.value.password!).subscribe({
+    this.authService.resetPassword(this.token(), this.resetPasswordForm.value.password!).subscribe({
       error: (err) => {
-        this.errorCode.set(err.error.code);
+        this.errorCode.set(err.error?.code);
         this.submitting.set(false);
       },
       complete: () => {

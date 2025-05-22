@@ -1,4 +1,4 @@
-<app-form-progress-bar [active]="submitting()"></app-form-progress-bar>
+<app-form-progress-bar [active]="submitting()" />
 
 <mat-card-header>
   <mat-card-title>Zaloguj się</mat-card-title>
@@ -36,8 +36,12 @@
         placeholder="Wprowadź Email"
         title="Email"
       />
-      <mat-error *ngIf="loginForm.get('email')?.hasError('required')"> Email jest wymagany </mat-error>
-      <mat-error *ngIf="loginForm.get('email')?.hasError('email')"> Proszę podać poprawny adres email </mat-error>
+      @if (loginForm.get('email')?.hasError('required')) {
+        <mat-error> Email jest wymagany </mat-error>
+      }
+      @if (loginForm.get('email')?.hasError('email')) {
+        <mat-error> Proszę podać poprawny adres email </mat-error>
+      }
     </mat-form-field>
 
     <mat-form-field appearance="outline">
@@ -50,7 +54,9 @@
         placeholder="Wprowadź hasło"
         required
       />
-      <mat-error *ngIf="loginForm.get('password')?.hasError('required')"> Hasło jest wymagane </mat-error>
+      @if (loginForm.get('password')?.hasError('required')) {
+        <mat-error> Hasło jest wymagane </mat-error>
+      }
     </mat-form-field>
     <p>Problemy z logowaniem? <a routerLink="/reset-password">Odzyskaj hasło</a></p>
 

@@ -42,7 +42,7 @@ export class ActivateComponent implements AfterViewInit {
 
     this.authService.activateAccount(this.token()!).subscribe({
       error: (err) => {
-        this.errorCode.set(err.error.code);
+        this.errorCode.set(err.error?.code);
         this.submitting.set(false);
       },
       complete: () => {
