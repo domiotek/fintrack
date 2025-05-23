@@ -2,11 +2,13 @@ name: Docker Containerization
 
 on:
   push:
+    branches: ["master", "workflows-dev"]
     paths:
       - "front/**"
       - "backend/**"
       - "**/docker-compose.yml"
   pull_request:
+    branches: ["master", "workflows-dev"]
     paths:
       - "front/**"
       - "backend/**"
