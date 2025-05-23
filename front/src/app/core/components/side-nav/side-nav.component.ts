@@ -54,6 +54,8 @@ export class SideNavComponent implements OnInit, AfterViewInit {
 
   protected readonly navWidth = computed(() => (this.isCollapsed() ? '56px' : '240px'));
 
+  protected readonly contentMargin = computed(() => (this.isMobile() ? '0px' : this.navWidth()));
+
   protected readonly settingsItem: NavItem = SETTINGS_ITEM;
 
   protected readonly pageTitle = signal<string>('');
