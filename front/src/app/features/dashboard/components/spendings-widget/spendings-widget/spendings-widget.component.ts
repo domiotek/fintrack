@@ -1,10 +1,6 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
-import { skip } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
 import { IWidget } from '../../../models/widget';
-import { RoutingService } from '../../../../../core/services/routing/routing.service';
 import { BaseWidgetComponent } from '../../base-widget/base-widget/base-widget.component';
-import { DashboardStateStore } from '../../../store/dashboard-state.store';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-spendings-widget',
@@ -13,24 +9,15 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   styleUrl: './spendings-widget.component.scss',
 })
 export class SpendingsWidgetComponent extends BaseWidgetComponent implements IWidget, OnInit {
-  routingService = inject(RoutingService);
-  dashboardStore = inject(DashboardStateStore);
-  destroyRef = inject(DestroyRef);
-
-  ngOnInit() {
+  override ngOnInit() {
     this.onInit.next({
       hasInteraction: true,
     });
 
-    this.dashboardStore.timeRange$.pipe(skip(1), takeUntilDestroyed(this.destroyRef)).subscribe((timeRange) => {
-      this.timeRange.set(timeRange);
-      this.onRefresh.next();
+    super.ngOnInit();
+  }
 
-      setTimeout(() => {
-        this.onLoad.next();
-      }, 1000);
-    });
-
+  loadData(): void {
     setTimeout(() => {
       this.onLoad.next();
     }, 1000);

@@ -5,6 +5,7 @@ export interface IWidget {
   onLoad$: Observable<void>;
   onRefresh$: Observable<void>;
 
+  loadData(): void;
   triggerAction(): void;
 }
 
