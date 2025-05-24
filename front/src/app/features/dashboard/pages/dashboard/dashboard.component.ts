@@ -13,6 +13,7 @@ import { DashboardStateStore } from '../../store/dashboard-state.store';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EMPTY_DASHBOARD_STATE } from '../../constants/empty-dasboard-state';
 import { callDebounced as debounceHandler } from '../../../../utils/debouncer';
+import { DateTime } from 'luxon';
 
 @Component({
   selector: 'app-dashboard',
@@ -41,11 +42,21 @@ export class DashboardComponent implements OnInit {
       this.timeRange.set(timeRange);
     });
   }
-  projection_range = computed(() => {
+  projectionRange = computed(() => {
     return {
       from: this.timeRange().from.startOf('month'),
       to: this.timeRange().to.endOf('month'),
     };
+  });
+
+  rangeConstraints = computed(() => {
+    return {
+      max: DateTime.now().endOf('month'),
+    };
+  });
+
+  addBillButtonDisabled = computed(() => {
+    return !this.timeRange().from.equals(DateTime.now().startOf('month'));
   });
 
   onProjectionDateChange = debounceHandler((timeRange: TimeRange) => {

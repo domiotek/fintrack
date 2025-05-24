@@ -3,7 +3,7 @@ import { Component, computed, input, OnInit, output, signal, ViewChild } from '@
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { DateTime } from 'luxon';
-import { TimeRange } from '../../../core/models/time-range/time-range';
+import { TimeRange, TimeRangeConstraints } from '../../../core/models/time-range/time-range';
 import { MatDatepickerModule, MatDateRangePicker } from '@angular/material/datepicker';
 
 @Component({
@@ -17,6 +17,7 @@ export class TimeRangeSelectorComponent implements OnInit {
 
   customRangeAllowed = input(false);
   initialTimeRange = input.required<TimeRange>();
+  constraints = input<TimeRangeConstraints>({});
   timeRangeChange = output<TimeRange>();
 
   timeRange = signal<TimeRange>({ from: DateTime.now(), to: DateTime.now() });
@@ -52,11 +53,32 @@ export class TimeRangeSelectorComponent implements OnInit {
     return `${from.toFormat(`dd LLL ${fromYear}`)} - ${to.toFormat(`dd LLL ${toYear}`)}`;
   });
 
+  prevDisabled = computed(() => {
+    const candidate = this.timeRange().from.minus({ months: 1 }).startOf('month');
+    return this.isOutsideMinRangeConstraint(candidate);
+  });
+
+  nextDisabled = computed(() => {
+    const candidate = this.timeRange().to.plus({ months: 1 }).endOf('month');
+    return this.isOutsideMaxRangeConstraint(candidate);
+  });
+
+  dateFilter = computed(() => {
+    return (date: DateTime | null): boolean => {
+      if (!date) return false;
+
+      const isAfterMin = !this.constraints().min || date >= this.constraints().min!;
+      const isBeforeMax = !this.constraints().max || date <= this.constraints().max!;
+
+      return isAfterMin && isBeforeMax;
+    };
+  });
+
   ngOnInit() {
     this.timeRange.set({ from: this.initialTimeRange().from, to: this.initialTimeRange().to });
   }
 
-  toggleFlyout() {
+  openPicker() {
     if (!this.customRangeAllowed()) return;
 
     this.picker.open();
@@ -64,6 +86,12 @@ export class TimeRangeSelectorComponent implements OnInit {
 
   updateTimeRange(value: DateTime | null, type: 'from' | 'to') {
     if (!value) return;
+
+    if (type === 'from' && this.isOutsideMinRangeConstraint(value)) {
+      value = this.constraints().min!;
+    } else if (type === 'to' && this.isOutsideMaxRangeConstraint(value)) {
+      value = this.constraints().max!;
+    }
 
     this.timeRange.update((prev) => ({
       ...prev,
@@ -91,5 +119,13 @@ export class TimeRangeSelectorComponent implements OnInit {
 
   onPickerClose() {
     this.timeRangeChange.emit(this.timeRange());
+  }
+
+  private isOutsideMinRangeConstraint(candidate: DateTime): boolean {
+    return this.constraints().min != undefined && candidate < this.constraints().min!;
+  }
+
+  private isOutsideMaxRangeConstraint(candidate: DateTime): boolean {
+    return this.constraints().max != undefined && candidate > this.constraints().max!;
   }
 }

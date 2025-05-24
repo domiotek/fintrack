@@ -1,11 +1,14 @@
 <div class="header">
   <app-time-range-selector
     [customRangeAllowed]="false"
-    [initialTimeRange]="projection_range()"
+    [initialTimeRange]="projectionRange()"
+    [constraints]="rangeConstraints()"
     (timeRangeChange)="onProjectionDateChange($event)"
   />
 
-  <button type="button" mat-flat-button><mat-icon>add</mat-icon> Dodaj wydatek</button>
+  <button type="button" mat-flat-button [disabled]="addBillButtonDisabled()">
+    <mat-icon>add</mat-icon> Dodaj wydatek
+  </button>
 </div>
 
 <div class="content">
