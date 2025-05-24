@@ -1,10 +1,10 @@
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { skip } from 'rxjs';
-import { IWidget } from '../../../models/widget';
-import { RoutingService } from '../../../../../core/services/routing/routing.service';
-import { DashboardStateStore } from '../../../store/dashboard-state.store';
+import { IWidget } from '../../models/widget';
+import { RoutingService } from '../../../../core/services/routing/routing.service';
+import { DashboardStateStore } from '../../store/dashboard-state.store';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { BaseWidgetComponent } from '../../base-widget/base-widget/base-widget.component';
+import { BaseWidgetComponent } from '../base-widget/base-widget.component';
 
 @Component({
   selector: 'app-events-widget',

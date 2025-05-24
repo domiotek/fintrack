@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { IWidget } from '../../../models/widget';
-import { BaseWidgetComponent } from '../../base-widget/base-widget/base-widget.component';
+import { IWidget } from '../../models/widget';
+import { BaseWidgetComponent } from '../base-widget/base-widget.component';
 
 @Component({
   selector: 'app-categories-widget',

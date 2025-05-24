@@ -1,10 +1,10 @@
 import { Observable, ReplaySubject, skip } from 'rxjs';
-import { IWidget, IWidgetConfig } from '../../../models/widget';
+import { IWidget, IWidgetConfig } from '../../models/widget';
 import { Component, DestroyRef, Directive, inject, OnInit, signal } from '@angular/core';
-import { TimeRange } from '../../../../../core/models/time-range/time-range';
-import { EMPTY_DASHBOARD_STATE } from '../../../constants/empty-dasboard-state';
-import { RoutingService } from '../../../../../core/services/routing/routing.service';
-import { DashboardStateStore } from '../../../store/dashboard-state.store';
+import { TimeRange } from '../../../../core/models/time-range/time-range';
+import { EMPTY_DASHBOARD_STATE } from '../../constants/empty-dasboard-state';
+import { RoutingService } from '../../../../core/services/routing/routing.service';
+import { DashboardStateStore } from '../../store/dashboard-state.store';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({ template: '' })

@@ -1,20 +1,19 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { WidgetWrapperComponent } from './widget-wrapper.component';
+import { SpendingSummaryWidgetComponent } from './spending-summary-widget/spending-summary-widget.component';
 import { provideExperimentalZonelessChangeDetection } from '@angular/core';
 
-describe('WidgetWrapperComponent', () => {
-  let component: WidgetWrapperComponent;
-  let fixture: ComponentFixture<WidgetWrapperComponent>;
+describe('SpendingSummaryWidgetComponent', () => {
+  let component: SpendingSummaryWidgetComponent;
+  let fixture: ComponentFixture<SpendingSummaryWidgetComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [WidgetWrapperComponent],
+      imports: [SpendingSummaryWidgetComponent],
       providers: [provideExperimentalZonelessChangeDetection()],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(WidgetWrapperComponent);
-    fixture.componentRef.setInput('header', 'test header');
+    fixture = TestBed.createComponent(SpendingSummaryWidgetComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
