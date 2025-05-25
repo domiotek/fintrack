@@ -1,5 +1,6 @@
-package com.example.fintrack.event;
+package com.example.fintrack.userevent;
 
+import com.example.fintrack.event.Event;
 import com.example.fintrack.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -21,7 +22,7 @@ public class UserEvent {
     private Long id;
 
     @Column(nullable = false)
-    private Boolean isOwner;
+    private Boolean isFounder;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -35,12 +36,12 @@ public class UserEvent {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof UserEvent userEvent)) return false;
-        return Objects.equals(id, userEvent.id) && Objects.equals(isOwner, userEvent.isOwner) &&
+        return Objects.equals(id, userEvent.id) && Objects.equals(isFounder, userEvent.isFounder) &&
                 Objects.equals(user, userEvent.user) && Objects.equals(event, userEvent.event);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, isOwner, user, event);
+        return Objects.hash(id, isFounder, user, event);
     }
 }
