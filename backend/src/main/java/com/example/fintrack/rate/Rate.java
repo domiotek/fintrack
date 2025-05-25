@@ -1,5 +1,6 @@
-package com.example.fintrack.currency;
+package com.example.fintrack.rate;
 
+import com.example.fintrack.currency.Currency;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -7,7 +8,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -26,7 +27,7 @@ public class Rate {
     private Currency currency;
 
     @Column(nullable = false)
-    private LocalDate date;
+    private LocalDateTime date;
 
     @Column(nullable = false)
     private BigDecimal amount;
