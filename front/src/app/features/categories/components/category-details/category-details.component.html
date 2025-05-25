@@ -1,0 +1,47 @@
+<div class="title_container">
+  @if (isMobile()) {
+    <button class="back-button" mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
+  }
+  <div>
+    <div class="color_label" [style.backgroundColor]="category().color"></div>
+    <p class="title">{{ category().name }}</p>
+  </div>
+</div>
+<div class="summary_container">
+  <div class="summary_container__title">
+    <p class="section_title">Podsumowanie wydatków</p>
+    <hr />
+  </div>
+  <div class="summary_container__content">
+    <p class="main_summary">
+      {{ `${category().spendLimit} ${category().limit ? '/' + category().limit : ''} ${userCurrency().code}` }}
+    </p>
+    @if (sameMonth()) {
+      @if (category().limit) {
+        <button mat-stroked-button (click)="changeLimit(true)">Edytuj limit</button>
+      } @else {
+        <p class="description bold">Skonfiguruj limit, aby mieć jeszcze większą kontrolę nad swoimi wydatkami.</p>
+        <button mat-stroked-button (click)="changeLimit(false)">Ustaw limit</button>
+      }
+    } @else {
+      <p class="description bold">Możesz zarządzać limitem tylko przy aktualnym miesiącu</p>
+    }
+  </div>
+</div>
+<div class="transactions_container">
+  <div class="transactions_container__title">
+    <p class="section_title">Transakcje</p>
+    <hr />
+  </div>
+  <div class="transactions_container__list">
+    <app-custom-list
+      [items]="transactions()"
+      [itemTemplate]="transactionItemTemplate"
+      [isSelectable]="false"
+    ></app-custom-list>
+  </div>
+</div>
+
+<ng-template #transactionItemTemplate let-item>
+  <app-transaction-item [transaction]="item" [showCategory]="false" [userCurrency]="userCurrency()" />
+</ng-template>

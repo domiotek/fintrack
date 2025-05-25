@@ -1,0 +1,26 @@
+@use '../../../../styles/variables' as *;
+
+:host {
+  display: flex;
+  width: 100%;
+  background-color: inherit;
+  align-items: center;
+  justify-content: space-between;
+
+  .left_container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .color_label {
+    display: block;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+  }
+
+  .limit_info {
+    color: $light-gray-3;
+  }
+}

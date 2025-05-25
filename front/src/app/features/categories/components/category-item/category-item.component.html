@@ -1,0 +1,7 @@
+<div class="left_container">
+  <div class="color_label" [style.backgroundColor]="item().color"></div>
+  <div class="name">{{ item().name }}</div>
+</div>
+<div class="limit_info">
+  {{ item().spendLimit }} {{ item().limit ? '/ ' + item().limit : '' }} {{ currency()?.code }}
+</div>

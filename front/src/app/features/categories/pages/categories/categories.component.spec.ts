@@ -2,6 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CategoriesComponent } from './categories.component';
 import { provideExperimentalZonelessChangeDetection } from '@angular/core';
+import { AppStateStore } from '../../../../core/store/app-state.store';
+import { provideLuxonDateAdapter } from '@angular/material-luxon-adapter';
 
 describe('CategoriesComponent', () => {
   let component: CategoriesComponent;
@@ -9,8 +11,8 @@ describe('CategoriesComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      providers: [provideExperimentalZonelessChangeDetection(), AppStateStore, provideLuxonDateAdapter()],
       imports: [CategoriesComponent],
-      providers: [provideExperimentalZonelessChangeDetection()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(CategoriesComponent);
