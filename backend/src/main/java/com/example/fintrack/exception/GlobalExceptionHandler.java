@@ -5,8 +5,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.*;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -25,6 +30,24 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(BusinessErrorCodes.BAD_CREDENTIALS);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, List<String>>> handleValidationExceptions(MethodArgumentNotValidException methodArgumentNotValidException) {
+        Map<String, List<String>> errors = new HashMap<>();
+        for (ObjectError objectError : methodArgumentNotValidException.getBindingResult().getAllErrors()) {
+            if (objectError instanceof FieldError fieldError) {
+                errors.computeIfAbsent(fieldError.getField(), key -> new ArrayList<>())
+                        .add(fieldError.getDefaultMessage());
+            } else {
+                errors.computeIfAbsent(objectError.getObjectName(), key -> new ArrayList<>())
+                        .add(objectError.getDefaultMessage());
+            }
+        }
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(errors);
     }
 
     @ExceptionHandler(Exception.class)
