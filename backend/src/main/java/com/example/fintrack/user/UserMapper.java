@@ -1,0 +1,20 @@
+package com.example.fintrack.user;
+
+import com.example.fintrack.user.dto.UserProfileCurrencyDto;
+import com.example.fintrack.user.dto.UserProfileDto;
+
+public class UserMapper {
+
+    public static UserProfileDto userToUserProfileDto(User user) {
+        UserProfileCurrencyDto userProfileCurrencyDto = UserProfileCurrencyDto.builder()
+                .id(user.getCurrency().getId())
+                .name(user.getCurrency().getName())
+                .code(user.getCurrency().getCode())
+                .build();
+        return UserProfileDto.builder()
+                .firstName(user.getFirstName())
+                .email(user.getEmail())
+                .currency(userProfileCurrencyDto)
+                .build();
+    }
+}

@@ -2,6 +2,7 @@ package com.example.fintrack.currency;
 
 import com.example.fintrack.bill.Bill;
 import com.example.fintrack.event.Event;
+import com.example.fintrack.rate.Rate;
 import com.example.fintrack.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;

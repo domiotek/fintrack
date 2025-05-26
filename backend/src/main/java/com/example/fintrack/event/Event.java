@@ -1,6 +1,7 @@
 package com.example.fintrack.event;
 
 import com.example.fintrack.currency.Currency;
+import com.example.fintrack.userevent.UserEvent;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,18 @@ public class Event {
     private LocalDateTime startDateTime;
 
     private LocalDateTime endDateTime;
+
+    public EventStatus getEventStatus() {
+        LocalDateTime now = LocalDateTime.now();
+
+        if (now.isBefore(startDateTime)) {
+            return EventStatus.UPCOMING;
+        } else if (endDateTime == null || now.isBefore(endDateTime)) {
+            return EventStatus.ONGOING;
+        } else {
+            return EventStatus.FINISHED;
+        }
+    }
 
     @Override
     public boolean equals(Object o) {
