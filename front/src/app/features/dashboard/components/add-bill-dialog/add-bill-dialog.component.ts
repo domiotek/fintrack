@@ -8,7 +8,6 @@ import { DateTime } from 'luxon';
 import { CurrencySelectorComponent } from '../../../../shared/components/currency-selector/currency-selector.component';
 import { ApiErrorCode } from '../../../../core/models/error-codes.enum';
 import { AlertPanelComponent } from '../../../../shared/components/alert-panel/alert-panel.component';
-import { DashboardService } from '../../services/dashboard.service';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { NewBillRequest } from '../../../../core/models/bills/new-bill-request';
 import { AppStateStore } from '../../../../core/store/app-state.store';
@@ -18,6 +17,8 @@ import { Currency } from '../../../../core/models/currency/currency.model';
 import { FormProgressBarComponent } from '../../../../shared/components/form-progress-bar/form-progress-bar.component';
 import { MatSelectModule } from '@angular/material/select';
 import { Category } from '../../../../core/models/category/category.model';
+import { BillsService } from '../../../../core/services/bills/bills.service';
+import { CategoriesService } from '../../../../core/services/categories/categories.service';
 
 @Component({
   selector: 'app-add-bill-dialog',
@@ -48,12 +49,13 @@ export class AddBillDialogComponent implements OnInit {
 
   userDefaultCurrency = signal<Currency | null>(null);
   currencies = signal<Currency[]>([]);
-  categories = signal<Category[]>([{ id: 1, name: 'Ogólne', color: '#FF5722' }]);
+  categories = signal<Category[]>([]);
   errorCode = signal<ApiErrorCode | null>(null);
   submitting = signal<boolean>(false);
   hasSetOtherCurrency = signal(false);
 
-  readonly dashboardService = inject(DashboardService);
+  readonly billsService = inject(BillsService);
+  readonly categoriesService = inject(CategoriesService);
   readonly appStateStore = inject(AppStateStore);
   readonly dialogRef = inject(MatDialogRef<AddBillDialogComponent>);
   readonly destroyRef = inject(DestroyRef);
@@ -74,14 +76,18 @@ export class AddBillDialogComponent implements OnInit {
   ngOnInit(): void {
     this.appStateStore.appState$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((state) => {
       this.form.patchValue({
-        currencyId: state.currency?.id ?? 1,
+        currencyId: state.currency?.id,
       });
-      this.userDefaultCurrency.set({ ...state.currency!, id: 1 });
-      this.currencies.set((state.currencyList ?? []).map((c) => ({ ...c, rate: 1.64 })));
+      this.userDefaultCurrency.set(state.currency);
+      this.currencies.set(state.currencyList ?? []);
     });
 
     this.form.get('currencyId')!.valueChanges.subscribe((value) => {
       this.hasSetOtherCurrency.set(value !== this.userDefaultCurrency()?.id);
+    });
+
+    this.categoriesService.getCategoriesList().subscribe((categories) => {
+      this.categories.set(categories);
     });
   }
 
@@ -103,7 +109,7 @@ export class AddBillDialogComponent implements OnInit {
       currencyId: this.form.value.currencyId!,
     };
 
-    this.dashboardService.addBill(billData).subscribe({
+    this.billsService.addBill(billData).subscribe({
       complete: () => {
         this.dialogRef.close();
         this.submitting.set(false);

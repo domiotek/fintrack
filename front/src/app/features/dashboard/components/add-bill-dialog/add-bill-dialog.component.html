@@ -6,7 +6,7 @@
 
     <div class="message-container">
       @if (this.errorCode() !== null) {
-        <app-alert-panel severity="error">{{ dashboardService.getErrorMessage(this.errorCode()!) }}</app-alert-panel>
+        <app-alert-panel severity="error">{{ billsService.getErrorMessage(this.errorCode()!) }}</app-alert-panel>
       }
     </div>
 

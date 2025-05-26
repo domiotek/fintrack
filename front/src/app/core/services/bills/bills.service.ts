@@ -1,13 +1,13 @@
 import { inject, Injectable } from '@angular/core';
-import { BaseApiService } from '../../../core/services/base-api.service';
-import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environments';
-import { NewBillRequest } from '../../../core/models/bills/new-bill-request';
+import { HttpClient } from '@angular/common/http';
+import { NewBillRequest } from '../../models/bills/new-bill-request';
+import { BaseApiService } from '../base-api.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class DashboardService extends BaseApiService {
+export class BillsService extends BaseApiService {
   private readonly apiUrl = `${environment.apiUrl}`;
   private readonly http = inject(HttpClient);
 
