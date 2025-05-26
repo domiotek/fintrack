@@ -5,10 +5,9 @@ import com.example.fintrack.authentication.dto.RegisterRequestDto;
 import com.example.fintrack.authentication.dto.TokenDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,14 +21,14 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/register")
-    public ResponseEntity<Void> register(@RequestBody RegisterRequestDto registerRequestDto) {
+    public ResponseEntity<Void> register(@RequestBody @Valid RegisterRequestDto registerRequestDto) {
         authenticationService.register(registerRequestDto);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Void> login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
+    public ResponseEntity<Void> login(@RequestBody @Valid LoginRequestDto loginRequestDto, HttpServletResponse response) {
         TokenDto tokens = authenticationService.login(loginRequestDto);
 
         ResponseCookie accessTokenCookie = ResponseCookie.from("access_token", tokens.accessToken())

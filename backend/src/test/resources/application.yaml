@@ -21,6 +21,10 @@ spring:
       repositories:
         enabled: false
 
+springdoc:
+  swagger-ui:
+    operationsSorter: method
+
 application:
   security:
     access-jwt:
