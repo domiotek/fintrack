@@ -1,0 +1,111 @@
+import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { DateTime } from 'luxon';
+import { CurrencySelectorComponent } from '../../../../shared/components/currency-selector/currency-selector.component';
+import { ApiErrorCode } from '../../../../core/models/error-codes.enum';
+import { AlertPanelComponent } from '../../../../shared/components/alert-panel/alert-panel.component';
+import { DashboardService } from '../../services/dashboard.service';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { NewBillRequest } from '../../../../core/models/bills/new-bill-request';
+import { AppStateStore } from '../../../../core/store/app-state.store';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { CommonModule } from '@angular/common';
+import { Currency } from '../../../../core/models/currency/currency.model';
+import { FormProgressBarComponent } from '../../../../shared/components/form-progress-bar/form-progress-bar.component';
+
+@Component({
+  selector: 'app-add-bill-dialog',
+  imports: [
+    CommonModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    MatInputModule,
+    MatButtonModule,
+    CurrencySelectorComponent,
+    AlertPanelComponent,
+    MatDatepickerModule,
+    FormProgressBarComponent,
+  ],
+  templateUrl: './add-bill-dialog.component.html',
+  styleUrl: './add-bill-dialog.component.scss',
+})
+export class AddBillDialogComponent implements OnInit {
+  form = new FormGroup({
+    title: new FormControl<string>('', { validators: [Validators.required, Validators.minLength(3)] }),
+    date: new FormControl<string>(DateTime.now().toISODate(), Validators.required),
+    amount: new FormControl<number>(0, { validators: [Validators.required, Validators.min(0.01)] }),
+    currencyId: new FormControl<number>(0, { validators: [Validators.required] }),
+  });
+
+  userDefaultCurrency = signal<Currency | null>(null);
+  currencies = signal<Currency[]>([]);
+  errorCode = signal<ApiErrorCode | null>(null);
+  submitting = signal<boolean>(false);
+  hasSetOtherCurrency = signal(false);
+
+  readonly dashboardService = inject(DashboardService);
+  readonly appStateStore = inject(AppStateStore);
+  readonly dialogRef = inject(MatDialogRef<AddBillDialogComponent>);
+  readonly destroyRef = inject(DestroyRef);
+
+  get amountInotherCurrencyText() {
+    var currentCurrency = this.currencies().find((c) => c.id === this.form.value.currencyId);
+    var conversionRate = currentCurrency?.rate;
+
+    if (!conversionRate || conversionRate <= 0 || !this.userDefaultCurrency()) {
+      return '';
+    }
+
+    var convertedAmount = this.form.value.amount! * conversionRate;
+
+    return `~${convertedAmount.toFixed(2)} ${this.userDefaultCurrency()!.code}`;
+  }
+
+  ngOnInit(): void {
+    this.appStateStore.appState$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((state) => {
+      this.form.patchValue({
+        currencyId: state.currency?.id ?? 1,
+      });
+      this.userDefaultCurrency.set({ ...state.currency!, id: 1 });
+      this.currencies.set((state.currencyList ?? []).map((c) => ({ ...c, rate: 1.64 })));
+    });
+
+    this.form.get('currencyId')!.valueChanges.subscribe((value) => {
+      this.hasSetOtherCurrency.set(value !== this.userDefaultCurrency()?.id);
+    });
+  }
+
+  dateFilter(date: DateTime | null): boolean {
+    if (!date) return false;
+    const today = DateTime.now();
+    return date >= today.startOf('month') && date <= today;
+  }
+
+  onSubmit() {
+    if (!this.form.valid) return;
+
+    this.submitting.set(true);
+    const billData: NewBillRequest = {
+      title: this.form.value.title!,
+      date: this.form.value.date!,
+      amount: this.form.value.amount!,
+      currencyId: this.form.value.currencyId!,
+    };
+
+    this.dashboardService.addBill(billData).subscribe({
+      complete: () => {
+        this.dialogRef.close();
+        this.submitting.set(false);
+      },
+      error: (err) => {
+        this.errorCode.set(err.error?.code);
+        this.submitting.set(false);
+      },
+    });
+  }
+}

@@ -6,7 +6,7 @@ import { AlertPanelComponent } from '../../../../shared/components/alert-panel/a
 import { MatButtonModule } from '@angular/material/button';
 import { ActivatedRoute } from '@angular/router';
 import { ApiErrorCode } from '../../../../core/models/error-codes.enum';
-import { FormProgressBarComponent } from '../../components/form-progress-bar/form-progress-bar.component';
+import { FormProgressBarComponent } from '../../../../shared/components/form-progress-bar/form-progress-bar.component';
 
 @Component({
   selector: 'app-activate',

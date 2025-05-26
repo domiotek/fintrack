@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnInit, signal, ViewContainerRef } from '@angular/core';
 import { TimeRangeSelectorComponent } from '../../../../shared/components/time-range-selector/time-range-selector.component';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,6 +14,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EMPTY_DASHBOARD_STATE } from '../../constants/empty-dasboard-state';
 import { callDebounced as debounceHandler } from '../../../../utils/debouncer';
 import { DateTime } from 'luxon';
+import { MatDialog } from '@angular/material/dialog';
+import { AddBillDialogComponent } from '../../components/add-bill-dialog/add-bill-dialog.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -36,6 +38,8 @@ export class DashboardComponent implements OnInit {
 
   dashboardState = inject(DashboardStateStore);
   destroyRef = inject(DestroyRef);
+  dialog = inject(MatDialog);
+  viewContainerRef = inject(ViewContainerRef);
 
   ngOnInit() {
     this.dashboardState.timeRange$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((timeRange) => {
@@ -62,4 +66,14 @@ export class DashboardComponent implements OnInit {
   onProjectionDateChange = debounceHandler((timeRange: TimeRange) => {
     this.dashboardState.setTimeRange(timeRange);
   }, 300);
+
+  openAddBillDialog() {
+    this.dialog.open(AddBillDialogComponent, {
+      width: '600px',
+      data: {
+        timeRange: this.timeRange(),
+      },
+      viewContainerRef: this.viewContainerRef,
+    });
+  }
 }

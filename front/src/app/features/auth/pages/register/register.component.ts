@@ -12,7 +12,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { RegisterRequest } from '../../../../core/models/auth/register-request.model';
 import { CurrencySelectorComponent } from '../../../../shared/components/currency-selector/currency-selector.component';
 import { RoutingService } from '../../../../core/services/routing/routing.service';
-import { FormProgressBarComponent } from '../../components/form-progress-bar/form-progress-bar.component';
+import { FormProgressBarComponent } from '../../../../shared/components/form-progress-bar/form-progress-bar.component';
 import { PasswordInputComponent } from '../../../../shared/components/password-input/password-input.component';
 
 @Component({

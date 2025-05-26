@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { WidgetWrapperComponent } from './widget-wrapper/widget-wrapper.component';
+import { WidgetWrapperComponent } from './widget-wrapper.component';
 import { provideExperimentalZonelessChangeDetection } from '@angular/core';
 
 describe('WidgetWrapperComponent', () => {

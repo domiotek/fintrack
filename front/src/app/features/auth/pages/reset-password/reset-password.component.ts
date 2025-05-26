@@ -4,7 +4,7 @@ import { MatCardModule } from '@angular/material/card';
 import { CommonModule } from '@angular/common';
 import { SendResetPasswordFormComponent } from '../../components/send-reset-password-form/send-reset-password-form.component';
 import { ResetPasswordFormComponent } from '../../components/reset-password-form/reset-password-form.component';
-import { FormProgressBarComponent } from '../../components/form-progress-bar/form-progress-bar.component';
+import { FormProgressBarComponent } from '../../../../shared/components/form-progress-bar/form-progress-bar.component';
 
 @Component({
   selector: 'app-reset-password',

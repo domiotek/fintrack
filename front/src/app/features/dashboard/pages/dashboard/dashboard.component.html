@@ -6,7 +6,7 @@
     (timeRangeChange)="onProjectionDateChange($event)"
   />
 
-  <button type="button" mat-flat-button [disabled]="addBillButtonDisabled()">
+  <button type="button" mat-flat-button [disabled]="addBillButtonDisabled()" (click)="openAddBillDialog()">
     <mat-icon>add</mat-icon> Dodaj wydatek
   </button>
 </div>
