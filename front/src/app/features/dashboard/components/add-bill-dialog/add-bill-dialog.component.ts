@@ -16,6 +16,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { Currency } from '../../../../core/models/currency/currency.model';
 import { FormProgressBarComponent } from '../../../../shared/components/form-progress-bar/form-progress-bar.component';
+import { MatSelectModule } from '@angular/material/select';
+import { Category } from '../../../../core/models/category/category.model';
 
 @Component({
   selector: 'app-add-bill-dialog',
@@ -30,6 +32,7 @@ import { FormProgressBarComponent } from '../../../../shared/components/form-pro
     AlertPanelComponent,
     MatDatepickerModule,
     FormProgressBarComponent,
+    MatSelectModule,
   ],
   templateUrl: './add-bill-dialog.component.html',
   styleUrl: './add-bill-dialog.component.scss',
@@ -39,11 +42,13 @@ export class AddBillDialogComponent implements OnInit {
     title: new FormControl<string>('', { validators: [Validators.required, Validators.minLength(3)] }),
     date: new FormControl<string>(DateTime.now().toISODate(), Validators.required),
     amount: new FormControl<number>(0, { validators: [Validators.required, Validators.min(0.01)] }),
+    categoryId: new FormControl<number | null>(null, { validators: [Validators.required] }),
     currencyId: new FormControl<number>(0, { validators: [Validators.required] }),
   });
 
   userDefaultCurrency = signal<Currency | null>(null);
   currencies = signal<Currency[]>([]);
+  categories = signal<Category[]>([{ id: 1, name: 'Ogólne', color: '#FF5722' }]);
   errorCode = signal<ApiErrorCode | null>(null);
   submitting = signal<boolean>(false);
   hasSetOtherCurrency = signal(false);
@@ -94,6 +99,7 @@ export class AddBillDialogComponent implements OnInit {
       title: this.form.value.title!,
       date: this.form.value.date!,
       amount: this.form.value.amount!,
+      categoryId: this.form.value.categoryId!,
       currencyId: this.form.value.currencyId!,
     };
 

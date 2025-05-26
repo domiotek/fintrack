@@ -71,6 +71,16 @@
       <app-currency-selector [parentForm]="form" inputName="currencyId" />
     </div>
 
+    <mat-form-field appearance="outline">
+      <mat-label for="category">Kategoria</mat-label>
+      <mat-select formControlName="categoryId" name="categoryId" required>
+        <mat-option *ngFor="let category of categories()" [value]="category.id">{{ category.name }}</mat-option>
+      </mat-select>
+      @if (form.get('categoryId')?.hasError('required')) {
+        <mat-error> Kategoria jest wymagana </mat-error>
+      }
+    </mat-form-field>
+
     <mat-dialog-actions>
       <button mat-button type="button" [disabled]="submitting()" mat-dialog-close>Anuluj</button>
       <button mat-flat-button color="primary" type="submit" [disabled]="submitting()">Dodaj</button>

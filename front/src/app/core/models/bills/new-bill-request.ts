@@ -3,4 +3,5 @@ export interface NewBillRequest {
   date: string;
   amount: number;
   currencyId: number;
+  categoryId: number;
 }
