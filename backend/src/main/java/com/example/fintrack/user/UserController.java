@@ -14,11 +14,6 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping("/test")
-    public ResponseEntity<String> register() {
-        return ResponseEntity.ok().body(userService.test());
-    }
-
     @GetMapping("/config")
     public ResponseEntity<UserProfileDto> profile() {
         return ResponseEntity.ok().body(userService.profile());
