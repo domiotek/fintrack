@@ -1,0 +1,89 @@
+<h2 mat-dialog-title>Dodaj wydatek</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <app-form-progress-bar [active]="submitting()" />
+
+    <div class="message-container">
+      @if (this.errorCode() !== null) {
+        <app-alert-panel severity="error">{{ billsService.getErrorMessage(this.errorCode()!) }}</app-alert-panel>
+      }
+    </div>
+
+    <mat-form-field appearance="outline">
+      <mat-label for="title">Tytuł</mat-label>
+      <input
+        matInput
+        formControlName="title"
+        name="title"
+        type="text"
+        required
+        placeholder="Wprowadź tytuł wydatku"
+        title="Tytuł"
+      />
+      @if (form.get('title')?.hasError('required')) {
+        <mat-error> Tytuł jest wymagany </mat-error>
+      }
+
+      @if (form.get('title')?.hasError('minlength')) {
+        <mat-error> Tytuł nie może być krótszy niż 3 znaki.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label for="date">Data</mat-label>
+      <input
+        matInput
+        formControlName="date"
+        name="date"
+        placeholder="Wprowadź datę wydatku"
+        required
+        [matDatepicker]="picker"
+        [matDatepickerFilter]="dateFilter"
+      />
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+      @if (form.get('date')?.hasError('required')) {
+        <mat-error> Data jest wymagana </mat-error>
+      }
+    </mat-form-field>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline">
+        <mat-label for="amount">Kwota</mat-label>
+        <input
+          matInput
+          formControlName="amount"
+          name="amount"
+          type="number"
+          required
+          placeholder="Wprowadź kwotę wydatku"
+          title="Kwota"
+          step="0.01"
+          min="0.01"
+        />
+        @if (form.get('amount')?.hasError('required') || form.get('amount')?.hasError('min')) {
+          <mat-error> Kwota jest wymagana </mat-error>
+        } @else if (hasSetOtherCurrency()) {
+          <mat-hint>{{ amountInotherCurrencyText }}</mat-hint>
+        }
+      </mat-form-field>
+      <app-currency-selector [parentForm]="form" inputName="currencyId" />
+    </div>
+
+    <mat-form-field appearance="outline">
+      <mat-label for="category">Kategoria</mat-label>
+      <mat-select formControlName="categoryId" name="categoryId" required>
+        <mat-option *ngFor="let category of categories()" [value]="category.id">{{ category.name }}</mat-option>
+      </mat-select>
+      @if (form.get('categoryId')?.hasError('required')) {
+        <mat-error> Kategoria jest wymagana </mat-error>
+      }
+    </mat-form-field>
+
+    <mat-dialog-actions>
+      <button mat-button type="button" [disabled]="submitting()" mat-dialog-close>Anuluj</button>
+      <button mat-flat-button color="primary" type="submit" [disabled]="submitting()">Dodaj</button>
+    </mat-dialog-actions>
+  </form>
+</mat-dialog-content>

@@ -9,7 +9,7 @@ import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth/auth.service';
 import { AlertPanelComponent } from '../../../../shared/components/alert-panel/alert-panel.component';
 import { RoutingService } from '../../../../core/services/routing/routing.service';
-import { FormProgressBarComponent } from '../../components/form-progress-bar/form-progress-bar.component';
+import { FormProgressBarComponent } from '../../../../shared/components/form-progress-bar/form-progress-bar.component';
 @Component({
   selector: 'app-login',
   imports: [
