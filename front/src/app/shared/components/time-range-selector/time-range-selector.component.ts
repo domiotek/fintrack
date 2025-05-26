@@ -43,14 +43,14 @@ export class TimeRangeSelectorComponent implements OnInit {
       return from.toFormat('LLLL yyyy');
     }
 
-    const fromYear = today.hasSame(from, 'year') ? '' : from.toFormat('yyyy');
-    const toYear = today.hasSame(to, 'year') ? '' : to.toFormat('yyyy');
+    const fromYearFormat = `dd LLL${today.hasSame(from, 'year') ? '' : from.toFormat(' yyyy')}`;
+    const toYearFormat = `dd LLL${today.hasSame(to, 'year') ? '' : to.toFormat(' yyyy')}`;
 
     if (from.hasSame(to, 'day')) {
-      return from.toFormat(`dd LLL ${fromYear}`);
+      return from.toFormat(fromYearFormat);
     }
 
-    return `${from.toFormat(`dd LLL ${fromYear}`)} - ${to.toFormat(`dd LLL ${toYear}`)}`;
+    return `${from.toFormat(fromYearFormat)} - ${to.toFormat(toYearFormat)}`;
   });
 
   prevDisabled = computed(() => {

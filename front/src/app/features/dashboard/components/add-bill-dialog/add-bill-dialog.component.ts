@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -54,14 +54,14 @@ export class AddBillDialogComponent implements OnInit {
   readonly destroyRef = inject(DestroyRef);
 
   get amountInotherCurrencyText() {
-    var currentCurrency = this.currencies().find((c) => c.id === this.form.value.currencyId);
-    var conversionRate = currentCurrency?.rate;
+    const currentCurrency = this.currencies().find((c) => c.id === this.form.value.currencyId);
+    const conversionRate = currentCurrency?.rate;
 
     if (!conversionRate || conversionRate <= 0 || !this.userDefaultCurrency()) {
       return '';
     }
 
-    var convertedAmount = this.form.value.amount! * conversionRate;
+    const convertedAmount = this.form.value.amount! * conversionRate;
 
     return `~${convertedAmount.toFixed(2)} ${this.userDefaultCurrency()!.code}`;
   }
