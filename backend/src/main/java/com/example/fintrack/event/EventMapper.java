@@ -8,8 +8,9 @@ public class EventMapper {
 
     public static EventDto userEventToEventDto(UserEvent userEvent) {
         return EventDto.builder()
+                .id(userEvent.getEvent().getId())
                 .name(userEvent.getEvent().getName())
-                .eventStatus(userEvent.getEvent().getEventStatus())
+                .status(userEvent.getEvent().getEventStatus())
                 .isFounder(userEvent.getIsFounder())
                 .numberOfNotification(2)
                 .users(userEvent.getEvent().getUsers().stream()

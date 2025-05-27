@@ -7,8 +7,9 @@ import java.util.List;
 
 @Builder
 public record EventDto(
+        Long id,
         String name,
-        EventStatus eventStatus,
+        EventStatus status,
         Boolean isFounder,
         Integer numberOfNotification,
         List<EventUserDto> users
