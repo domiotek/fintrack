@@ -18,6 +18,9 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import static com.example.fintrack.exception.BusinessErrorCodes.*;
 import static com.example.fintrack.userevent.UserEventSpecification.*;
@@ -70,5 +73,57 @@ public class EventService {
                 .totalSum(totalSum)
                 .costPerUser(costPerUser)
                 .build();
+    }
+
+    public void deleteUserFromEvent(long eventId, long userId) {
+        Event event = eventRepository.findById(eventId).orElseThrow(EVENT_DOES_NOT_EXISTS::getError);
+
+        Set<UserEvent> userEvents = event.getUsers();
+        UserEvent userEvent = userEvents.stream()
+                .filter(ue -> ue.getUser().getId() == userId)
+                .findFirst()
+                .orElseThrow(USER_DOES_NOT_EXISTS::getError);
+
+        if (userEvent.getIsFounder()) {
+            throw USER_IS_FOUNDER.getError();
+        }
+
+        User user = userEvent.getUser();
+
+        List<User> usersWhoPaidForBills = event.getBills().stream()
+                .map(Bill::getPaidBy)
+                .distinct()
+                .toList();
+
+        if (usersWhoPaidForBills.contains(user)) {
+            throw USER_ALREADY_PAID.getError();
+        }
+
+        userEventRepository.delete(userEvent);
+    }
+
+    public List<Long> getUsersWhoPaidInEvent(long eventId) {
+        Event event = eventRepository.findById(eventId).orElseThrow(EVENT_DOES_NOT_EXISTS::getError);
+
+        List<User> users = new ArrayList<>(
+                event.getBills().stream()
+                        .map(Bill::getPaidBy)
+                        .distinct()
+                        .toList()
+        );
+
+        UserEvent userEvent = event.getUsers().stream()
+                .filter(UserEvent::getIsFounder)
+                .findFirst()
+                .orElseThrow(USER_DOES_NOT_EXISTS::getError);
+
+        User user = userEvent.getUser();
+        if (!users.contains(user)) {
+            users.add(user);
+        }
+
+        return users.stream()
+                .map(User::getId)
+                .toList();
     }
 }

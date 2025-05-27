@@ -24,7 +24,10 @@ public enum BusinessErrorCodes {
     INVALID_USER(304, "Wrong refresh token", HttpStatus.FORBIDDEN),
     CURRENCY_NOT_FOUND(305, "Currency not found", HttpStatus.NOT_FOUND),
     INTERNAL_SERVER_ERROR(306, "Internal server error", HttpStatus.INTERNAL_SERVER_ERROR),
-    EVENT_DOES_NOT_EXISTS(307, "Event does not exist", HttpStatus.NOT_FOUND);
+    EVENT_DOES_NOT_EXISTS(307, "Event does not exist", HttpStatus.NOT_FOUND),
+    USER_DOES_NOT_EXISTS(308, "User does not exist", HttpStatus.NOT_FOUND),
+    USER_ALREADY_PAID(309, "User already paid", HttpStatus.CONFLICT),
+    USER_IS_FOUNDER(310, "User is a founder", HttpStatus.CONFLICT),;
 
     private final int code;
     private final String description;

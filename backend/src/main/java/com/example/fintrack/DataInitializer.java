@@ -268,6 +268,14 @@ public class DataInitializer implements CommandLineRunner {
         bill6.setCurrency(currency1);
         bill6.setUser(user3);
         bill6.setAmount(BigDecimal.valueOf(50));
-        billRepository.saveAll(List.of(bill1, bill2, bill3, bill4, bill5, bill6));
+        Bill bill7 = new Bill();
+        bill7.setName("Water");
+        bill7.setDate(LocalDateTime.now());
+        bill7.setCategory(category4);
+        bill7.setCurrency(currency1);
+        bill7.setEvent(event1);
+        bill7.setPaidBy(user2);
+        bill7.setAmount(BigDecimal.valueOf(100));
+        billRepository.saveAll(List.of(bill1, bill2, bill3, bill4, bill5, bill6, bill7));
     }
 }
