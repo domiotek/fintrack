@@ -31,17 +31,17 @@ public class EventController {
         return ResponseEntity.ok().body(eventService.getUserEvents(name, eventStatus, fromDate, toDate, page, size));
     }
 
-    @GetMapping("/{id}/bills")
+    @GetMapping("/{event-id}/bills")
     public ResponseEntity<PagedModel<EventBillDto>> getEventBills(
-            @PathVariable long id,
+            @PathVariable("event-id") long eventId,
             @RequestParam int page,
             @RequestParam int size
     ) {
-        return ResponseEntity.ok().body(billService.getEventBills(id, page, size));
+        return ResponseEntity.ok().body(billService.getEventBills(eventId, page, size));
     }
 
-    @GetMapping("/{id}/summary")
-    public ResponseEntity<EventSummaryDto> getEventSummary(@PathVariable long id) {
-        return ResponseEntity.ok().body(eventService.getEventSummary(id));
+    @GetMapping("/{event-id}/summary")
+    public ResponseEntity<EventSummaryDto> getEventSummary(@PathVariable("event-id") long eventId) {
+        return ResponseEntity.ok().body(eventService.getEventSummary(eventId));
     }
 }

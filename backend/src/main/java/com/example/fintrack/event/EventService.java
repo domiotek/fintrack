@@ -55,8 +55,8 @@ public class EventService {
         return new PagedModel<>(userEvents.map(EventMapper::userEventToEventDto));
     }
 
-    public EventSummaryDto getEventSummary(long id) {
-        Event event = eventRepository.findById(id).orElseThrow(EVENT_DOES_NOT_EXISTS::getError);
+    public EventSummaryDto getEventSummary(long eventId) {
+        Event event = eventRepository.findById(eventId).orElseThrow(EVENT_DOES_NOT_EXISTS::getError);
 
         BigDecimal totalSum = event.getBills().stream()
                 .map(Bill::getAmount)
