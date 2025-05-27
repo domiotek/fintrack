@@ -41,7 +41,7 @@ public class EventController {
     }
 
     @GetMapping("/{id}/summary")
-    public ResponseEntity<EventSummaryDto> getEventTotal(@PathVariable long id) {
-        return ResponseEntity.ok().body(eventService.getEventTotal(id));
+    public ResponseEntity<EventSummaryDto> getEventSummary(@PathVariable long id) {
+        return ResponseEntity.ok().body(eventService.getEventSummary(id));
     }
 }
