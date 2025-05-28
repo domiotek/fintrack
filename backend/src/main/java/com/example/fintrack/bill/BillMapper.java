@@ -1,11 +1,14 @@
 package com.example.fintrack.bill;
 
+import com.example.fintrack.bill.dto.EventBillDto;
+import com.example.fintrack.bill.dto.EventBillUserDto;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 public class BillMapper {
 
-    public static EventBillDto billToBillDto(Bill bill) {
+    public static EventBillDto billToEventBillDto(Bill bill) {
         return EventBillDto.builder()
                 .id(bill.getId())
                 .name(bill.getName())

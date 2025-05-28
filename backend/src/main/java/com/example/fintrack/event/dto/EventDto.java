@@ -11,7 +11,8 @@ public record EventDto(
         String name,
         EventStatus status,
         Boolean isFounder,
-        Integer numberOfNotification,
+        Integer numberOfNotifications,
+        Long currencyId,
         List<EventUserDto> users
 ) {
 }
