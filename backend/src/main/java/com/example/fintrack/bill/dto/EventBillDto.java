@@ -1,8 +1,8 @@
 package com.example.fintrack.bill.dto;
 
+import com.example.fintrack.event.dto.EventBillCurrencyDto;
 import lombok.Builder;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Builder
@@ -11,7 +11,7 @@ public record EventBillDto(
         String name,
         LocalDateTime date,
         EventBillUserDto paidBy,
-        BigDecimal amount,
-        BigDecimal costPerUser
+        EventBillCurrencyDto eventCurrency,
+        EventBillCurrencyDto userCurrency
 ) {
 }
