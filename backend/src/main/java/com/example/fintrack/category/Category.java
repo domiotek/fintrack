@@ -1,6 +1,7 @@
 package com.example.fintrack.category;
 
 import com.example.fintrack.bill.Bill;
+import com.example.fintrack.category.limit.Limit;
 import com.example.fintrack.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;

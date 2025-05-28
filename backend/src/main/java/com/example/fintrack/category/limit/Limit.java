@@ -1,5 +1,6 @@
-package com.example.fintrack.category;
+package com.example.fintrack.category.limit;
 
+import com.example.fintrack.category.Category;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
