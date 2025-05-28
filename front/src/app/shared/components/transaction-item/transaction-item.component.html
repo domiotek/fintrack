@@ -1,0 +1,25 @@
+@let secondCurrencyCode = (secondCurency$ | async)?.code;
+
+<div class="left_container">
+  <div class="logo"><mat-icon>receipt</mat-icon></div>
+  <div class="info">
+    <div class="info_top">
+      <p class="bold">{{ transaction().name }}</p>
+    </div>
+    <div class="info_bottom">
+      <p class="date">{{ transaction().date }}</p>
+      @if (showCategory()) {
+        <div class="color_label" [style.backgroundColor]="transaction().category.color"></div>
+        <p>{{ transaction().category.name }}</p>
+      }
+    </div>
+  </div>
+</div>
+<div class="right_container">
+  @if (transaction().currencyId === userCurrency().id) {
+    <p class="main_amount bold">{{ transaction().amount }} {{ userCurrency().code }}</p>
+  } @else {
+    <p class="main_amount bold">~ {{ transaction().amount }} {{ userCurrency().code }}</p>
+    <p class="payment_amount">{{ transaction().billValue }} {{ secondCurrencyCode }}</p>
+  }
+</div>

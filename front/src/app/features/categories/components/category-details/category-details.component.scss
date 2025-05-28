@@ -1,0 +1,89 @@
+@use '../../../../styles/variables' as *;
+
+:host {
+  display: flex;
+  padding: 36px;
+  flex-direction: column;
+  gap: 24px;
+  height: auto;
+  overflow-y: visible;
+  position: relative;
+
+  hr {
+    border: 1px solid $light-gray-1;
+    opacity: 0.3;
+    margin: 0.5rem 0 2rem;
+  }
+
+  .title_container {
+    display: flex;
+    gap: 16px;
+
+    .back-button {
+      position: absolute;
+    }
+
+    div {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+      margin: auto;
+    }
+
+    .color_label {
+      display: block;
+      height: 40px;
+      width: 40px;
+      border-radius: 50%;
+    }
+
+    .title {
+      font-size: 2rem;
+    }
+  }
+
+  .summary_container {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+
+    .summary_container__title {
+      width: 100%;
+    }
+
+    .summary_container__content {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+
+      .main_summary {
+        padding: 1rem;
+        color: $dark-gray;
+        font-size: 32px;
+      }
+
+      .description {
+        font-size: 14px;
+      }
+    }
+  }
+
+  .transactions_container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  :host {
+    padding: 0;
+    height: 100%;
+    overflow: visible;
+  }
+}

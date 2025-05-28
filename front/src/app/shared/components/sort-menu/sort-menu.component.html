@@ -1,0 +1,49 @@
+<button mat-icon-button [matMenuTriggerFor]="sortMenu" #menuTrigger="matMenuTrigger">
+  <mat-icon class="light-blue-1">filter_alt</mat-icon>
+</button>
+
+<mat-menu
+  #sortMenu="matMenu"
+  class="no-padding-menu"
+  [overlapTrigger]="false"
+  yPosition="below"
+  xPosition="before"
+  [hasBackdrop]="true"
+  (closed)="onMenuClosed()"
+>
+  <button mat-menu-item disableRipple (click)="$event.stopPropagation()">
+    <div class="sort-menu-panel">
+      <div class="custom-select-wrapper">
+        <select [(ngModel)]="localState().value" class="custom-select">
+          @for (option of options(); track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+        <mat-icon class="select-arrow">arrow_drop_down</mat-icon>
+      </div>
+
+      <div class="sort-direction">
+        <span
+          (click)="changeDirection($event, true)"
+          (keydown.enter)="changeDirection($event, true)"
+          matTooltip="Rosnąco"
+        >
+          <mat-icon [class]="localState().direction === 'asc' ? 'light-blue-1' : 'light-gray-1'">arrow_upward</mat-icon>
+        </span>
+        <span
+          (click)="changeDirection($event, false)"
+          (keydown.enter)="changeDirection($event, true)"
+          matTooltip="Malejąco"
+        >
+          <mat-icon [class]="localState().direction === 'desc' ? 'light-blue-1' : 'light-gray-1'"
+            >arrow_downward</mat-icon
+          >
+        </span>
+      </div>
+
+      <button mat-button (click)="onSortChange()">
+        <span class="dark-blue-2">Zapisz</span>
+      </button>
+    </div>
+  </button>
+</mat-menu>

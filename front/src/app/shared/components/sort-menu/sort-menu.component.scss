@@ -1,0 +1,77 @@
+@use '../../../styles/variables' as vars;
+
+.sort-menu-panel {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: center;
+  padding: 0 8px;
+}
+
+::ng-deep .mat-mdc-menu-item .mat-icon.light-blue-1 {
+  color: vars.$light-blue-1 !important;
+}
+
+::ng-deep .mat-mdc-menu-item .mat-icon.light-gray-1 {
+  color: vars.$light-gray-1 !important;
+}
+
+::ng-deep.mat-mdc-menu-panel {
+  max-width: none !important;
+}
+
+.mat-mdc-menu-item:not([disabled]):hover {
+  background-color: #efedf0 !important;
+  cursor: unset !important;
+}
+
+.mat-mdc-menu-item .mat-icon {
+  margin-right: 0 !important;
+}
+
+.custom-select-wrapper {
+  display: flex;
+  position: relative;
+  background: #e7e4ef;
+  border-radius: 1.5rem;
+  padding: 0.5rem 1rem;
+  min-width: 180px;
+  align-items: center;
+}
+
+.custom-select {
+  appearance: none;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 1rem;
+  width: 100%;
+  color: #333;
+  cursor: pointer;
+}
+
+.select-arrow {
+  position: absolute;
+  right: 12px;
+  color: #666;
+  pointer-events: none;
+}
+
+.sort-direction {
+  display: flex;
+  align-items: center;
+  span {
+    cursor: pointer;
+
+    &:nth-child(1) {
+      margin-right: -4px;
+      margin-bottom: 6px;
+    }
+
+    &:nth-child(2) {
+      margin-left: -4px;
+      margin-top: 6px;
+    }
+  }
+}
