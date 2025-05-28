@@ -5,6 +5,7 @@ import com.example.fintrack.event.dto.EventDto;
 import com.example.fintrack.event.dto.EventSummaryDto;
 import com.example.fintrack.security.service.UserProvider;
 import com.example.fintrack.user.User;
+import com.example.fintrack.user.UserRepository;
 import com.example.fintrack.userevent.UserEvent;
 import com.example.fintrack.userevent.UserEventRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class EventService {
 
     private final UserEventRepository userEventRepository;
     private final EventRepository eventRepository;
+    private final UserRepository userRepository;
     private final UserProvider userProvider;
 
     public PagedModel<EventDto> getUserEvents(
@@ -59,7 +61,7 @@ public class EventService {
     }
 
     public EventSummaryDto getEventSummary(long eventId) {
-        Event event = eventRepository.findById(eventId).orElseThrow(EVENT_DOES_NOT_EXISTS::getError);
+        Event event = eventRepository.findById(eventId).orElseThrow(EVENT_DOES_NOT_EXIST::getError);
 
         BigDecimal totalSum = event.getBills().stream()
                 .map(Bill::getAmount)
@@ -75,14 +77,35 @@ public class EventService {
                 .build();
     }
 
+    public void addUserToEvent(long eventId, long userId) {
+        Event event = eventRepository.findById(eventId).orElseThrow(EVENT_DOES_NOT_EXIST::getError);
+        User user = userRepository.findById(userId).orElseThrow(USER_DOES_NOT_EXIST::getError);
+
+        Set<UserEvent> userEvents = event.getUsers();
+        List<User> users = userEvents.stream()
+                .map(UserEvent::getUser)
+                .toList();
+
+        if (users.contains(user)) {
+            throw EVENT_ALREADY_CONTAINS_USER.getError();
+        }
+
+        UserEvent userEvent = new UserEvent();
+        userEvent.setEvent(event);
+        userEvent.setUser(user);
+        userEvent.setIsFounder(false);
+
+        userEventRepository.save(userEvent);
+    }
+
     public void deleteUserFromEvent(long eventId, long userId) {
-        Event event = eventRepository.findById(eventId).orElseThrow(EVENT_DOES_NOT_EXISTS::getError);
+        Event event = eventRepository.findById(eventId).orElseThrow(EVENT_DOES_NOT_EXIST::getError);
 
         Set<UserEvent> userEvents = event.getUsers();
         UserEvent userEvent = userEvents.stream()
                 .filter(ue -> ue.getUser().getId() == userId)
                 .findFirst()
-                .orElseThrow(USER_DOES_NOT_EXISTS::getError);
+                .orElseThrow(USER_DOES_NOT_EXIST::getError);
 
         if (userEvent.getIsFounder()) {
             throw USER_IS_FOUNDER.getError();
@@ -103,7 +126,7 @@ public class EventService {
     }
 
     public List<Long> getUsersWhoPaidInEvent(long eventId) {
-        Event event = eventRepository.findById(eventId).orElseThrow(EVENT_DOES_NOT_EXISTS::getError);
+        Event event = eventRepository.findById(eventId).orElseThrow(EVENT_DOES_NOT_EXIST::getError);
 
         List<User> users = new ArrayList<>(
                 event.getBills().stream()
@@ -115,7 +138,7 @@ public class EventService {
         UserEvent userEvent = event.getUsers().stream()
                 .filter(UserEvent::getIsFounder)
                 .findFirst()
-                .orElseThrow(USER_DOES_NOT_EXISTS::getError);
+                .orElseThrow(USER_DOES_NOT_EXIST::getError);
 
         User user = userEvent.getUser();
         if (!users.contains(user)) {
