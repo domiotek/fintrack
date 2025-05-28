@@ -1,0 +1,23 @@
+:host {
+  display: flex;
+  align-items: center;
+  background-color: #f0eaf6;
+  border-radius: 2rem;
+  padding: 0.5rem 1rem;
+  width: 100%;
+  position: relative;
+}
+
+.search-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 1rem;
+  color: #2e2e2e;
+}
+
+.search-icon {
+  display: flex;
+  cursor: pointer;
+}

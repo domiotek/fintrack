@@ -1,0 +1,14 @@
+@for (item of items(); track item) {
+  <div
+    class="item"
+    [class.selected]="isSelectable() && item.id === selectedItem()?.id"
+    (click)="onItemClick(item)"
+    (keydown.enter)="onItemClick(item)"
+  >
+    <ng-container *ngTemplateOutlet="itemTemplate(); context: { $implicit: item }" />
+  </div>
+} @empty {
+  <div class="empty-data">
+    <p class="empty-data__text">Brak danych do wyświetlenia</p>
+  </div>
+}

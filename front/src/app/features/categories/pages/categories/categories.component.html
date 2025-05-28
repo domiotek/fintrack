@@ -1,1 +1,49 @@
-<p>categories works!</p>
+@let userCurrency = userCurrency$ | async;
+
+<div class="header">
+  <app-time-range-selector
+    [customRangeAllowed]="false"
+    [initialTimeRange]="projection_range()"
+    [constraints]="rangeConstraints()"
+    (timeRangeChange)="onProjectionDateChange($event)"
+  />
+  <button type="button" mat-flat-button><mat-icon>add</mat-icon> Dodaj kategorię</button>
+</div>
+<div class="content">
+  @if (!isMobile() || !selectedCategory()) {
+    <div class="content__list_container">
+      <div class="content__list_container__search">
+        <app-search-input placeholder="Wyszukaj po nazwie" (emitSearch)="onSearch($event)" [(ngModel)]="searchValue" />
+        <app-sort-menu [options]="sortOptions()" [(state)]="sortState" (sortChange)="onSortChange($event)" />
+      </div>
+      <div>
+        <p class="gray center">Wyświetlasz kategorie zdefiniowane w {{ dateLabel() }}</p>
+      </div>
+      <div class="content__list_container__list">
+        <app-custom-list
+          [items]="categories()"
+          [itemTemplate]="categoryItemTemplate"
+          [isSelectable]="true"
+          [(selectedItem)]="selectedCategory"
+          (selectEmit)="onCategorySelect($event)"
+        />
+      </div>
+    </div>
+  }
+  <div class="content__selected_container" [style.display]="!isMobile() || selectedCategory() ? 'block' : 'none'">
+    @if (selectedCategory()) {
+      <app-category-details
+        [category]="selectedCategory()!"
+        [userCurrency]="userCurrency!"
+        [isMobile]="isMobile()"
+        (goBackEmit)="onCategorySelect(null)"
+      />
+    } @else if (!isMobile()) {
+      <app-no-selected placeholder="Nie wybrano kategorii" />
+    }
+  </div>
+</div>
+
+<ng-template #categoryItemTemplate let-item>
+  <app-category-item [item]="item" [currency]="userCurrency!" />
+</ng-template>

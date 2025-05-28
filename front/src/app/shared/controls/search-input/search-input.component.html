@@ -1,0 +1,11 @@
+<input
+  type="text"
+  class="search-input"
+  [disabled]="disabled()"
+  [placeholder]="placeholder()"
+  [(ngModel)]="value"
+  (keydown.enter)="onSearch()"
+/>
+<span (click)="onSearch()" (keydown.enter)="onSearch()" class="search-icon">
+  <mat-icon class="gray">search</mat-icon>
+</span>
