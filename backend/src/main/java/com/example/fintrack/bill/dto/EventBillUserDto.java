@@ -1,4 +1,4 @@
-package com.example.fintrack.bill;
+package com.example.fintrack.bill.dto;
 
 import lombok.Builder;
 

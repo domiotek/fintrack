@@ -6,6 +6,8 @@ import com.example.fintrack.rate.RateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -15,7 +17,11 @@ public class CurrencyService {
     private final RateRepository rateRepository;
 
     public List<CurrencyDto> getCurrenciesWithLatestRate() {
-        List<Rate> rates = rateRepository.findCurrenciesWithLatestRate();
+        LocalDate now = LocalDate.now();
+        LocalDateTime startDate = now.atStartOfDay();
+        LocalDateTime endDate = startDate.plusDays(1);
+
+        List<Rate> rates = rateRepository.findRatesByDateBetween(startDate, endDate);
 
         return rates.stream()
                 .map(RateMapper::rateToCurrencyDto)

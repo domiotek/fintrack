@@ -1,7 +1,7 @@
 package com.example.fintrack.event;
 
-import com.example.fintrack.bill.AddBillEventDto;
-import com.example.fintrack.bill.EventBillDto;
+import com.example.fintrack.bill.dto.AddBillEventDto;
+import com.example.fintrack.bill.dto.EventBillDto;
 import com.example.fintrack.bill.BillService;
 import com.example.fintrack.event.dto.AddEventDto;
 import com.example.fintrack.event.dto.EventDto;
