@@ -22,13 +22,14 @@ public enum BusinessErrorCodes {
     BAD_CREDENTIALS(302, "Login and / or password is incorrect", HttpStatus.UNAUTHORIZED),
     ALREADY_EXISTS(303, "User with this email already exists", HttpStatus.CONFLICT),
     INVALID_USER(304, "Wrong refresh token", HttpStatus.FORBIDDEN),
-    CURRENCY_NOT_FOUND(305, "Currency not found", HttpStatus.NOT_FOUND),
+    CURRENCY_DOES_NOT_EXIST(401, "Currency not found", HttpStatus.NOT_FOUND),
     INTERNAL_SERVER_ERROR(306, "Internal server error", HttpStatus.INTERNAL_SERVER_ERROR),
-    EVENT_DOES_NOT_EXIST(307, "Event does not exist", HttpStatus.NOT_FOUND),
-    USER_DOES_NOT_EXIST(308, "User does not exist", HttpStatus.NOT_FOUND),
+    EVENT_DOES_NOT_EXIST(402, "Event does not exist", HttpStatus.NOT_FOUND),
+    USER_DOES_NOT_EXIST(403, "User does not exist", HttpStatus.NOT_FOUND),
     USER_ALREADY_PAID(309, "User already paid", HttpStatus.CONFLICT),
     USER_IS_FOUNDER(310, "User is a founder", HttpStatus.CONFLICT),
-    EVENT_ALREADY_CONTAINS_USER(311, "Event already contains user", HttpStatus.CONFLICT);
+    EVENT_ALREADY_CONTAINS_USER(311, "Event already contains user", HttpStatus.CONFLICT),
+    CATEGORY_DOES_NOT_EXIST(404, "Category not found", HttpStatus.NOT_FOUND);
 
     private final int code;
     private final String description;

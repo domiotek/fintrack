@@ -47,7 +47,7 @@ public class AuthenticationService {
         }
 
         Currency currency = currencyRepository.findById(registerRequestDto.currencyId())
-                .orElseThrow(CURRENCY_NOT_FOUND::getError);
+                .orElseThrow(CURRENCY_DOES_NOT_EXIST::getError);
 
         User user = User.builder()
                 .email(registerRequestDto.email())

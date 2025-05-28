@@ -1,9 +1,13 @@
 package com.example.fintrack.event;
 
+import com.example.fintrack.bill.AddBillEventDto;
 import com.example.fintrack.bill.EventBillDto;
 import com.example.fintrack.bill.BillService;
+import com.example.fintrack.event.dto.AddEventDto;
 import com.example.fintrack.event.dto.EventDto;
 import com.example.fintrack.event.dto.EventSummaryDto;
+import com.example.fintrack.user.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.web.PagedModel;
 import org.springframework.http.HttpStatus;
@@ -19,6 +23,7 @@ import java.util.List;
 public class EventController {
 
     private final EventService eventService;
+    private final UserService userService;
     private final BillService billService;
 
     @GetMapping
@@ -47,12 +52,29 @@ public class EventController {
         return ResponseEntity.ok().body(eventService.getEventSummary(eventId));
     }
 
+    @PostMapping
+    public ResponseEntity<Void> addEvent(@RequestBody @Valid AddEventDto addEventDto) {
+        eventService.addEvent(addEventDto);
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @PostMapping("/{event-id}/bills")
+    public ResponseEntity<Void> addBillToEvent(
+            @RequestBody AddBillEventDto addBillEventDto,
+            @PathVariable("event-id") long eventId
+    ) {
+        billService.addBillToEvent(addBillEventDto, eventId);
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
     @PostMapping("/{event-id}/users/{user-id}")
     public ResponseEntity<Void> addUserToEvent(
             @PathVariable("event-id") long eventId,
             @PathVariable("user-id") long userId
     ) {
-        eventService.addUserToEvent(eventId, userId);
+        userService.addUserToEvent(eventId, userId);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -62,7 +84,7 @@ public class EventController {
             @PathVariable("event-id") long eventId,
             @PathVariable("user-id") long userId
     ) {
-        eventService.deleteUserFromEvent(eventId, userId);
+        userService.deleteUserFromEvent(eventId, userId);
 
         return ResponseEntity.noContent().build();
     }

@@ -1,11 +1,13 @@
 package com.example.fintrack.event;
 
 import com.example.fintrack.bill.Bill;
+import com.example.fintrack.currency.Currency;
+import com.example.fintrack.currency.CurrencyRepository;
+import com.example.fintrack.event.dto.AddEventDto;
 import com.example.fintrack.event.dto.EventDto;
 import com.example.fintrack.event.dto.EventSummaryDto;
 import com.example.fintrack.security.service.UserProvider;
 import com.example.fintrack.user.User;
-import com.example.fintrack.user.UserRepository;
 import com.example.fintrack.userevent.UserEvent;
 import com.example.fintrack.userevent.UserEventRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +23,6 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import static com.example.fintrack.exception.BusinessErrorCodes.*;
 import static com.example.fintrack.userevent.UserEventSpecification.*;
@@ -32,8 +33,8 @@ public class EventService {
 
     private final UserEventRepository userEventRepository;
     private final EventRepository eventRepository;
-    private final UserRepository userRepository;
     private final UserProvider userProvider;
+    private final CurrencyRepository currencyRepository;
 
     public PagedModel<EventDto> getUserEvents(
             String name, EventStatus eventStatus, LocalDateTime fromDate, LocalDateTime toDate, int page, int size
@@ -60,6 +61,28 @@ public class EventService {
         return new PagedModel<>(userEvents.map(EventMapper::userEventToEventDto));
     }
 
+    public void addEvent(AddEventDto addEventDto) {
+        Currency currency = currencyRepository.findById(addEventDto.currencyId())
+                .orElseThrow(CURRENCY_DOES_NOT_EXIST::getError);
+
+        Event event = new Event();
+        event.setName(addEventDto.name());
+        event.setCurrency(currency);
+        event.setStartDateTime(addEventDto.startDate());
+        event.setEndDateTime(addEventDto.endDate());
+
+        eventRepository.save(event);
+
+        User user = userProvider.getLoggedUser();
+
+        UserEvent userEvent = new UserEvent();
+        userEvent.setEvent(event);
+        userEvent.setUser(user);
+        userEvent.setIsFounder(true);
+
+        userEventRepository.save(userEvent);
+    }
+
     public EventSummaryDto getEventSummary(long eventId) {
         Event event = eventRepository.findById(eventId).orElseThrow(EVENT_DOES_NOT_EXIST::getError);
 
@@ -75,54 +98,6 @@ public class EventService {
                 .totalSum(totalSum)
                 .costPerUser(costPerUser)
                 .build();
-    }
-  
-    public void addUserToEvent(long eventId, long userId) {
-        Event event = eventRepository.findById(eventId).orElseThrow(EVENT_DOES_NOT_EXIST::getError);
-        User user = userRepository.findById(userId).orElseThrow(USER_DOES_NOT_EXIST::getError);
-
-        Set<UserEvent> userEvents = event.getUsers();
-        List<User> users = userEvents.stream()
-                .map(UserEvent::getUser)
-                .toList();
-
-        if (users.contains(user)) {
-            throw EVENT_ALREADY_CONTAINS_USER.getError();
-        }
-
-        UserEvent userEvent = new UserEvent();
-        userEvent.setEvent(event);
-        userEvent.setUser(user);
-        userEvent.setIsFounder(false);
-
-        userEventRepository.save(userEvent);
-    }
-
-    public void deleteUserFromEvent(long eventId, long userId) {
-        Event event = eventRepository.findById(eventId).orElseThrow(EVENT_DOES_NOT_EXIST::getError);
-
-        Set<UserEvent> userEvents = event.getUsers();
-        UserEvent userEvent = userEvents.stream()
-                .filter(ue -> ue.getUser().getId() == userId)
-                .findFirst()
-                .orElseThrow(USER_DOES_NOT_EXIST::getError);
-
-        if (userEvent.getIsFounder()) {
-            throw USER_IS_FOUNDER.getError();
-        }
-
-        User user = userEvent.getUser();
-
-        List<User> usersWhoPaidForBills = event.getBills().stream()
-                .map(Bill::getPaidBy)
-                .distinct()
-                .toList();
-
-        if (usersWhoPaidForBills.contains(user)) {
-            throw USER_ALREADY_PAID.getError();
-        }
-
-        userEventRepository.delete(userEvent);
     }
 
     public List<Long> getUsersWhoPaidInEvent(long eventId) {
