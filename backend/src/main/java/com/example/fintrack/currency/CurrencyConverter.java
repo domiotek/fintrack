@@ -31,7 +31,7 @@ public class CurrencyConverter {
         Currency usd = currencyRepository.findCurrencyByCode("USD")
                 .orElseThrow(CURRENCY_DOES_NOT_EXIST::getError);
 
-        return convertWithRatesFromGivenDay(currency, usd, amount, date);
+        return convertWithRatesFromGivenDay(usd, currency, amount, date);
     }
 
     private BigDecimal convertWithRatesFromGivenDay(
@@ -52,6 +52,7 @@ public class CurrencyConverter {
                 .findFirst()
                 .orElseThrow();
 
-        return amount.divide(fromRate.getAmount(), 2, RoundingMode.HALF_UP).multiply(toRate.getAmount());
+        return amount.divide(fromRate.getAmount(), 2, RoundingMode.HALF_UP).multiply(toRate.getAmount())
+                .setScale(2, RoundingMode.HALF_UP);
     }
 }

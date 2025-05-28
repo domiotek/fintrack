@@ -2,9 +2,11 @@ package com.example.fintrack.event;
 
 import com.example.fintrack.bill.Bill;
 import com.example.fintrack.currency.Currency;
+import com.example.fintrack.currency.CurrencyConverter;
 import com.example.fintrack.currency.CurrencyRepository;
 import com.example.fintrack.event.dto.AddEventDto;
 import com.example.fintrack.event.dto.EventDto;
+import com.example.fintrack.event.dto.EventSummaryCurrencyDto;
 import com.example.fintrack.event.dto.EventSummaryDto;
 import com.example.fintrack.security.service.UserProvider;
 import com.example.fintrack.user.User;
@@ -35,6 +37,7 @@ public class EventService {
     private final EventRepository eventRepository;
     private final UserProvider userProvider;
     private final CurrencyRepository currencyRepository;
+    private final CurrencyConverter currencyConverter;
 
     public PagedModel<EventDto> getUserEvents(
             String name, EventStatus eventStatus, LocalDateTime fromDate, LocalDateTime toDate, int page, int size
@@ -85,18 +88,36 @@ public class EventService {
 
     public EventSummaryDto getEventSummary(long eventId) {
         Event event = eventRepository.findById(eventId).orElseThrow(EVENT_DOES_NOT_EXIST::getError);
+        User user = userProvider.getLoggedUser();
 
         BigDecimal totalSum = event.getBills().stream()
                 .map(Bill::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-
         BigDecimal costPerUser = totalSum.divide(
                 BigDecimal.valueOf(event.getUsers().size()), 2, RoundingMode.HALF_UP
         );
 
+        BigDecimal totalSumInEventCurrency = currencyConverter
+                .convertFromUSDToGivenCurrency(event.getCurrency(), event.getStartDateTime().toLocalDate(), totalSum);
+        BigDecimal totalCostPerUserInEventCurrency = currencyConverter
+                .convertFromUSDToGivenCurrency(event.getCurrency(), event.getStartDateTime().toLocalDate(), costPerUser);
+
+        BigDecimal totalSumInUserCurrency = currencyConverter
+                .convertFromUSDToGivenCurrency(user.getCurrency(), event.getStartDateTime().toLocalDate(), totalSum);
+        BigDecimal totalCostPerUserInUserCurrency = currencyConverter
+                .convertFromUSDToGivenCurrency(event.getCurrency(), event.getStartDateTime().toLocalDate(), costPerUser);
+
         return EventSummaryDto.builder()
-                .totalSum(totalSum)
-                .costPerUser(costPerUser)
+                .eventCurrency(EventSummaryCurrencyDto.builder()
+                        .totalSum(totalSumInEventCurrency)
+                        .costPerUser(totalCostPerUserInEventCurrency)
+                        .build()
+                )
+                .userCurrency(EventSummaryCurrencyDto.builder()
+                        .totalSum(totalSumInUserCurrency)
+                        .costPerUser(totalCostPerUserInUserCurrency)
+                        .build()
+                )
                 .build();
     }
 

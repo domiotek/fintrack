@@ -8,6 +8,7 @@ import com.example.fintrack.currency.Currency;
 import com.example.fintrack.currency.CurrencyConverter;
 import com.example.fintrack.event.Event;
 import com.example.fintrack.event.EventRepository;
+import com.example.fintrack.security.service.UserProvider;
 import com.example.fintrack.user.User;
 import com.example.fintrack.user.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,13 +30,16 @@ public class BillService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final CurrencyConverter currencyConverter;
+    private final UserProvider userProvider;
 
     public PagedModel<EventBillDto> getEventBills(long eventId, int page, int size) {
+        User user = userProvider.getLoggedUser();
+
         PageRequest pageRequest = PageRequest.of(page, size);
 
         Page<Bill> bills = billRepository.findBillsByEventId(eventId, pageRequest);
 
-        return new PagedModel<>(bills.map(BillMapper::billToEventBillDto));
+        return new PagedModel<>(bills.map(bill -> BillMapper.billToEventBillDto(bill, currencyConverter, user)));
     }
 
     public void addBillToEvent(AddBillEventDto addBillEventDto, long eventId) {
