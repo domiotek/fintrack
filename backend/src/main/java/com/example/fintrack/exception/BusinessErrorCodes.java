@@ -23,7 +23,8 @@ public enum BusinessErrorCodes {
     ALREADY_EXISTS(303, "User with this email already exists", HttpStatus.CONFLICT),
     INVALID_USER(304, "Wrong refresh token", HttpStatus.FORBIDDEN),
     CURRENCY_NOT_FOUND(305, "Currency not found", HttpStatus.NOT_FOUND),
-    INTERNAL_SERVER_ERROR(306, "Internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
+    INTERNAL_SERVER_ERROR(306, "Internal server error", HttpStatus.INTERNAL_SERVER_ERROR),
+    EVENT_DOES_NOT_EXISTS(307, "Event does not exist", HttpStatus.NOT_FOUND);
 
     private final int code;
     private final String description;

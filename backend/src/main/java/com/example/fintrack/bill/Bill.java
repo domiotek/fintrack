@@ -10,9 +10,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -52,17 +52,17 @@ public class Bill {
     private LocalDateTime date;
 
     @Column(nullable = false)
-    private double amount;
+    private BigDecimal amount;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Bill bill = (Bill) o;
-        return Double.compare(amount, bill.amount) == 0 && Objects.equals(id, bill.id) &&
-                Objects.equals(currency, bill.currency) && Objects.equals(category, bill.category) &&
-                Objects.equals(event, bill.event) && Objects.equals(name, bill.name) &&
-                Objects.equals(date, bill.date);
+        if (!(o instanceof Bill bill)) return false;
+        return Objects.equals(id, bill.id) && Objects.equals(currency, bill.currency) &&
+                Objects.equals(category, bill.category) && Objects.equals(event, bill.event) &&
+                Objects.equals(user, bill.user) && Objects.equals(paidBy, bill.paidBy) &&
+                Objects.equals(name, bill.name) && Objects.equals(date, bill.date) &&
+                Objects.equals(amount, bill.amount);
     }
 
     @Override

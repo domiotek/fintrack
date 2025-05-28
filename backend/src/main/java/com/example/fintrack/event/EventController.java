@@ -1,13 +1,13 @@
 package com.example.fintrack.event;
 
+import com.example.fintrack.bill.EventBillDto;
+import com.example.fintrack.bill.BillService;
 import com.example.fintrack.event.dto.EventDto;
+import com.example.fintrack.event.dto.EventSummaryDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 
@@ -17,9 +17,10 @@ import java.time.LocalDateTime;
 public class EventController {
 
     private final EventService eventService;
+    private final BillService billService;
 
     @GetMapping
-    public ResponseEntity<PagedModel<EventDto>> getEvents(
+    public ResponseEntity<PagedModel<EventDto>> getUserEvents(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) EventStatus eventStatus,
             @RequestParam(required = false) LocalDateTime fromDate,
@@ -27,6 +28,20 @@ public class EventController {
             @RequestParam int page,
             @RequestParam int size
     ) {
-        return ResponseEntity.ok().body(eventService.getEvents(name, eventStatus, fromDate, toDate, page, size));
+        return ResponseEntity.ok().body(eventService.getUserEvents(name, eventStatus, fromDate, toDate, page, size));
+    }
+
+    @GetMapping("/{event-id}/bills")
+    public ResponseEntity<PagedModel<EventBillDto>> getEventBills(
+            @PathVariable("event-id") long eventId,
+            @RequestParam int page,
+            @RequestParam int size
+    ) {
+        return ResponseEntity.ok().body(billService.getEventBills(eventId, page, size));
+    }
+
+    @GetMapping("/{event-id}/summary")
+    public ResponseEntity<EventSummaryDto> getEventSummary(@PathVariable("event-id") long eventId) {
+        return ResponseEntity.ok().body(eventService.getEventSummary(eventId));
     }
 }

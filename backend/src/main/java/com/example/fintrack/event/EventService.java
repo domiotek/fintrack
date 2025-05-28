@@ -1,6 +1,8 @@
 package com.example.fintrack.event;
 
+import com.example.fintrack.bill.Bill;
 import com.example.fintrack.event.dto.EventDto;
+import com.example.fintrack.event.dto.EventSummaryDto;
 import com.example.fintrack.security.service.UserProvider;
 import com.example.fintrack.user.User;
 import com.example.fintrack.userevent.UserEvent;
@@ -13,24 +15,27 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 
+import static com.example.fintrack.exception.BusinessErrorCodes.*;
 import static com.example.fintrack.userevent.UserEventSpecification.*;
-import static org.springframework.data.jpa.domain.Specification.*;
 
 @Service
 @RequiredArgsConstructor
 public class EventService {
 
     private final UserEventRepository userEventRepository;
+    private final EventRepository eventRepository;
     private final UserProvider userProvider;
 
-    public PagedModel<EventDto> getEvents(
+    public PagedModel<EventDto> getUserEvents(
             String name, EventStatus eventStatus, LocalDateTime fromDate, LocalDateTime toDate, int page, int size
     ) {
         User loggedUser = userProvider.getLoggedUser();
 
-        Specification<UserEvent> eventSpecification = where(hasUserId(loggedUser.getId()));
+        Specification<UserEvent> eventSpecification = hasUserId(loggedUser.getId());
         if (name != null) {
             eventSpecification = eventSpecification.and(hasEventName(name));
         }
@@ -48,5 +53,22 @@ public class EventService {
         Page<UserEvent> userEvents = userEventRepository.findAll(eventSpecification, pageRequest);
 
         return new PagedModel<>(userEvents.map(EventMapper::userEventToEventDto));
+    }
+
+    public EventSummaryDto getEventSummary(long eventId) {
+        Event event = eventRepository.findById(eventId).orElseThrow(EVENT_DOES_NOT_EXISTS::getError);
+
+        BigDecimal totalSum = event.getBills().stream()
+                .map(Bill::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal costPerUser = totalSum.divide(
+                BigDecimal.valueOf(event.getUsers().size()), 2, RoundingMode.HALF_UP
+        );
+
+        return EventSummaryDto.builder()
+                .totalSum(totalSum)
+                .costPerUser(costPerUser)
+                .build();
     }
 }

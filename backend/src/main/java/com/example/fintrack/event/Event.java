@@ -1,5 +1,6 @@
 package com.example.fintrack.event;
 
+import com.example.fintrack.bill.Bill;
 import com.example.fintrack.currency.Currency;
 import com.example.fintrack.userevent.UserEvent;
 import jakarta.persistence.*;
@@ -30,6 +31,10 @@ public class Event {
     @OneToMany(mappedBy = "event")
     @ToString.Exclude
     private Set<UserEvent> users;
+
+    @OneToMany(mappedBy = "event")
+    @ToString.Exclude
+    private Set<Bill> bills;
 
     @Column(nullable = false)
     private String name;
