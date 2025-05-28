@@ -62,7 +62,6 @@ public class EventService {
 
     public EventSummaryDto getEventSummary(long eventId) {
         Event event = eventRepository.findById(eventId).orElseThrow(EVENT_DOES_NOT_EXIST::getError);
-        Event event = eventRepository.findById(eventId).orElseThrow(EVENT_DOES_NOT_EXISTS::getError);
 
         BigDecimal totalSum = event.getBills().stream()
                 .map(Bill::getAmount)
