@@ -1,4 +1,4 @@
-package com.example.fintrack.category;
+package com.example.fintrack.category.limit;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
