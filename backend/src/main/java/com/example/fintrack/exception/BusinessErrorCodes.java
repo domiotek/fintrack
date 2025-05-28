@@ -20,16 +20,18 @@ public enum BusinessErrorCodes {
     ACCESS_TOKEN_EXPIRED(300, "Access token expired", HttpStatus.UNAUTHORIZED),
     VERIFICATION_TOKEN_EXPIRED(301, "Verification token expired", HttpStatus.UNAUTHORIZED),
     BAD_CREDENTIALS(302, "Login and / or password is incorrect", HttpStatus.UNAUTHORIZED),
-    ALREADY_EXISTS(303, "User with this email already exists", HttpStatus.CONFLICT),
+    USER_ALREADY_EXISTS(303, "User with this email already exists", HttpStatus.CONFLICT),
     INVALID_USER(304, "Wrong refresh token", HttpStatus.FORBIDDEN),
+    INTERNAL_SERVER_ERROR(305, "Internal server error", HttpStatus.INTERNAL_SERVER_ERROR),
+    USER_ALREADY_PAID(306, "User already paid", HttpStatus.CONFLICT),
+    USER_IS_FOUNDER(307, "User is a founder", HttpStatus.CONFLICT),
+    EVENT_ALREADY_CONTAINS_USER(308, "Event already contains user", HttpStatus.CONFLICT),
     CURRENCY_DOES_NOT_EXIST(401, "Currency not found", HttpStatus.NOT_FOUND),
-    INTERNAL_SERVER_ERROR(306, "Internal server error", HttpStatus.INTERNAL_SERVER_ERROR),
     EVENT_DOES_NOT_EXIST(402, "Event does not exist", HttpStatus.NOT_FOUND),
     USER_DOES_NOT_EXIST(403, "User does not exist", HttpStatus.NOT_FOUND),
-    USER_ALREADY_PAID(309, "User already paid", HttpStatus.CONFLICT),
-    USER_IS_FOUNDER(310, "User is a founder", HttpStatus.CONFLICT),
-    EVENT_ALREADY_CONTAINS_USER(311, "Event already contains user", HttpStatus.CONFLICT),
-    CATEGORY_DOES_NOT_EXIST(404, "Category not found", HttpStatus.NOT_FOUND);
+    CATEGORY_DOES_NOT_EXIST(404, "Category not found", HttpStatus.NOT_FOUND),
+    MISSING_REQUEST_BODY(501, "Missing request body", HttpStatus.FAILED_DEPENDENCY),
+    REQUEST_FAILED(502, "Request failed", HttpStatus.BAD_GATEWAY);
 
     private final int code;
     private final String description;

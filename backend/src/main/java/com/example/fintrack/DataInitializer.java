@@ -67,11 +67,11 @@ public class DataInitializer implements CommandLineRunner {
         Rate rate1 = new Rate();
         rate1.setDate(LocalDateTime.now());
         rate1.setCurrency(currency1);
-        rate1.setAmount(BigDecimal.valueOf(3.74));
+        rate1.setAmount(BigDecimal.valueOf(3.7479));
         Rate rate2 = new Rate();
         rate2.setDate(LocalDateTime.now());
         rate2.setCurrency(currency2);
-        rate2.setAmount(BigDecimal.valueOf(0.88));
+        rate2.setAmount(BigDecimal.valueOf(0.8836));
         Rate rate3 = new Rate();
         rate3.setDate(LocalDateTime.now());
         rate3.setCurrency(currency3);
@@ -79,15 +79,15 @@ public class DataInitializer implements CommandLineRunner {
         Rate rate4 = new Rate();
         rate4.setDate(LocalDateTime.now());
         rate4.setCurrency(currency4);
-        rate4.setAmount(BigDecimal.valueOf(0.74));
+        rate4.setAmount(BigDecimal.valueOf(0.7421));
         Rate rate5 = new Rate();
         rate5.setDate(LocalDateTime.now());
         rate5.setCurrency(currency5);
-        rate5.setAmount(BigDecimal.valueOf(0.82));
+        rate5.setAmount(BigDecimal.valueOf(0.8274));
         Rate rate6 = new Rate();
         rate6.setDate(LocalDateTime.now());
         rate6.setCurrency(currency6);
-        rate6.setAmount(BigDecimal.valueOf(21.87));
+        rate6.setAmount(BigDecimal.valueOf(22.0220));
         rateRepository.saveAll(List.of(rate1, rate2, rate3, rate4, rate5, rate6));
 
         User user1 = new User();

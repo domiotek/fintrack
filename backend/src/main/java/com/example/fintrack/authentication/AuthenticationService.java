@@ -43,7 +43,7 @@ public class AuthenticationService {
 
     public void register(RegisterRequestDto registerRequestDto) {
         if (userRepository.existsByEmail(registerRequestDto.email())) {
-            throw ALREADY_EXISTS.getError();
+            throw USER_ALREADY_EXISTS.getError();
         }
 
         Currency currency = currencyRepository.findById(registerRequestDto.currencyId())
