@@ -29,6 +29,7 @@ public enum BusinessErrorCodes {
     USER_ALREADY_PAID(309, "User already paid", HttpStatus.CONFLICT),
     USER_IS_FOUNDER(310, "User is a founder", HttpStatus.CONFLICT),
     EVENT_ALREADY_CONTAINS_USER(311, "Event already contains user", HttpStatus.CONFLICT);
+
     private final int code;
     private final String description;
     private final HttpStatus httpStatus;
