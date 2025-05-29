@@ -14,7 +14,6 @@ import com.example.fintrack.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -32,14 +31,14 @@ public class BillService {
     private final CurrencyConverter currencyConverter;
     private final UserProvider userProvider;
 
-    public PagedModel<EventBillDto> getEventBills(long eventId, int page, int size) {
+    public Page<EventBillDto> getEventBills(long eventId, int page, int size) {
         User user = userProvider.getLoggedUser();
 
         PageRequest pageRequest = PageRequest.of(page, size);
 
         Page<Bill> bills = billRepository.findBillsByEventId(eventId, pageRequest);
 
-        return new PagedModel<>(bills.map(bill -> BillMapper.billToEventBillDto(bill, currencyConverter, user)));
+        return bills.map(bill -> BillMapper.billToEventBillDto(bill, currencyConverter, user));
     }
 
     public void addBillToEvent(AddBillEventDto addBillEventDto, long eventId) {

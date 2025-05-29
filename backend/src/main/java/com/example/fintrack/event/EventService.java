@@ -17,7 +17,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -39,7 +38,7 @@ public class EventService {
     private final CurrencyRepository currencyRepository;
     private final CurrencyConverter currencyConverter;
 
-    public PagedModel<EventDto> getUserEvents(
+    public Page<EventDto> getUserEvents(
             String name, EventStatus eventStatus, LocalDateTime fromDate, LocalDateTime toDate, int page, int size
     ) {
         User loggedUser = userProvider.getLoggedUser();
@@ -61,7 +60,7 @@ public class EventService {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by("event.startDateTime").ascending());
         Page<UserEvent> userEvents = userEventRepository.findAll(eventSpecification, pageRequest);
 
-        return new PagedModel<>(userEvents.map(EventMapper::userEventToEventDto));
+        return userEvents.map(EventMapper::userEventToEventDto);
     }
 
     public void addEvent(AddEventDto addEventDto) {
