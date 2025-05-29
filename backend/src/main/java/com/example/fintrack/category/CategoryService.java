@@ -3,7 +3,7 @@ package com.example.fintrack.category;
 import com.example.fintrack.category.dto.CategoryDto;
 import com.example.fintrack.security.service.UserProvider;
 import com.example.fintrack.user.User;
-import com.example.fintrack.utilEnums.SortDirection;
+import com.example.fintrack.utils.SortDirection;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -41,7 +41,6 @@ public class CategoryService {
         if(from != null && to != null) {
             categorySpecification = categorySpecification.and(hasCategoryBillsBetween(from, to));
         }
-
 
         Sort.Direction sortDirection = sortOrder.toSortDirection();
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(sortDirection, "name"));

@@ -6,7 +6,10 @@ import com.example.fintrack.bill.BillService;
 import com.example.fintrack.event.dto.AddEventDto;
 import com.example.fintrack.event.dto.EventDto;
 import com.example.fintrack.event.dto.EventSummaryDto;
+import com.example.fintrack.event.enums.EventSortField;
+import com.example.fintrack.event.enums.EventStatus;
 import com.example.fintrack.user.UserService;
+import com.example.fintrack.utils.SortDirection;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -32,10 +35,14 @@ public class EventController {
             @RequestParam(required = false) EventStatus eventStatus,
             @RequestParam(required = false) LocalDateTime fromDate,
             @RequestParam(required = false) LocalDateTime toDate,
+            @RequestParam(defaultValue = "NAME") EventSortField sortField,
+            @RequestParam(defaultValue = "ASC") SortDirection sortDirection,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        return ResponseEntity.ok().body(eventService.getUserEvents(name, eventStatus, fromDate, toDate, page, size));
+        return ResponseEntity.ok().body(eventService.getUserEvents(
+                name, eventStatus, fromDate, toDate, sortField, sortDirection, page, size
+        ));
     }
 
     @GetMapping("/{event-id}/bills")

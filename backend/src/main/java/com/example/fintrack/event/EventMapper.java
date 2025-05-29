@@ -1,5 +1,6 @@
 package com.example.fintrack.event;
 
+import com.example.fintrack.event.dto.EventCurrencyDto;
 import com.example.fintrack.event.dto.EventDto;
 import com.example.fintrack.event.dto.EventUserDto;
 import com.example.fintrack.userevent.UserEvent;
@@ -13,7 +14,12 @@ public class EventMapper {
                 .status(userEvent.getEvent().getEventStatus())
                 .isFounder(userEvent.getIsFounder())
                 .numberOfNotifications(2)
-                .currencyId(userEvent.getEvent().getCurrency().getId())
+                .currency(EventCurrencyDto.builder()
+                        .id(userEvent.getEvent().getCurrency().getId())
+                        .name(userEvent.getEvent().getCurrency().getName())
+                        .code(userEvent.getEvent().getCurrency().getCode())
+                        .build()
+                )
                 .users(userEvent.getEvent().getUsers().stream()
                         .map(UserEvent::getUser)
                         .map(user -> EventUserDto.builder()

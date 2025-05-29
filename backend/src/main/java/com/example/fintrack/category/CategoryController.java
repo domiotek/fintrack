@@ -1,7 +1,7 @@
 package com.example.fintrack.category;
 
 import com.example.fintrack.category.dto.CategoryDto;
-import com.example.fintrack.utilEnums.SortDirection;
+import com.example.fintrack.utils.SortDirection;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +24,7 @@ public class CategoryController {
             @RequestParam(required = false) String name,
             @RequestParam(required = false) LocalDateTime from,
             @RequestParam(required = false) LocalDateTime to,
-            @RequestParam(required = false) SortDirection sortDirection,
+            @RequestParam(defaultValue = "ASC") SortDirection sortDirection,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {

@@ -1,6 +1,6 @@
 package com.example.fintrack.event.dto;
 
-import com.example.fintrack.event.EventStatus;
+import com.example.fintrack.event.enums.EventStatus;
 import lombok.Builder;
 
 import java.util.List;
@@ -12,7 +12,7 @@ public record EventDto(
         EventStatus status,
         Boolean isFounder,
         Integer numberOfNotifications,
-        Long currencyId,
+        EventCurrencyDto currency,
         List<EventUserDto> users
 ) {
 }
