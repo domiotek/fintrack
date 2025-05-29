@@ -7,7 +7,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Builder
-public record LimitDto(BigDecimal amount,
-                       LocalDateTime startDateTime,
-                       LocalDateTime endDateTime) {
+public record LimitDto(
+        BigDecimal amount,
+        LocalDateTime startDateTime,
+        LocalDateTime endDateTime) {
 }
