@@ -5,12 +5,15 @@ import com.example.fintrack.category.dto.CategoryDto;
 import com.example.fintrack.security.service.UserProvider;
 import com.example.fintrack.user.User;
 import com.example.fintrack.util.enums.SortDirection;
+import com.example.fintrack.category.dto.CategoryDto;
+import com.example.fintrack.security.service.UserProvider;
+import com.example.fintrack.user.User;
+import com.example.fintrack.utilEnums.SortDirection;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -66,7 +69,5 @@ public class CategoryService {
 
         categoryRepository.save(category);
     }
-
-
 
 }
