@@ -9,7 +9,7 @@ import com.example.fintrack.event.dto.EventSummaryDto;
 import com.example.fintrack.user.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.web.PagedModel;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,22 +27,22 @@ public class EventController {
     private final BillService billService;
 
     @GetMapping
-    public ResponseEntity<PagedModel<EventDto>> getUserEvents(
+    public ResponseEntity<Page<EventDto>> getUserEvents(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) EventStatus eventStatus,
             @RequestParam(required = false) LocalDateTime fromDate,
             @RequestParam(required = false) LocalDateTime toDate,
-            @RequestParam int page,
-            @RequestParam int size
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
     ) {
         return ResponseEntity.ok().body(eventService.getUserEvents(name, eventStatus, fromDate, toDate, page, size));
     }
 
     @GetMapping("/{event-id}/bills")
-    public ResponseEntity<PagedModel<EventBillDto>> getEventBills(
+    public ResponseEntity<Page<EventBillDto>> getEventBills(
             @PathVariable("event-id") long eventId,
-            @RequestParam int page,
-            @RequestParam int size
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
     ) {
         return ResponseEntity.ok().body(billService.getEventBills(eventId, page, size));
     }

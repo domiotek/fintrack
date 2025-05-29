@@ -1,19 +1,16 @@
 package com.example.fintrack.category;
 
+import com.example.fintrack.category.dto.AddCategoryDto;
 import com.example.fintrack.category.dto.CategoryDto;
-import com.example.fintrack.utilEnums.SortDirection;
+import com.example.fintrack.util.enums.SortDirection;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.validator.constraints.Range;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PagedModel;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @RestController
 @RequestMapping("/categories")
@@ -23,14 +20,23 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @GetMapping
-    public ResponseEntity<PagedModel<CategoryDto>> getCategories(
+    public ResponseEntity<Page<CategoryDto>> getCategories(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) LocalDateTime from,
             @RequestParam(required = false) LocalDateTime to,
             @RequestParam(required = false) SortDirection sortDirection,
-            @RequestParam int page,
-            @RequestParam int size
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
     ) {
         return ResponseEntity.ok().body(categoryService.getCategories(name, from, to, sortDirection, page, size));
+    }
+
+    @PostMapping
+    public ResponseEntity<Void> addCategory(
+            @RequestBody @Valid AddCategoryDto categoryDto
+    )  {
+        categoryService.addCategory(categoryDto);
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }
