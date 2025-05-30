@@ -40,8 +40,8 @@ public class EventService {
 
     public Page<EventDto> getUserEvents(
             String name, EventStatus eventStatus,
-            ZonedDateTime fromDate,
-            ZonedDateTime toDate,
+            ZonedDateTime from,
+            ZonedDateTime to,
             EventSortField field,
             SortDirection sortOrder,
             int page,
@@ -56,16 +56,17 @@ public class EventService {
         if (eventStatus != null) {
             eventSpecification = eventSpecification.and(hasEventStatus(eventStatus));
         }
-        if (fromDate != null) {
-            eventSpecification = eventSpecification.and(hasEventStartedAfter(fromDate));
+        if (from != null) {
+            eventSpecification = eventSpecification.and(hasEventStartedAfter(from));
         }
-        if (toDate != null) {
-            eventSpecification = eventSpecification.and(hasEventStartedBefore(toDate));
+        if (to != null) {
+            eventSpecification = eventSpecification.and(hasEventStartedBefore(to));
         }
 
         String sortField = field.getSortField();
         Sort.Direction sortDirection = sortOrder.toSortDirection();
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(sortDirection, sortField));
+
         Page<UserEvent> userEvents = userEventRepository.findAll(eventSpecification, pageRequest);
 
         return userEvents.map(EventMapper::userEventToEventDto);

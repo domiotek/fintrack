@@ -32,15 +32,15 @@ public class EventController {
     public ResponseEntity<Page<EventDto>> getUserEvents(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) EventStatus eventStatus,
-            @RequestParam(required = false) ZonedDateTime fromDate,
-            @RequestParam(required = false) ZonedDateTime toDate,
+            @RequestParam(required = false) ZonedDateTime from,
+            @RequestParam(required = false) ZonedDateTime to,
             @RequestParam(defaultValue = "NAME") EventSortField sortField,
             @RequestParam(defaultValue = "ASC") SortDirection sortDirection,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         return ResponseEntity.ok().body(eventService.getUserEvents(
-                name, eventStatus, fromDate, toDate, sortField, sortDirection, page, size
+                name, eventStatus, from, to, sortField, sortDirection, page, size
         ));
     }
 
