@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -40,8 +40,8 @@ public class EventService {
 
     public Page<EventDto> getUserEvents(
             String name, EventStatus eventStatus,
-            LocalDateTime fromDate,
-            LocalDateTime toDate,
+            ZonedDateTime fromDate,
+            ZonedDateTime toDate,
             EventSortField field,
             SortDirection sortOrder,
             int page,
