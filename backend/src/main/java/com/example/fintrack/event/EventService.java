@@ -25,8 +25,8 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.example.fintrack.exception.BusinessErrorCodes.*;
 import static com.example.fintrack.userevent.UserEventSpecification.*;
@@ -154,5 +154,84 @@ public class EventService {
         return users.stream()
                 .map(User::getId)
                 .toList();
+    }
+
+    public List<SettlementDto> getSettlements(long eventId) {
+        Event event = eventRepository.findById(eventId).orElseThrow(EVENT_DOES_NOT_EXIST::getError);
+
+        Map<User, BigDecimal> totalSettlements = calculateTotalSettlements(event);
+
+        Map<User, Map<User, BigDecimal>> settlements = calculateSettlements(totalSettlements, event);
+
+        User loggedUser = userProvider.getLoggedUser();
+
+        Map<User, BigDecimal> result = settlements.get(loggedUser);
+
+        return result.entrySet().stream()
+                .map(entry -> EventMapper.settlementEntryToSettlementDto(entry, currencyConverter, event, loggedUser))
+                .toList();
+    }
+
+    private Map<User, BigDecimal> calculateTotalSettlements(Event event) {
+        Set<Bill> bills = event.getBills();
+
+        BigDecimal totalSum = bills.stream()
+                .map(Bill::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal averageCostPerUser = totalSum.divide(
+                BigDecimal.valueOf(event.getUsers().size()), 2, RoundingMode.HALF_UP
+        );
+
+        Map<User, BigDecimal> realCostPerUser = event.getUsers().stream()
+                .map(UserEvent::getUser)
+                .collect(Collectors.toMap(user -> user, user -> BigDecimal.ZERO, (u1, u2) -> u1));
+        for (Bill bill : bills) {
+            realCostPerUser.put(bill.getPaidBy(), realCostPerUser.get(bill.getPaidBy()).add(bill.getAmount()));
+        }
+
+        Map<User, BigDecimal> totalSettlements = new HashMap<>();
+        for (Map.Entry<User, BigDecimal> pair: realCostPerUser.entrySet()) {
+            totalSettlements.put(pair.getKey(), pair.getValue().subtract(averageCostPerUser));
+        }
+
+        return totalSettlements;
+    }
+
+    private Map<User, Map<User, BigDecimal>> calculateSettlements(Map<User, BigDecimal> totalSettlements, Event event) {
+        List<Map.Entry<User, BigDecimal>> entries = totalSettlements.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue())
+                .toList();
+
+        Map<User, Map<User, BigDecimal>> settlements = event.getUsers().stream()
+                .map(UserEvent::getUser)
+                .collect(Collectors.toMap(user -> user, user -> new HashMap<>(), (u1, u2) -> u1));
+
+        int start = 0;
+        int end = entries.size() - 1;
+
+        while (start < end) {
+            Map.Entry<User, BigDecimal> startEntry = entries.get(start);
+            Map.Entry<User, BigDecimal> endEntry = entries.get(end);
+
+            if (startEntry.getValue().negate().compareTo(endEntry.getValue()) < 0) {
+                settlements.get(startEntry.getKey()).put(endEntry.getKey(), startEntry.getValue());
+                settlements.get(endEntry.getKey()).put(startEntry.getKey(), startEntry.getValue().negate());
+
+                startEntry.setValue(startEntry.getValue().subtract(startEntry.getValue()));
+                endEntry.setValue(endEntry.getValue().add(startEntry.getValue()));
+
+                start++;
+            } else {
+                settlements.get(startEntry.getKey()).put(endEntry.getKey(), endEntry.getValue().negate());
+                settlements.get(endEntry.getKey()).put(startEntry.getKey(), endEntry.getValue());
+
+                startEntry.setValue(startEntry.getValue().add(endEntry.getValue()));
+                endEntry.setValue(endEntry.getValue().subtract(endEntry.getValue()));
+
+                end--;
+            }
+        }
+
+        return settlements;
     }
 }
