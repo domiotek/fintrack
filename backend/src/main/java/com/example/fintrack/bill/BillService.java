@@ -23,7 +23,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 import static com.example.fintrack.bill.BillSpecification.*;
 import static com.example.fintrack.bill.BillSpecification.hasCategoryId;
@@ -75,13 +75,12 @@ public class BillService {
     }
 
     public Page<BillDto> getBills(
-            LocalDateTime from, LocalDateTime to, Long categoryId, SortDirection sortDirection, int page, int size
+            ZonedDateTime from, ZonedDateTime to, Long categoryId, SortDirection sortDirection, int page, int size
     ) {
         User loggedUser = userProvider.getLoggedUser();
 
         Specification<Bill> billSpecification = hasUserId(loggedUser.getId());
         billSpecification = billSpecification.or(hasPaidById(loggedUser.getId()));
-
         if(from != null && to != null) {
             billSpecification = billSpecification.and(hasBillsBetweenDates(from, to));
         }
@@ -92,8 +91,9 @@ public class BillService {
         Sort.Direction sortDirectionSpringEnum = sortDirection.toSortDirection();
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(sortDirectionSpringEnum, "category"));
 
-        return billRepository.findAll(billSpecification, pageRequest)
-                .map(bill -> BillMapper.billToBillDto(bill, currencyConverter, loggedUser));
+        Page<Bill> bills = billRepository.findAll(billSpecification, pageRequest);
+
+        return bills.map(bill -> BillMapper.billToBillDto(bill, currencyConverter, loggedUser));
     }
 
     public void addBill(AddBillDto addBillDto) {
