@@ -24,7 +24,9 @@ public class Rate {
 
     @ManyToOne
     @JoinColumn(name = "currency_id", nullable = false)
-    private Currency currency;    @Column(nullable = false)
+    private Currency currency;
+
+    @Column(nullable = false)
     private ZonedDateTime date;
 
     @Column(nullable = false)

@@ -43,7 +43,9 @@ public class Bill {
 
     @ManyToOne
     @JoinColumn(name = "paid_by")
-    private User paidBy;    @Column(nullable = false)
+    private User paidBy;
+
+    @Column(nullable = false)
     private String name;
 
     @Column(nullable = false)

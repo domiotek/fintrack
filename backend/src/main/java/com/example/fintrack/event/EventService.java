@@ -33,7 +33,9 @@ public class EventService {
     private final EventRepository eventRepository;
     private final UserProvider userProvider;
     private final CurrencyRepository currencyRepository;
-    private final CurrencyConverter currencyConverter;    public Page<EventDto> getUserEvents(
+    private final CurrencyConverter currencyConverter;
+
+    public Page<EventDto> getUserEvents(
             String name, EventStatus eventStatus, ZonedDateTime fromDate, ZonedDateTime toDate, int page, int size
     ) {
         User loggedUser = userProvider.getLoggedUser();

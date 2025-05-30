@@ -25,7 +25,9 @@ public class Limit {
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
-    private Category category;    @Column(nullable = false)
+    private Category category;
+
+    @Column(nullable = false)
     private BigDecimal amount;
 
     @Column(nullable = false)

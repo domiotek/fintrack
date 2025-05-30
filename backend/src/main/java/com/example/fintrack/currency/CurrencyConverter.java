@@ -33,7 +33,9 @@ public class CurrencyConverter {
                 .orElseThrow(CURRENCY_DOES_NOT_EXIST::getError);
 
         return convertWithRatesFromGivenDay(usd, currency, amount, date);
-    }    private BigDecimal convertWithRatesFromGivenDay(
+    }
+
+    private BigDecimal convertWithRatesFromGivenDay(
             Currency fromCurrency, Currency toCurrency, BigDecimal amount, LocalDate date
     ) {
         ZonedDateTime startDate = date.atStartOfDay(ZoneId.systemDefault());

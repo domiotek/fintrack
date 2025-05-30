@@ -42,7 +42,6 @@ public class CategoryService {
             categorySpecification = categorySpecification.and(hasCategoryBillsBetween(from, to));
         }
 
-
         Sort.Direction sortDirection = sortOrder.toSortDirection();
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(sortDirection, "name"));
         Page<Category> categories = categoryRepository.findAll(categorySpecification, pageRequest);
