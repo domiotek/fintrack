@@ -1,8 +1,14 @@
 package com.example.fintrack.bill;
 
+import com.example.fintrack.bill.dto.AddBillDto;
+import com.example.fintrack.bill.dto.BillDto;
 import com.example.fintrack.bill.dto.EventBillDto;
 import com.example.fintrack.bill.dto.EventBillUserDto;
+import com.example.fintrack.category.Category;
+import com.example.fintrack.category.dto.BillCategoryDto;
+import com.example.fintrack.currency.Currency;
 import com.example.fintrack.currency.CurrencyConverter;
+import com.example.fintrack.event.Event;
 import com.example.fintrack.event.dto.EventBillCurrencyDto;
 import com.example.fintrack.user.User;
 
@@ -48,5 +54,46 @@ public class BillMapper {
                         .build()
                 )
                 .build();
+    }
+
+    public static BillDto billToBillDto(Bill bill, CurrencyConverter currencyConverter, User user) {
+        BigDecimal amountInUSD = currencyConverter.convertFromGivenCurrencyToUSD(bill.getCurrency(), bill.getAmount());
+        BigDecimal userAmountInUsersCurrency = currencyConverter.convertFromUSDToGivenCurrency(user.getCurrency(), bill.getDate().toLocalDate(), amountInUSD);
+
+        BillCategoryDto categoryDto = BillCategoryDto.builder()
+                .id(bill.getCategory().getId())
+                .name(bill.getCategory().getName())
+                .build();
+
+        return BillDto.builder()
+                .id(bill.getId())
+                .name(bill.getName())
+                .categoryDto(categoryDto)
+                .date(bill.getDate())
+                .userValue(userAmountInUsersCurrency)
+                .billValue(bill.getAmount())
+                .currencyId(bill.getCurrency().getId())
+                .build();
+    }
+
+    public static Bill addBillDtoToBill(AddBillDto addBillDto, Category category,
+                                        Currency currency, Event event, User user) {
+        Bill bill = new Bill();
+
+        bill.setName(addBillDto.name());
+        bill.setAmount(addBillDto.amount());
+        bill.setCategory(category);
+        bill.setCurrency(currency);
+        bill.setDate(addBillDto.date());
+        if(addBillDto.eventId() != null) {
+            bill.setEvent(event);
+        }
+        if(addBillDto.userId() != null) {
+            bill.setUser(user);
+        } else {
+            bill.setPaidBy(user);
+        }
+
+        return bill;
     }
 }
