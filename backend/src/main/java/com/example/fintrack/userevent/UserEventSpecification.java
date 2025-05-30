@@ -1,6 +1,6 @@
 package com.example.fintrack.userevent;
 
-import com.example.fintrack.event.EventStatus;
+import com.example.fintrack.event.enums.EventStatus;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.ZonedDateTime;
