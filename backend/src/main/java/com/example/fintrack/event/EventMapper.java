@@ -1,8 +1,12 @@
 package com.example.fintrack.event;
 
-import com.example.fintrack.event.dto.EventDto;
-import com.example.fintrack.event.dto.EventUserDto;
+import com.example.fintrack.currency.CurrencyConverter;
+import com.example.fintrack.event.dto.*;
+import com.example.fintrack.user.User;
 import com.example.fintrack.userevent.UserEvent;
+
+import java.math.BigDecimal;
+import java.util.Map;
 
 public class EventMapper {
 
@@ -24,6 +28,34 @@ public class EventMapper {
                         )
                         .toList()
                 )
+                .build();
+    }
+
+    public static SettlementDto settlementEntryToSettlementDto(
+            Map.Entry<User, BigDecimal> settlementEntry, CurrencyConverter currencyConverter, Event event, User user
+    ) {
+        SettlementUserDto settlementUserDto = SettlementUserDto.builder()
+                .id(settlementEntry.getKey().getId())
+                .firstname(settlementEntry.getKey().getFirstName())
+                .lastname(settlementEntry.getKey().getLastName())
+                .build();
+
+        SettlementCurrencyDto settlementCurrencyDto = SettlementCurrencyDto.builder()
+                .eventCurrency(
+                        currencyConverter.convertFromUSDToGivenCurrency(
+                                event.getCurrency(), event.getStartDateTime().toLocalDate(), settlementEntry.getValue()
+                        )
+                )
+                .userCurrency(
+                        currencyConverter.convertFromUSDToGivenCurrency(
+                                user.getCurrency(), event.getStartDateTime().toLocalDate(), settlementEntry.getValue()
+                        )
+                )
+                .build();
+
+        return SettlementDto.builder()
+                .user(settlementUserDto)
+                .settlement(settlementCurrencyDto)
                 .build();
     }
 }
