@@ -2,6 +2,7 @@ package com.example.fintrack.event;
 
 import com.example.fintrack.bill.Bill;
 import com.example.fintrack.currency.Currency;
+import com.example.fintrack.event.enums.EventStatus;
 import com.example.fintrack.userevent.UserEvent;
 import jakarta.persistence.*;
 import lombok.Getter;

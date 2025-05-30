@@ -24,7 +24,7 @@ public class CategoryController {
             @RequestParam(required = false) String name,
             @RequestParam(required = false) ZonedDateTime from,
             @RequestParam(required = false) ZonedDateTime to,
-            @RequestParam(required = false) SortDirection sortDirection,
+            @RequestParam(defaultValue = "ASC") SortDirection sortDirection,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {

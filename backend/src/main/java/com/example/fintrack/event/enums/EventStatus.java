@@ -1,4 +1,4 @@
-package com.example.fintrack.event;
+package com.example.fintrack.event.enums;
 
 public enum EventStatus {
     UPCOMING,

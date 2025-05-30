@@ -5,10 +5,13 @@ import com.example.fintrack.currency.Currency;
 import com.example.fintrack.currency.CurrencyConverter;
 import com.example.fintrack.currency.CurrencyRepository;
 import com.example.fintrack.event.dto.*;
+import com.example.fintrack.event.enums.EventSortField;
+import com.example.fintrack.event.enums.EventStatus;
 import com.example.fintrack.security.service.UserProvider;
 import com.example.fintrack.user.User;
 import com.example.fintrack.userevent.UserEvent;
 import com.example.fintrack.userevent.UserEventRepository;
+import com.example.fintrack.utils.SortDirection;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -36,7 +39,13 @@ public class EventService {
     private final CurrencyConverter currencyConverter;
 
     public Page<EventDto> getUserEvents(
-            String name, EventStatus eventStatus, ZonedDateTime fromDate, ZonedDateTime toDate, int page, int size
+            String name, EventStatus eventStatus,
+            ZonedDateTime fromDate,
+            ZonedDateTime toDate,
+            EventSortField field,
+            SortDirection sortOrder,
+            int page,
+            int size
     ) {
         User loggedUser = userProvider.getLoggedUser();
 
@@ -54,7 +63,9 @@ public class EventService {
             eventSpecification = eventSpecification.and(hasEventStartedBefore(toDate));
         }
 
-        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("event.startDateTime").ascending());
+        String sortField = field.getSortField();
+        Sort.Direction sortDirection = sortOrder.toSortDirection();
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(sortDirection, sortField));
         Page<UserEvent> userEvents = userEventRepository.findAll(eventSpecification, pageRequest);
 
         return userEvents.map(EventMapper::userEventToEventDto);
