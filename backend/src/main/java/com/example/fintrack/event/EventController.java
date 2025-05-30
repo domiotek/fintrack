@@ -28,12 +28,12 @@ public class EventController {
     public ResponseEntity<Page<EventDto>> getUserEvents(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) EventStatus eventStatus,
-            @RequestParam(required = false) LocalDateTime fromDate,
-            @RequestParam(required = false) LocalDateTime toDate,
+            @RequestParam(required = false) LocalDateTime from,
+            @RequestParam(required = false) LocalDateTime to,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        return ResponseEntity.ok().body(eventService.getUserEvents(name, eventStatus, fromDate, toDate, page, size));
+        return ResponseEntity.ok().body(eventService.getUserEvents(name, eventStatus, from, to, page, size));
     }
 
     @GetMapping("/{event-id}/bills")

@@ -74,8 +74,9 @@ public class BillService {
         billRepository.save(bill);
     }
 
-    public Page<BillDto> getBills(LocalDateTime from, LocalDateTime to, Long categoryId, SortDirection sortDirection,
-                                  int page, int pageSize) {
+    public Page<BillDto> getBills(
+            LocalDateTime from, LocalDateTime to, Long categoryId, SortDirection sortDirection, int page, int size
+    ) {
         User loggedUser = userProvider.getLoggedUser();
 
         Specification<Bill> billSpecification = hasUserId(loggedUser.getId());
@@ -89,9 +90,10 @@ public class BillService {
         }
 
         Sort.Direction sortDirectionSpringEnum = sortDirection.toSortDirection();
-        PageRequest pageRequest = PageRequest.of(page, pageSize, Sort.by(sortDirectionSpringEnum, "category"));
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(sortDirectionSpringEnum, "category"));
 
-        return billRepository.findAll(billSpecification, pageRequest).map(bill -> BillMapper.billToBillDto(bill, currencyConverter, loggedUser));
+        return billRepository.findAll(billSpecification, pageRequest)
+                .map(bill -> BillMapper.billToBillDto(bill, currencyConverter, loggedUser));
     }
 
     public void addBill(AddBillDto addBillDto) {

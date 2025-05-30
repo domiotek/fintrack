@@ -36,7 +36,7 @@ public class EventService {
     private final CurrencyConverter currencyConverter;
 
     public Page<EventDto> getUserEvents(
-            String name, EventStatus eventStatus, LocalDateTime fromDate, LocalDateTime toDate, int page, int size
+            String name, EventStatus eventStatus, LocalDateTime from, LocalDateTime to, int page, int size
     ) {
         User loggedUser = userProvider.getLoggedUser();
 
@@ -47,11 +47,11 @@ public class EventService {
         if (eventStatus != null) {
             eventSpecification = eventSpecification.and(hasEventStatus(eventStatus));
         }
-        if (fromDate != null) {
-            eventSpecification = eventSpecification.and(hasEventStartedAfter(fromDate));
+        if (from != null) {
+            eventSpecification = eventSpecification.and(hasEventStartedAfter(from));
         }
-        if (toDate != null) {
-            eventSpecification = eventSpecification.and(hasEventStartedBefore(toDate));
+        if (to != null) {
+            eventSpecification = eventSpecification.and(hasEventStartedBefore(to));
         }
 
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by("event.startDateTime").ascending());
