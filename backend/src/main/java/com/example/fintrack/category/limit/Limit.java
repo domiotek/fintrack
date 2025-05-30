@@ -8,7 +8,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Objects;
 
 @Entity
@@ -25,15 +25,13 @@ public class Limit {
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
-    private Category category;
-
-    @Column(nullable = false)
+    private Category category;    @Column(nullable = false)
     private BigDecimal amount;
 
     @Column(nullable = false)
-    private LocalDateTime startDateTime;
+    private ZonedDateTime startDateTime;
 
-    private LocalDateTime endDateTime;
+    private ZonedDateTime endDateTime;
 
     @Override
     public boolean equals(Object o) {

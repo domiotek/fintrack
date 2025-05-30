@@ -8,7 +8,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Objects;
 
 @Entity
@@ -24,10 +24,8 @@ public class Rate {
 
     @ManyToOne
     @JoinColumn(name = "currency_id", nullable = false)
-    private Currency currency;
-
-    @Column(nullable = false)
-    private LocalDateTime date;
+    private Currency currency;    @Column(nullable = false)
+    private ZonedDateTime date;
 
     @Column(nullable = false)
     private BigDecimal amount;

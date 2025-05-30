@@ -23,7 +23,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 import static com.example.fintrack.bill.BillSpecification.*;
 import static com.example.fintrack.bill.BillSpecification.hasCategoryId;
@@ -72,9 +72,7 @@ public class BillService {
         bill.setPaidBy(user);
 
         billRepository.save(bill);
-    }
-
-    public Page<BillDto> getBills(LocalDateTime from, LocalDateTime to, Long categoryId, SortDirection sortDirection,
+    }    public Page<BillDto> getBills(ZonedDateTime from, ZonedDateTime to, Long categoryId, SortDirection sortDirection,
                                   int page, int pageSize) {
         User loggedUser = userProvider.getLoggedUser();
 

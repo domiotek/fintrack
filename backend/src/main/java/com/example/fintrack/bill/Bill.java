@@ -11,7 +11,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Objects;
 
 @Entity
@@ -43,13 +43,11 @@ public class Bill {
 
     @ManyToOne
     @JoinColumn(name = "paid_by")
-    private User paidBy;
-
-    @Column(nullable = false)
+    private User paidBy;    @Column(nullable = false)
     private String name;
 
     @Column(nullable = false)
-    private LocalDateTime date;
+    private ZonedDateTime date;
 
     @Column(nullable = false)
     private BigDecimal amount;

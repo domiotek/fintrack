@@ -8,7 +8,8 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 import static com.example.fintrack.exception.BusinessErrorCodes.*;
@@ -32,13 +33,11 @@ public class CurrencyConverter {
                 .orElseThrow(CURRENCY_DOES_NOT_EXIST::getError);
 
         return convertWithRatesFromGivenDay(usd, currency, amount, date);
-    }
-
-    private BigDecimal convertWithRatesFromGivenDay(
+    }    private BigDecimal convertWithRatesFromGivenDay(
             Currency fromCurrency, Currency toCurrency, BigDecimal amount, LocalDate date
     ) {
-        LocalDateTime startDate = date.atStartOfDay();
-        LocalDateTime endDate = startDate.plusDays(1);
+        ZonedDateTime startDate = date.atStartOfDay(ZoneId.systemDefault());
+        ZonedDateTime endDate = startDate.plusDays(1);
 
         List<Rate> rates = rateRepository.findRatesByDateBetween(startDate, endDate);
 

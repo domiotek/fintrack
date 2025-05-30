@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -33,10 +33,8 @@ public class EventService {
     private final EventRepository eventRepository;
     private final UserProvider userProvider;
     private final CurrencyRepository currencyRepository;
-    private final CurrencyConverter currencyConverter;
-
-    public Page<EventDto> getUserEvents(
-            String name, EventStatus eventStatus, LocalDateTime fromDate, LocalDateTime toDate, int page, int size
+    private final CurrencyConverter currencyConverter;    public Page<EventDto> getUserEvents(
+            String name, EventStatus eventStatus, ZonedDateTime fromDate, ZonedDateTime toDate, int page, int size
     ) {
         User loggedUser = userProvider.getLoggedUser();
 
