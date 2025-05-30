@@ -3,7 +3,7 @@ package com.example.fintrack.category;
 import com.example.fintrack.category.dto.CategoryDto;
 import com.example.fintrack.security.service.UserProvider;
 import com.example.fintrack.user.User;
-import com.example.fintrack.utils.SortDirection;
+import com.example.fintrack.util.enums.SortDirection;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
