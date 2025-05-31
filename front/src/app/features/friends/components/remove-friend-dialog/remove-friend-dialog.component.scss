@@ -1,0 +1,18 @@
+@use '../../../../styles/variables' as *;
+
+mat-dialog-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2em;
+  p {
+    font-size: 0.95em;
+  }
+
+  app-custom-list {
+    min-height: 150px;
+  }
+}
+
+.delete-button {
+  color: rgba($red, 0.6);
+}

@@ -1,8 +1,8 @@
 import { Component, DestroyRef, inject, input, OnInit, signal } from '@angular/core';
-import { Chat } from '../../../core/models/chat/chat.model';
-import { AvatarComponent } from '../avatar/avatar.component';
+import { Chat } from '../../../../core/models/chat/chat.model';
+import { AvatarComponent } from '../../../../shared/components/avatar/avatar.component';
 import { MatIconModule } from '@angular/material/icon';
-import { AppStateStore } from '../../../core/store/app-state.store';
+import { AppStateStore } from '../../../../core/store/app-state.store';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { DateTime } from 'luxon';

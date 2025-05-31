@@ -1,1 +1,6 @@
-<span>{{ name()[0] | uppercase }}</span>
+<span
+  >{{ name()[0] | uppercase }}
+  @if (surname()) {
+    {{ surname()![0] | uppercase }}
+  }
+</span>

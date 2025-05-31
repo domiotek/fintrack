@@ -1,0 +1,28 @@
+@use '../../../styles/variables' as *;
+
+:host {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  align-items: center;
+}
+
+.middle-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+
+  .secondary-text {
+    color: $gray;
+    font-size: 0.75rem;
+    white-space: nowrap;
+  }
+}
+
+.end-container {
+  display: flex;
+  align-items: center;
+  width: fit-content;
+  flex-shrink: 0;
+}

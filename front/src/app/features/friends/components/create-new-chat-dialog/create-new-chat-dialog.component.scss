@@ -1,0 +1,12 @@
+mat-dialog-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2em;
+  p {
+    font-size: 0.95em;
+  }
+
+  app-custom-list {
+    min-height: 150px;
+  }
+}

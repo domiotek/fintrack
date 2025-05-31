@@ -1,0 +1,25 @@
+<h2 mat-dialog-title>Zarządzaj znajomymi</h2>
+
+<mat-dialog-content>
+  <p>Przeglądaj swoją listę znajomych i usuń tych, których już nie chcesz mieć na liście.</p>
+
+  <app-search-input placeholder="Wyszukaj" (emitSearch)="onSearch($event)" [(ngModel)]="searchValue" />
+
+  <app-custom-list
+    [items]="friends()"
+    [itemTemplate]="requestItemTemplate"
+    [isSelectable]="true"
+    (selectEmit)="onUserSelected($event)"
+  />
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-flat-button type="button" mat-dialog-close>Zamknij</button>
+</mat-dialog-actions>
+
+<ng-template #requestItemTemplate let-item>
+  <app-user-item [item]="item" [showEmail]="true">
+    <button class="delete-button" mat-icon-button type="button" (click)="onRemoveFriendAttempt(item)">
+      <mat-icon>delete</mat-icon>
+    </button>
+  </app-user-item>
+</ng-template>

@@ -1,15 +1,16 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { Chat } from '../../models/chat/chat.model';
+import { Chat, PrivateChat } from '../../models/chat/chat.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ChatService {
-  mockedChats: Chat[] = [
+  mockedChats: PrivateChat[] = [
     {
       id: 'e34f1c4d-9b1a-4c7d-8f5e-2d3b6c7a8f9d',
       name: 'Konrad',
+      isFriend: true,
       lastMessage: {
         id: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d',
         authorType: 'system',
@@ -21,6 +22,7 @@ export class ChatService {
     {
       id: '7a2b9c4d-5e6f-4a1b-9c8d-3f2e1d4b5a6c',
       name: 'Artur',
+      isFriend: true,
       lastMessage: {
         id: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d',
         authorType: 'user',
@@ -34,6 +36,7 @@ export class ChatService {
     {
       id: '1f2e3d4c-5b6a-7890-9c8d-7e6f5d4c3b2a',
       name: 'Mateusz',
+      isFriend: false,
       lastMessage: {
         id: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d',
         authorType: 'user',
@@ -46,7 +49,11 @@ export class ChatService {
     },
   ];
 
-  getChatsList(): Observable<Chat[]> {
+  getPrivateChatsList(): Observable<PrivateChat[]> {
     return of([...this.mockedChats]);
+  }
+
+  getUserIdsWithPrivateChat(): Observable<number[]> {
+    return of([1, 2, 4]);
   }
 }

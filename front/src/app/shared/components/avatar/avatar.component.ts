@@ -9,4 +9,5 @@ import { Component, input } from '@angular/core';
 })
 export class AvatarComponent {
   readonly name = input.required<string>();
+  readonly surname = input<string>();
 }

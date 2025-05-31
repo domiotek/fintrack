@@ -9,8 +9,12 @@ export interface Chat {
   lastReadMessageId?: string;
 }
 
+export interface PrivateChat extends Chat {
+  isFriend: boolean;
+}
+
 export interface FullyFetchedChat extends Chat {
   participants: Friend[];
   messages: ChatMessage[];
-  lastReadMessageById: Record<string, LastReadMessage>;
+  lastReadMessageByUserId: Record<number, LastReadMessage>;
 }
