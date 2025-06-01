@@ -24,6 +24,7 @@ import { SortItem } from '../../../../core/models/sort/sort-item';
 import { EVENTS_SORT_ITEMS } from '../../../categories/constants/events-sort-items';
 import { EventDetailsComponent } from '../../components/event-details/event-details.component';
 import { NoSelectedComponent } from '../../../../shared/components/no-selected/no-selected.component';
+import { Event } from '../../../../core/models/events/event';
 
 @Component({
   selector: 'app-events',
@@ -61,8 +62,8 @@ export class EventsComponent implements OnInit {
   filters = signal<EventFilters>({
     name: null,
     eventStatus: null,
-    fromDate: null,
-    toDate: null,
+    from: null,
+    to: null,
   });
 
   pagination = signal<Pagination>({
@@ -84,8 +85,8 @@ export class EventsComponent implements OnInit {
   ngOnInit(): void {
     this.filters.set({
       ...this.filters(),
-      fromDate: `${this.timeRange().from.toISODate()}T00:00:00`,
-      toDate: `${this.timeRange().to.toISODate()}T23:59:59`,
+      from: `${this.timeRange().from.toISO()}`,
+      to: `${this.timeRange().to.toISO()}`,
     });
 
     this.getEvents();
@@ -114,8 +115,8 @@ export class EventsComponent implements OnInit {
     this.timeRange.set(timeRange);
     this.filters.set({
       ...this.filters(),
-      fromDate: `${timeRange.from.toISODate()}T00:00:00`,
-      toDate: `${timeRange.to.toISODate()}T23:59:59`,
+      from: `${timeRange.from.toISO()}`,
+      to: `${timeRange.to.toISO()}`,
     });
   }, 300);
 

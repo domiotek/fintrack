@@ -14,6 +14,7 @@ import { AppStateStore } from './core/store/app-state.store';
 import { firstValueFrom, switchMap } from 'rxjs';
 import { ConfigService } from './core/services/config/config.service';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { loadingInterceptor } from './core/interceptors/loading/loading.interceptor';
 
 async function initializeAppFactory(configService: ConfigService) {
   try {
@@ -27,7 +28,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideExperimentalZonelessChangeDetection(),
     provideRouter(routes),
-    provideHttpClient(withInterceptors([authInterceptor, httpErrorInterceptor])),
+    provideHttpClient(withInterceptors([authInterceptor, httpErrorInterceptor, loadingInterceptor])),
     provideAnimations(),
     provideAppInitializer(() => {
       const configService = inject(ConfigService);

@@ -1,3 +1,5 @@
+@let userCurrency = userCurrency$ | async;
+
 <mat-tab-group>
   <mat-tab label="Wiadomości">
     <ng-template matTabContent>
@@ -6,22 +8,22 @@
   </mat-tab>
   <mat-tab label="Rachunki">
     <ng-template matTabContent>
-      <p>Rachunki</p>
+      <app-event-details-bills [event]="event()" [userCurrency]="userCurrency!" />
     </ng-template>
   </mat-tab>
   <mat-tab label="Użytkownicy">
     <ng-template matTabContent>
-      <p>Użytkownicy</p>
+      <app-event-details-users />
     </ng-template>
   </mat-tab>
   <mat-tab label="Podsumowanie wydatków">
-    <ng-template #matTabContent>
-      <p>Podsumowanie wydatków</p>
+    <ng-template matTabContent>
+      <app-event-details-settlements />
     </ng-template>
   </mat-tab>
   <mat-tab label="Ustawienia">
     <ng-template matTabContent>
-      <p>Ustawienia</p>
+      <app-event-details-settings />
     </ng-template>
   </mat-tab>
 </mat-tab-group>
