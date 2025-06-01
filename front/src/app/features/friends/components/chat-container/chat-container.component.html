@@ -1,0 +1,18 @@
+<mat-card [ngClass]="{ visible: visible() }">
+  @if (chat()) {
+    <mat-card-header class="chat-header">
+      @if (isMobile()) {
+        <button type="button" mat-icon-button (click)="onGoBack()">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+      }
+      <app-avatar [name]="chat()!.name" />
+      <h3>{{ chat()!.name }}</h3>
+    </mat-card-header>
+    <mat-card-content>
+      <app-chat [chatId]="'d'" [readonly]="false" />
+    </mat-card-content>
+  } @else if (!isMobile()) {
+    <app-no-selected placeholder="Nie wybrano czatu" />
+  }
+</mat-card>

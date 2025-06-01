@@ -1,0 +1,18 @@
+<div class="wrapper" [ngClass]="[type()]">
+  <app-avatar [name]="name()" [matTooltip]="name() + ' ' + surname()" />
+  <div class="content">
+    <div class="author-label">{{ name() }}</div>
+    <div class="message-list">
+      <ng-container *ngFor="let message of messages()">
+        <app-chat-message
+          [type]="type()"
+          [matTooltip]="getSentAtString(message)"
+          matTooltipPosition="before"
+          [attr.data-message-id]="message.id"
+        >
+          {{ message.content }}
+        </app-chat-message>
+      </ng-container>
+    </div>
+  </div>
+</div>

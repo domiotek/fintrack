@@ -1,0 +1,57 @@
+@if (loading() && offset() === 0) {
+  <div class="preloader">
+    <mat-spinner diameter="50" mode="indeterminate" />
+  </div>
+} @else {
+  <ng-scrollbar
+    externalContentWrapper=".chat-content"
+    appearance="compact"
+    [buttons]="true"
+    (reachedTop)="onScrolledTop()"
+    (droppedBottom)="onLeftBottom()"
+    (reachedBottom)="onScrolledBottom()"
+    (afterInit)="scrollToBottom(true)"
+    (afterUpdate)="onScrollerContentUpdate()"
+    [droppedBottomOffset]="droppedBottomOffset"
+    #scrollbarRef="ngScrollbar"
+  >
+    <div class="chat-content">
+      @for (block of messageBlocks(); track $index) {
+        @if (block.type === 'system') {
+          <app-chat-system-message [attr.data-message-id]="block.id">{{ block.message }}</app-chat-system-message>
+        } @else {
+          <app-chat-message-block
+            [type]="block.perspective"
+            [messages]="block.messages"
+            [name]="block.name"
+            [surname]="block.surname"
+          />
+        }
+      } @empty {
+        To początek czatu. Napisz coś, aby rozpocząć rozmowę!
+      }
+    </div>
+  </ng-scrollbar>
+}
+
+<app-typing-indicator [typingUsers]="typingUsers()" />
+
+<button
+  class="scroll-bottom-button"
+  [ngClass]="{ visible: scrollToBottomVisible() }"
+  type="button"
+  mat-mini-fab
+  (click)="scrollToBottom()"
+>
+  <mat-icon>keyboard_double_arrow_down</mat-icon>
+</button>
+
+<div class="load-more-indicator" [ngClass]="{ visible: loading() && offset() > 0 }">
+  <mat-spinner diameter="20" mode="indeterminate" /> Ładowanie wiadomości...
+</div>
+
+@if (readonly()) {
+  <app-chat-readonly-message />
+} @else {
+  <app-chat-input />
+}

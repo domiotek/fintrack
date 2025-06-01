@@ -7,7 +7,7 @@
   </button>
 </div>
 <div class="content">
-  @if (!isMobile() || !selectedChatId()) {
+  @if (!isMobile() || !selectedChat()) {
     <div class="chats-list-container">
       <div class="chats-list-header">
         <app-search-input placeholder="Wyszukaj po nazwie" (emitSearch)="onSearch($event)" [(ngModel)]="searchValue" />
@@ -24,18 +24,18 @@
           [items]="chats()"
           [itemTemplate]="categoryItemTemplate"
           [isSelectable]="true"
-          [(selectedItem)]="selectedChatId"
+          [(selectedItem)]="selectedChat"
           (selectEmit)="onChatSelect($event)"
         />
       </div>
     </div>
   }
-  <div class="chat-container" [style.display]="!isMobile() || selectedChatId() ? 'block' : 'none'">
-    @if (selectedChatId()) {
-    } @else if (!isMobile()) {
-      <app-no-selected placeholder="Nie wybrano czatu" />
-    }
-  </div>
+  <app-chat-container
+    [visible]="!isMobile() || selectedChat() !== null"
+    [chat]="selectedChat()"
+    [isMobile]="isMobile()"
+    (goBackEmit)="unselectChat()"
+  />
 </div>
 
 <ng-template #categoryItemTemplate let-item>

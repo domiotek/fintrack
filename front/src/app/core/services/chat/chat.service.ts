@@ -1,59 +1,117 @@
-import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { Chat, PrivateChat } from '../../models/chat/chat.model';
+import { Injectable, signal } from '@angular/core';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { delay } from 'rxjs/operators';
+import { PrivateChat } from '../../models/chat/chat.model';
+import { ChatMessage } from '../../models/chat/message.model';
+import { mockedChats, mockChatMessages } from './mock-chat-data';
+import { BasePagingResponse } from '../../models/api/paging.model';
+import { User } from '../../models/user/user.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ChatService {
-  mockedChats: PrivateChat[] = [
+  private readonly connectedChatId = signal<string | null>(null);
+  private readonly typingUsers = new BehaviorSubject<User[]>([]);
+  private readonly lastReadMessagesMap = new BehaviorSubject<Record<number, string>>({});
+  private typingGenerator?: ReturnType<typeof setInterval>;
+
+  readonly typingUsers$ = this.typingUsers.asObservable();
+  readonly lastReadMessagesMap$ = this.lastReadMessagesMap.asObservable();
+
+  private readonly mockUsers: User[] = [
     {
-      id: 'e34f1c4d-9b1a-4c7d-8f5e-2d3b6c7a8f9d',
+      id: 1,
       name: 'Konrad',
-      isFriend: true,
-      lastMessage: {
-        id: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d',
-        authorType: 'system',
-        content: 'Welcome to the chat!',
-        sentAt: '2023-10-01T12:00:00Z',
-      },
-      lastReadMessageId: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+      surname: 'Serwa',
+      email: 'konrad.serwa@example.com',
     },
     {
-      id: '7a2b9c4d-5e6f-4a1b-9c8d-3f2e1d4b5a6c',
+      id: 2,
       name: 'Artur',
-      isFriend: true,
-      lastMessage: {
-        id: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d',
-        authorType: 'user',
-        authorId: 2,
-        authorName: 'Artur',
-        content: 'Dawaj siano',
-        sentAt: '2023-10-01T12:00:00Z',
-      },
-      lastReadMessageId: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d',
+      surname: 'Pajor',
+      email: 'artur.pajor@example.com',
     },
     {
-      id: '1f2e3d4c-5b6a-7890-9c8d-7e6f5d4c3b2a',
-      name: 'Mateusz',
-      isFriend: false,
-      lastMessage: {
-        id: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d',
-        authorType: 'user',
-        authorId: 0,
-        authorName: 'Damian',
-        content: "What's up?",
-        sentAt: '2023-10-01T12:00:00Z',
-      },
-      lastReadMessageId: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d',
+      id: 0,
+      name: 'Damian',
+      surname: 'Omiotek',
+      email: 'damian.omiotek@example.com',
     },
   ];
 
   getPrivateChatsList(): Observable<PrivateChat[]> {
-    return of([...this.mockedChats]);
+    return of([...mockedChats]);
   }
 
   getUserIdsWithPrivateChat(): Observable<number[]> {
     return of([1, 2, 4]);
+  }
+
+  connectToChat(chatId: string): Observable<void> {
+    this.connectedChatId.set(chatId);
+    this.startTypingGenerator();
+    return of();
+  }
+
+  private startTypingGenerator(): void {
+    this.stopTypingGenerator();
+
+    const generateTypingEvent = () => {
+      const shouldHaveTypingUsers = Math.random() > 0.7; // 30% chance of having typing users
+
+      if (shouldHaveTypingUsers) {
+        const numTypingUsers = Math.floor(Math.random() * 2) + 1; // 1-2 users
+        const shuffledUsers = [...this.mockUsers].sort(() => Math.random() - 0.5);
+        const typingUsers = shuffledUsers.slice(0, numTypingUsers);
+        this.typingUsers.next(typingUsers);
+
+        // Stop typing after 2-5 seconds
+        setTimeout(
+          () => {
+            this.typingUsers.next([]);
+          },
+          Math.random() * 3000 + 2000,
+        );
+      } else {
+        this.typingUsers.next([]);
+      }
+    };
+
+    // Generate typing events every 3-8 seconds
+    const scheduleNext = () => {
+      const delay = Math.random() * 5000 + 3000;
+      this.typingGenerator = setTimeout(() => {
+        generateTypingEvent();
+        scheduleNext();
+      }, delay);
+    };
+
+    scheduleNext();
+  }
+
+  private stopTypingGenerator(): void {
+    if (this.typingGenerator) {
+      clearTimeout(this.typingGenerator);
+      this.typingGenerator = undefined;
+    }
+    this.typingUsers.next([]);
+  }
+
+  getChatMessages(offset: number): Observable<BasePagingResponse<ChatMessage>> {
+    const pageSize = 30;
+    const startIndex = offset;
+    const endIndex = startIndex + pageSize;
+    const page = mockChatMessages.slice(startIndex, endIndex);
+
+    return of({
+      content: page,
+      page: {
+        size: pageSize,
+        number: Math.floor(startIndex / pageSize),
+        totalElements: mockChatMessages.length,
+        totalPages: Math.ceil(mockChatMessages.length / pageSize),
+      },
+    }).pipe(delay(1000));
   }
 }

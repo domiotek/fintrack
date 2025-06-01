@@ -17,6 +17,8 @@ import { AddFriendDialogComponent } from '../../components/add-friend-dialog/add
 import { PendingFriendRequestsDialogComponent } from '../../components/pending-friend-requests-dialog/pending-friend-requests-dialog.component';
 import { CreateNewChatDialogComponent } from '../../components/create-new-chat-dialog/create-new-chat-dialog.component';
 import { RemoveFriendDialogComponent } from '../../components/remove-friend-dialog/remove-friend-dialog.component';
+import { MatCardModule } from '@angular/material/card';
+import { ChatContainerComponent } from '../../components/chat-container/chat-container.component';
 
 @Component({
   selector: 'app-friends',
@@ -25,17 +27,18 @@ import { RemoveFriendDialogComponent } from '../../components/remove-friend-dial
     FormsModule,
     SearchInputComponent,
     CustomListComponent,
-    NoSelectedComponent,
     MatIconModule,
+    MatCardModule,
     MatButtonModule,
     ChatItemComponent,
+    ChatContainerComponent,
   ],
   templateUrl: './friends.component.html',
   styleUrl: './friends.component.scss',
 })
 export class FriendsComponent {
   readonly isMobile = signal<boolean>(false);
-  readonly selectedChatId = signal<number | null>(null);
+  readonly selectedChat = signal<Chat | null>(null);
   readonly searchValue = signal<string>('');
   readonly chats = signal<Chat[]>([]);
 
@@ -63,10 +66,12 @@ export class FriendsComponent {
 
   onSearch(val: string): void {}
 
-  onChatSelect(category: any | null): void {
-    if (!category) {
-      this.selectedChatId.set(null);
-    }
+  unselectChat() {
+    this.selectedChat.set(null);
+  }
+
+  onChatSelect(chat: Chat): void {
+    this.selectedChat.set(chat);
   }
 
   openAddFriendDialog(): void {

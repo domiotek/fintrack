@@ -1,0 +1,50 @@
+:host {
+  width: 100%;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 1em;
+  margin-left: auto;
+  max-width: 100%;
+
+  app-avatar {
+    display: none;
+    align-self: flex-end;
+  }
+
+  .author-label {
+    display: none;
+    color: #777;
+    font-size: 0.8em;
+    padding-left: 0.9em;
+    margin-bottom: 0.25em;
+  }
+
+  .message-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+}
+
+.wrapper.their {
+  flex-direction: row;
+  align-self: flex-end;
+  margin-left: unset;
+
+  app-avatar {
+    display: flex;
+  }
+
+  .author-label {
+    display: block;
+  }
+}
+
+@media (width > 480px) {
+  .wrapper {
+    max-width: 60%;
+  }
+}

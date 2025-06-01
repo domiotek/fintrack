@@ -3,6 +3,7 @@ export interface ChatMessage {
   authorType: 'system' | 'user';
   authorId?: number;
   authorName?: string;
+  authorSurname?: string;
   sentAt: string;
   content: string;
 }
