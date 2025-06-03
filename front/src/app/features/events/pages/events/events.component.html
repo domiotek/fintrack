@@ -19,25 +19,33 @@
         <app-sort-menu [options]="sortOptions()" [(state)]="sortState" (sortChange)="onSortChange($event)" />
       </div>
       <div class="content__list_container__list">
-        <app-custom-list
-          [items]="events()"
-          [itemTemplate]="eventItemTemplate"
-          [isSelectable]="true"
-          [(selectedItem)]="selectedEvent"
-          (selectEmit)="onEventSelect($event)"
-        />
+        @if (isSearching()) {
+          <app-spinner />
+        } @else {
+          <app-custom-list
+            [items]="events()"
+            [itemTemplate]="eventItemTemplate"
+            [isSelectable]="true"
+            [(selectedItem)]="selectedEvent"
+            (selectEmit)="onEventSelect($event)"
+          />
+        }
       </div>
     </div>
   }
   <div class="content__selected_container" [style.display]="!isMobile() || selectedEvent() ? 'block' : 'none'">
-    @if (selectedEvent()) {
-      <app-event-details
-        [event]="selectedEvent()!"
-        [isMobile]="isMobile()"
-        (goBackEmit)="onEventSelect(null)"
-      />
-    } @else if (!isMobile()) {
-      <app-no-selected placeholder="Nie wybrano wydarzenia" />
+    @if (!reload()) {
+      @if (selectedEvent()) {
+        <app-event-details
+          [event]="selectedEvent()!"
+          [isMobile]="isMobile()"
+          (goBackEmit)="onEventSelect(null)"
+        />
+      } @else if (!isMobile()) {
+        <app-no-selected placeholder="Nie wybrano wydarzenia" />
+      }
+    } @else {
+      <app-spinner />
     }
   </div>
 </div>

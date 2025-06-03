@@ -3,11 +3,19 @@
   padding: 0;
   flex-direction: column;
   gap: 24px;
-  height: auto;
+  height: 100%;
   overflow-y: visible;
   position: relative;
   max-width: calc(100vw - 64px);
   width: 100%;
+
+  mat-tab-group {
+    height: 100%;
+  }
+}
+
+.mat-mdc-tab-body-wrapper {
+  height: 100%;
 }
 
 @media (max-width: 768px) {

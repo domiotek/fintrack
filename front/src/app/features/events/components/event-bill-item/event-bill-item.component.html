@@ -5,7 +5,7 @@
       <p class="bold">{{ bill().name }}</p>
     </div>
     <div class="info_bottom">
-      <p class="date">{{ bill().date }}</p>
+      <p class="date">{{ bill().date.slice(0, 10) }}</p>
       <!-- @if (showCategory()) { -->
         <!-- <div class="color_label" [style.backgroundColor]="transaction().category.color"></div>
         <p>{{ transaction().category.name }}</p> -->
@@ -14,7 +14,7 @@
   </div>
 </div>
 <div class="middle_container">
-  <p>Do zapłaty: </p>
+  <p>Do zapłaty: &nbsp;</p>
   <div class="to_paid_container">
     @if (billCurrency().id) {
       <p class="main_amount bold">{{ bill().userCurrency.costPerUser }} {{ userCurrency().code }}</p>
@@ -26,9 +26,9 @@
 </div>
 <div class="right_container">
   @if (billCurrency().id) {
-    <p class="main_amount bold">{{ bill().userCurrency.amount }} {{ userCurrency().code }}</p>
+    <p class="main_amount bold">{{ bill().userCurrency.totalSum }} {{ userCurrency().code }}</p>
   } @else {
-    <p class="main_amount bold">~ {{ bill().userCurrency.amount }} {{ userCurrency().code }}</p>
-    <p class="payment_amount">{{ bill().eventCurrency.amount }} {{ billCurrency().code }}</p>
+    <p class="main_amount bold">~ {{ bill().userCurrency.totalSum }} {{ userCurrency().code }}</p>
+    <p class="payment_amount">{{ bill().eventCurrency.totalSum }} {{ billCurrency().code }}</p>
   }
 </div>

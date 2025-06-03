@@ -50,6 +50,20 @@
     }
   }
 
+  .middle_container {
+    display: flex;
+    height: 40px;
+    align-items: center;
+
+    .to_paid_container {
+      display: flex;
+      flex-direction: column;
+      height: 40px;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
   .right_container {
     text-align: right;
 

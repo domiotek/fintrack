@@ -1,14 +1,22 @@
 @if (isLoading()) {
-  <div class="loadingState">
-    <mat-spinner mode="indeterminate"></mat-spinner>
-    <h5>Jeszcze chwila...</h5>
-  </div>
+  <app-spinner />
 } @else {
-  <app-custom-list
-    [items]="event().eventBills ?? []"
-    [itemTemplate]="billsItemTemplate"
-    [isSelectable]="false"
-  />
+  <div class="summary-container">
+    <app-event-bills-summary
+      [summary]="event().eventSummary!"
+      [eventCurrency]="event().currency"
+      [userCurrency]="userCurrency()"
+    />
+  </div>
+  <div class="list-container">
+    <p>Lista rachunków</p>
+    <hr />
+    <app-custom-list
+      [items]="event().eventBills ?? []"
+      [itemTemplate]="billsItemTemplate"
+      [isSelectable]="false"
+    />
+  </div>
 }
 
 <ng-template #billsItemTemplate let-item>

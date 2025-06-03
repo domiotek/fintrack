@@ -5,14 +5,14 @@ import { EventsService } from '../../../../core/services/events/events.service';
 import { Pagination } from '../../../../core/models/pagination/pagination';
 import { LoadingService } from '../../../../core/services/loading/loading.service';
 import { CommonModule } from '@angular/common';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { TransactionItemComponent } from '../../../../shared/components/transaction-item/transaction-item.component';
 import { Currency } from '../../../../core/models/currency/currency.model';
 import { EventBillItemComponent } from '../event-bill-item/event-bill-item.component';
+import { SpinnerComponent } from '../../../../core/components/spinner/spinner.component';
+import { EventBillsSummaryComponent } from '../event-bills-summary/event-bills-summary.component';
 
 @Component({
   selector: 'app-event-details-bills',
-  imports: [CommonModule, MatProgressSpinnerModule, CustomListComponent, EventBillItemComponent],
+  imports: [CommonModule, CustomListComponent, EventBillItemComponent, SpinnerComponent, EventBillsSummaryComponent],
   templateUrl: './event-details-bills.component.html',
   styleUrl: './event-details-bills.component.scss',
 })
@@ -39,6 +39,15 @@ export class EventDetailsBillsComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         console.error('Error fetching bills:', error);
+      },
+    });
+
+    this.eventsService.getEventSummary(this.event().id).subscribe({
+      next: (res) => {
+        this.event().eventSummary = res;
+      },
+      error: (error) => {
+        console.error('Error fetching event summary:', error);
       },
     });
   }

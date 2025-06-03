@@ -14,7 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { SearchInputComponent } from '../../../../shared/controls/search-input/search-input.component';
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { tap } from 'rxjs';
+import { finalize, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { SortMenuComponent } from '../../../../shared/components/sort-menu/sort-menu.component';
@@ -25,6 +25,7 @@ import { EVENTS_SORT_ITEMS } from '../../../categories/constants/events-sort-ite
 import { EventDetailsComponent } from '../../components/event-details/event-details.component';
 import { NoSelectedComponent } from '../../../../shared/components/no-selected/no-selected.component';
 import { Event } from '../../../../core/models/events/event';
+import { SpinnerComponent } from '../../../../core/components/spinner/spinner.component';
 
 @Component({
   selector: 'app-events',
@@ -40,6 +41,7 @@ import { Event } from '../../../../core/models/events/event';
     SortMenuComponent,
     EventDetailsComponent,
     NoSelectedComponent,
+    SpinnerComponent,
   ],
   templateUrl: './events.component.html',
   styleUrl: './events.component.scss',
@@ -52,6 +54,8 @@ export class EventsComponent implements OnInit {
   private readonly observer = inject(BreakpointObserver);
 
   private readonly destroyRef = inject(DestroyRef);
+
+  isSearching = signal<boolean>(false);
 
   isMobile = signal<boolean>(false);
 
@@ -82,6 +86,8 @@ export class EventsComponent implements OnInit {
     to: this.timeRange().to.endOf('month'),
   }));
 
+  reload = signal<boolean>(false);
+
   ngOnInit(): void {
     this.filters.set({
       ...this.filters(),
@@ -108,6 +114,7 @@ export class EventsComponent implements OnInit {
       name: searchValue || null,
     });
     this.getEvents();
+    this.selectedEvent.set(null);
   }
 
   onProjectionDateChange = debounceHandler((timeRange: TimeRange) => {
@@ -118,14 +125,20 @@ export class EventsComponent implements OnInit {
       from: `${timeRange.from.toISO()}`,
       to: `${timeRange.to.toISO()}`,
     });
+
+    this.onSearch(this.filters().name || '');
   }, 300);
 
   onEventSelect(event: Event | null): void {
     if (!event) {
       this.selectedEvent.set(null);
+      return;
       // return; sonar sie czepia
     }
-    // console.log('Event selected:', event);
+    this.reload.set(true);
+    setTimeout(() => {
+      this.reload.set(false);
+    }, 250);
   }
 
   onSortChange(state: SortState): void {
@@ -134,6 +147,13 @@ export class EventsComponent implements OnInit {
   }
 
   private getEvents(): void {
-    this.eventsService.getEvents(this.filters(), this.pagination()).subscribe();
+    this.isSearching.set(true);
+    this.eventsService
+      .getEvents(this.filters(), this.pagination())
+      .pipe(
+        finalize(() => this.isSearching.set(false)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
   }
 }
