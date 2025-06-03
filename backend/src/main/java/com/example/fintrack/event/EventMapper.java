@@ -41,8 +41,8 @@ public class EventMapper {
     ) {
         SettlementUserDto settlementUserDto = SettlementUserDto.builder()
                 .id(settlementEntry.getKey().getId())
-                .firstname(settlementEntry.getKey().getFirstName())
-                .lastname(settlementEntry.getKey().getLastName())
+                .firstName(settlementEntry.getKey().getFirstName())
+                .lastName(settlementEntry.getKey().getLastName())
                 .build();
 
         SettlementCurrencyDto settlementCurrencyDto = SettlementCurrencyDto.builder()

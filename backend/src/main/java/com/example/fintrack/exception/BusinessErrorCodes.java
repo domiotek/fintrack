@@ -32,6 +32,7 @@ public enum BusinessErrorCodes {
     CATEGORY_DOES_NOT_EXIST(404, "Category does not exist", HttpStatus.NOT_FOUND),
     BILL_DOES_NOT_EXIST(405, "Bill does not exist", HttpStatus.NOT_FOUND),
     MISSING_REQUEST_BODY(501, "Missing request body", HttpStatus.FAILED_DEPENDENCY),
+    LIMIT_DOES_NOT_EXIST(406, "Limit does not exist", HttpStatus.NOT_FOUND),
     REQUEST_FAILED(502, "Request failed", HttpStatus.BAD_GATEWAY);
 
     private final int code;
