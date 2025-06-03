@@ -7,7 +7,7 @@
       <p class="bold">{{ transaction().name }}</p>
     </div>
     <div class="info_bottom">
-      <p class="date">{{ transaction().date }}</p>
+      <p class="date">{{ transaction().date.slice(0, 10) }}</p>
       @if (showCategory()) {
         <div class="color_label" [style.backgroundColor]="transaction().category.color"></div>
         <p>{{ transaction().category.name }}</p>
