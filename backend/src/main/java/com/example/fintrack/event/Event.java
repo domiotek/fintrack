@@ -2,6 +2,7 @@ package com.example.fintrack.event;
 
 import com.example.fintrack.bill.Bill;
 import com.example.fintrack.currency.Currency;
+import com.example.fintrack.event.enums.EventStatus;
 import com.example.fintrack.userevent.UserEvent;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -9,9 +10,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Objects;
 import java.util.Set;
+
+import static jakarta.persistence.CascadeType.*;
 
 @Entity
 @Getter
@@ -28,11 +31,11 @@ public class Event {
     @JoinColumn(name = "currency_id", nullable = false)
     private Currency currency;
 
-    @OneToMany(mappedBy = "event")
+    @OneToMany(mappedBy = "event", cascade = {PERSIST, MERGE, REMOVE})
     @ToString.Exclude
     private Set<UserEvent> users;
 
-    @OneToMany(mappedBy = "event")
+    @OneToMany(mappedBy = "event", cascade = {PERSIST, MERGE, REMOVE})
     @ToString.Exclude
     private Set<Bill> bills;
 
@@ -40,12 +43,12 @@ public class Event {
     private String name;
 
     @Column(nullable = false)
-    private LocalDateTime startDateTime;
+    private ZonedDateTime startDateTime;
 
-    private LocalDateTime endDateTime;
+    private ZonedDateTime endDateTime;
 
     public EventStatus getEventStatus() {
-        LocalDateTime now = LocalDateTime.now();
+        ZonedDateTime now = ZonedDateTime.now();
 
         if (now.isBefore(startDateTime)) {
             return EventStatus.UPCOMING;

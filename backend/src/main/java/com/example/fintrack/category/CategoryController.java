@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @RestController
 @RequestMapping("/categories")
@@ -22,9 +22,9 @@ public class CategoryController {
     @GetMapping
     public ResponseEntity<Page<CategoryDto>> getCategories(
             @RequestParam(required = false) String name,
-            @RequestParam(required = false) LocalDateTime from,
-            @RequestParam(required = false) LocalDateTime to,
-            @RequestParam(required = false) SortDirection sortDirection,
+            @RequestParam(required = false) ZonedDateTime from,
+            @RequestParam(required = false) ZonedDateTime to,
+            @RequestParam(defaultValue = "ASC") SortDirection sortDirection,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {

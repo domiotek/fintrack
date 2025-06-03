@@ -1,9 +1,6 @@
 package com.example.fintrack.bill;
 
-import com.example.fintrack.bill.dto.AddBillDto;
-import com.example.fintrack.bill.dto.AddBillEventDto;
-import com.example.fintrack.bill.dto.BillDto;
-import com.example.fintrack.bill.dto.EventBillDto;
+import com.example.fintrack.bill.dto.*;
 import com.example.fintrack.category.Category;
 import com.example.fintrack.category.CategoryRepository;
 import com.example.fintrack.currency.Currency;
@@ -23,7 +20,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 import static com.example.fintrack.bill.BillSpecification.*;
 import static com.example.fintrack.bill.BillSpecification.hasCategoryId;
@@ -74,13 +71,44 @@ public class BillService {
         billRepository.save(bill);
     }
 
-    public Page<BillDto> getBills(LocalDateTime from, LocalDateTime to, Long categoryId, SortDirection sortDirection,
-                                  int page, int pageSize) {
+    public void updateBillInEvent(long eventId, long billId, UpdateBillEventDto updateBillEventDto) {
+        Event event = eventRepository.findById(eventId).orElseThrow(EVENT_DOES_NOT_EXIST::getError);
+
+        Bill bill = event.getBills().stream().filter(b -> b.getId() == billId).findFirst()
+                .orElseThrow(BILL_DOES_NOT_EXIST::getError);
+
+        if (updateBillEventDto.name() != null) {
+            bill.setName(updateBillEventDto.name());
+        }
+        if (updateBillEventDto.date() != null) {
+            bill.setDate(updateBillEventDto.date());
+        }
+        if (updateBillEventDto.amount() != null) {
+            BigDecimal amount = currencyConverter
+                    .convertFromGivenCurrencyToUSD(event.getCurrency(), updateBillEventDto.amount());
+
+            bill.setAmount(amount);
+        }
+
+        billRepository.save(bill);
+    }
+
+    public void deleteBillFromEvent(long eventId, long billId) {
+        Event event = eventRepository.findById(eventId).orElseThrow(EVENT_DOES_NOT_EXIST::getError);
+
+        Bill bill = event.getBills().stream().filter(b -> b.getId() == billId).findFirst()
+                .orElseThrow(BILL_DOES_NOT_EXIST::getError);
+
+        billRepository.delete(bill);
+    }
+
+    public Page<BillDto> getBills(
+            ZonedDateTime from, ZonedDateTime to, Long categoryId, SortDirection sortDirection, int page, int size
+    ) {
         User loggedUser = userProvider.getLoggedUser();
 
         Specification<Bill> billSpecification = hasUserId(loggedUser.getId());
         billSpecification = billSpecification.or(hasPaidById(loggedUser.getId()));
-
         if(from != null && to != null) {
             billSpecification = billSpecification.and(hasBillsBetweenDates(from, to));
         }
@@ -89,9 +117,11 @@ public class BillService {
         }
 
         Sort.Direction sortDirectionSpringEnum = sortDirection.toSortDirection();
-        PageRequest pageRequest = PageRequest.of(page, pageSize, Sort.by(sortDirectionSpringEnum, "category"));
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(sortDirectionSpringEnum, "category"));
 
-        return billRepository.findAll(billSpecification, pageRequest).map(bill -> BillMapper.billToBillDto(bill, currencyConverter, loggedUser));
+        Page<Bill> bills = billRepository.findAll(billSpecification, pageRequest);
+
+        return bills.map(bill -> BillMapper.billToBillDto(bill, currencyConverter, loggedUser));
     }
 
     public void addBill(AddBillDto addBillDto) {

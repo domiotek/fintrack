@@ -6,12 +6,11 @@ import com.example.fintrack.util.enums.SortDirection;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.web.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @RestController
 @RequestMapping("/bills")
@@ -22,14 +21,14 @@ public class BillController {
 
     @GetMapping
     public ResponseEntity<Page<BillDto>> getBills(
-            @RequestParam LocalDateTime from,
-            @RequestParam LocalDateTime to,
-            @RequestParam (required = false) Long categoryId,
-            @RequestParam SortDirection sortDirection,
-            @RequestParam int page,
-            @RequestParam int pageSize
-            ) {
-        return ResponseEntity.ok().body(billService.getBills(from, to, categoryId, sortDirection, page, pageSize));
+            @RequestParam ZonedDateTime from,
+            @RequestParam ZonedDateTime to,
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(defaultValue = "ASC") SortDirection sortDirection,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return ResponseEntity.ok().body(billService.getBills(from, to, categoryId, sortDirection, page, size));
     }
 
     @PostMapping

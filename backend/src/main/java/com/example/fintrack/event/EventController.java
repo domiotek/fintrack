@@ -3,8 +3,13 @@ package com.example.fintrack.event;
 import com.example.fintrack.bill.dto.AddBillEventDto;
 import com.example.fintrack.bill.dto.EventBillDto;
 import com.example.fintrack.bill.BillService;
+import com.example.fintrack.bill.dto.UpdateBillEventDto;
+import com.example.fintrack.event.dto.EventSummaryDto;
+import com.example.fintrack.event.enums.EventSortField;
+import com.example.fintrack.event.enums.EventStatus;
 import com.example.fintrack.event.dto.*;
 import com.example.fintrack.user.UserService;
+import com.example.fintrack.utils.SortDirection;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -12,7 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @RestController
@@ -28,12 +33,16 @@ public class EventController {
     public ResponseEntity<Page<EventDto>> getUserEvents(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) EventStatus eventStatus,
-            @RequestParam(required = false) LocalDateTime fromDate,
-            @RequestParam(required = false) LocalDateTime toDate,
+            @RequestParam(required = false) ZonedDateTime from,
+            @RequestParam(required = false) ZonedDateTime to,
+            @RequestParam(defaultValue = "NAME") EventSortField sortField,
+            @RequestParam(defaultValue = "ASC") SortDirection sortDirection,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        return ResponseEntity.ok().body(eventService.getUserEvents(name, eventStatus, fromDate, toDate, page, size));
+        return ResponseEntity.ok().body(eventService.getUserEvents(
+                name, eventStatus, from, to, sortField, sortDirection, page, size
+        ));
     }
 
     @GetMapping("/{event-id}/bills")
@@ -57,6 +66,23 @@ public class EventController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @PutMapping("/{event-id}")
+    public ResponseEntity<Void> updateEvent(
+            @PathVariable("event-id") long eventId,
+            @RequestBody UpdateEventDto updateEventDto
+    ) {
+        eventService.updateEvent(eventId, updateEventDto);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{event-id}")
+    public ResponseEntity<Void> deleteEvent(@PathVariable("event-id") long eventId) {
+        eventService.deleteEvent(eventId);
+
+        return ResponseEntity.noContent().build();
+    }
+
     @PostMapping("/{event-id}/bills")
     public ResponseEntity<Void> addBillToEvent(
             @RequestBody AddBillEventDto addBillEventDto,
@@ -65,6 +91,27 @@ public class EventController {
         billService.addBillToEvent(addBillEventDto, eventId);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @PutMapping("/{event-id}/bills/{bill-id}")
+    public ResponseEntity<Void> updateBillInEvent(
+            @PathVariable("event-id") long eventId,
+            @PathVariable("bill-id") long billId,
+            @RequestBody UpdateBillEventDto updateBillEventDto
+    ) {
+        billService.updateBillInEvent(eventId, billId, updateBillEventDto);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{event-id}/bills/{bill-id}")
+    public ResponseEntity<Void> deleteBillFromEvent(
+            @PathVariable("event-id") long eventId,
+            @PathVariable("bill-id") long billId
+    ) {
+        billService.deleteBillFromEvent(eventId, billId);
+
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{event-id}/users/{user-id}")
