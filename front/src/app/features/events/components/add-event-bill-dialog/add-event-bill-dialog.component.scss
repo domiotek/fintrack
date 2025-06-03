@@ -1,0 +1,25 @@
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+
+  .form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+  }
+}
+
+@media (width > 600px) {
+  form .form-row {
+    flex-direction: row;
+
+    > * {
+      flex: 1;
+    }
+
+    mat-form-field:nth-child(1) {
+      flex-basis: 15%;
+    }
+  }
+}

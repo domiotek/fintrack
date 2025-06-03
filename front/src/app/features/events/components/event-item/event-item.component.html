@@ -1,5 +1,5 @@
 <div class="left_container">
-  <div class="circle bold">{{ event().name.slice(0,2).toUpperCase() }}</div>
+  <div class="circle bold">{{ event().name.slice(0, 2).toUpperCase() }}</div>
   <div class="info">
     <div class="info_top bold">{{ event().name }}</div>
     <div class="info_bottom">
@@ -9,7 +9,7 @@
           <span class="status">Nachodzące</span>
         }
         @case ('ONGOING') {
-          <div class="color_label"  [style.backgroundColor]="'#008000'"></div>
+          <div class="color_label" [style.backgroundColor]="'#008000'"></div>
           <span class="status">W trakcie</span>
         }
         @case ('FINISHED') {

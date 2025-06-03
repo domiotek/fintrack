@@ -9,16 +9,20 @@
     />
   </div>
   <div class="list-container">
-    <p>Lista rachunków</p>
+    <div class="button-container">
+      <p>Lista rachunków</p>
+      <button type="button" mat-mini-fab (click)="onAddBillDialog()"><mat-icon>add</mat-icon></button>
+    </div>
     <hr />
-    <app-custom-list
-      [items]="event().eventBills ?? []"
-      [itemTemplate]="billsItemTemplate"
-      [isSelectable]="false"
-    />
+    <app-custom-list [items]="event().eventBills ?? []" [itemTemplate]="billsItemTemplate" [isSelectable]="false" />
   </div>
 }
 
 <ng-template #billsItemTemplate let-item>
-  <app-event-bill-item [bill]="item" [userCurrency]="userCurrency()" [billCurrency]="event().currency" />
+  <app-event-bill-item
+    [bill]="item"
+    [userCurrency]="userCurrency()"
+    [billCurrency]="event().currency"
+    [isMobile]="isMobile()"
+  />
 </ng-template>

@@ -10,6 +10,6 @@ export interface EventBill {
 }
 
 export interface EventCurrency {
-  totalSum: number;
+  amount: number;
   costPerUser: number;
 }

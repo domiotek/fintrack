@@ -15,15 +15,15 @@
   </div>
 </div>
 <div class="right_container">
-<div class="data">
+  <div class="data">
     <p class="bold main-val">
       {{
         `${eventCurrency().id !== userCurrency().id ? '~' : ''}
-        ${summary().userCurrency.totalSum} ${userCurrency().code}`
+        ${summary().userCurrency.amount} ${userCurrency().code}`
       }}
     </p>
     @if (eventCurrency().id !== userCurrency().id) {
-      <p class="second-val">{{ summary().eventCurrency.totalSum }} {{ eventCurrency().code }}</p>
+      <p class="second-val">{{ summary().eventCurrency.amount }} {{ eventCurrency().code }}</p>
     }
   </div>
   <div class="label bold">

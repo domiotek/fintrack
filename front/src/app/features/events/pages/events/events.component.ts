@@ -98,7 +98,7 @@ export class EventsComponent implements OnInit {
     this.getEvents();
 
     this.observer
-      .observe('(max-width: 768px)')
+      .observe('(max-width: 1024px)')
       .pipe(
         tap((res) => {
           this.isMobile.set(res.matches);

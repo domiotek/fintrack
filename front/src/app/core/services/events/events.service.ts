@@ -1,4 +1,4 @@
-import { Observable, tap } from 'rxjs';
+import { Observable, Subject, tap } from 'rxjs';
 import { inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../../environments/environments';
 import { HttpClient, HttpParams } from '@angular/common/http';
@@ -10,14 +10,23 @@ import { EventSummary } from '../../models/events/event-summary';
 import { EventSettlements } from '../../models/events/event-settlements';
 import { CreateEventRequest } from '../../models/events/create-event-request';
 import { AddBillEventRequest } from '../../models/events/add-bill-event-request';
+import { BaseApiService } from '../base-api.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class EventsService {
+export class EventsService extends BaseApiService {
   private readonly apiUrl = `${environment.apiUrl}/events`;
 
   private readonly http = inject(HttpClient);
+
+  private readonly billRefreshSubject = new Subject<void>();
+
+  billRefresh$ = this.billRefreshSubject.asObservable();
+
+  emitBIllRefresh(): void {
+    this.billRefreshSubject.next();
+  }
 
   readonly events = signal<Event[]>([]);
 

@@ -33,14 +33,10 @@
       </div>
     </div>
   }
-  <div class="content__selected_container" [style.display]="!isMobile() || selectedEvent() ? 'block' : 'none'">
+  <div class="content__selected_container" [style.display]="!isMobile() || selectedEvent() ? 'flex' : 'none'">
     @if (!reload()) {
       @if (selectedEvent()) {
-        <app-event-details
-          [event]="selectedEvent()!"
-          [isMobile]="isMobile()"
-          (goBackEmit)="onEventSelect(null)"
-        />
+        <app-event-details [event]="selectedEvent()!" [isMobile]="isMobile()" (goBackEmit)="onEventSelect(null)" />
       } @else if (!isMobile()) {
         <app-no-selected placeholder="Nie wybrano wydarzenia" />
       }
@@ -49,8 +45,6 @@
     }
   </div>
 </div>
-
-
 
 <ng-template #eventItemTemplate let-item>
   <app-event-item [event]="item" />

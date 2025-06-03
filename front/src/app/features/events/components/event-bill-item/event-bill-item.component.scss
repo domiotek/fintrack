@@ -45,6 +45,7 @@
           height: 8px;
           width: 8px;
           border-radius: 50%;
+          background-color: $dark-blue-2;
         }
       }
     }
@@ -71,5 +72,11 @@
       color: $dark-gray;
       font-size: 12px;
     }
+  }
+
+  .overflow_ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
