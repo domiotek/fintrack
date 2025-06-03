@@ -20,6 +20,9 @@ public record AddBillDto(
    @NotNull
    Long currencyId,
    @NotNull
-   ZonedDateTime date
+   ZonedDateTime date,
+   Long eventId,
+   Long paidBy,
+   Long userId
 ) {
 }

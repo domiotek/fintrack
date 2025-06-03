@@ -19,32 +19,23 @@ public class CategorySpecification {
     }
 
     public static Specification<Category> hasCategoryBillsBetween(ZonedDateTime from, ZonedDateTime to) {
-        return (root, query, builder) -> {
-            Join<Category, Bill> billJoin = root.join("bills", JoinType.LEFT);
-            return builder.or(
-                    builder.between(billJoin.get("date"), from, to),
-                    builder.isNull(billJoin.get("id"))
-            );
+        return (root, query, builder) ->  {
+            Join<Category, Bill> billJoin = root.join("bills", JoinType.INNER);
+            return builder.between(billJoin.get("date"), from, to);
         };
     }
 
     public static Specification<Category> hasCategoryLimitsAfter(ZonedDateTime from) {
-        return (root, query, builder) -> {
-            Join<Category, Limit> limitJoin = root.join("limits", JoinType.LEFT);
-            return builder.or(
-                    builder.greaterThan(limitJoin.get("startDateTime"), from),
-                    builder.isNull(limitJoin.get("id"))
-            );
+        return (root, query, builder) ->  {
+            Join<Category, Limit> limitJoin = root.join("limits", JoinType.INNER);
+            return builder.greaterThan(limitJoin.get("startDateTime"), from);
         };
     }
 
     public static Specification<Category> hasCategoryLimitsBefore(ZonedDateTime to) {
-        return (root, query, builder) -> {
-            Join<Category, Limit> limitJoin = root.join("limits", JoinType.LEFT);
-            return builder.or(
-                    builder.lessThan(limitJoin.get("endDateTime"), to),
-                    builder.isNull(limitJoin.get("id"))
-            );
+        return (root, query, builder) ->  {
+            Join<Category, Limit> limitJoin = root.join("limits", JoinType.INNER);
+            return builder.lessThan(limitJoin.get("endDateTime"), to);
         };
     }
 }

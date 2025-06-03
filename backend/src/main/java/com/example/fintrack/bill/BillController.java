@@ -32,16 +32,9 @@ public class BillController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> addBill(@RequestBody @Valid AddBillDto addBillDto) {
+    public ResponseEntity<AddBillDto> addBill(@RequestBody @Valid AddBillDto addBillDto) {
         billService.addBill(addBillDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
-
-    @DeleteMapping("/{bill-id}")
-    public ResponseEntity<Void> deleteBill(@PathVariable("bill-id") Long id) {
-        billService.deleteBill(id);
-
-        return ResponseEntity.noContent().build();
     }
 }

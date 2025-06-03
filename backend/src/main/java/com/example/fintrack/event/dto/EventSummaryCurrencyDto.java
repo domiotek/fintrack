@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 
 @Builder
 public record EventSummaryCurrencyDto(
-        BigDecimal amount,
+        BigDecimal totalSum,
         BigDecimal costPerUser
 ) {
 }

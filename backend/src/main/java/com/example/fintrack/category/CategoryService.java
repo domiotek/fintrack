@@ -1,6 +1,5 @@
 package com.example.fintrack.category;
 
-import com.example.fintrack.category.dto.AddCategoryDto;
 import com.example.fintrack.category.dto.CategoryDto;
 import com.example.fintrack.security.service.UserProvider;
 import com.example.fintrack.user.User;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
 import java.time.ZonedDateTime;
 
 import static com.example.fintrack.category.CategorySpecification.*;
-import static com.example.fintrack.exception.BusinessErrorCodes.CATEGORY_DOES_NOT_EXIST;
 
 
 @Service
@@ -49,19 +47,5 @@ public class CategoryService {
         Page<Category> categories = categoryRepository.findAll(categorySpecification, pageRequest);
 
         return categories.map(CategoryMapper::categoryToCategoryDto);
-    }
-
-    public void addCategory(AddCategoryDto addCategoryDto) {
-        var category = CategoryMapper.addCategoryDtoToCategory(addCategoryDto);
-        category.setUser(userProvider.getLoggedUser());
-
-        categoryRepository.save(category);
-    }
-
-    public void deleteCategory(Long id) {
-        var category = categoryRepository.findById(id)
-                .orElseThrow(CATEGORY_DOES_NOT_EXIST::getError);
-
-        categoryRepository.delete(category);
     }
 }
