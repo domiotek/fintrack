@@ -89,12 +89,6 @@ public class BillService {
 
             bill.setAmount(amount);
         }
-        if (updateBillEventDto.categoryId() != null) {
-            Category category = categoryRepository.findById(updateBillEventDto.categoryId())
-                    .orElseThrow(CATEGORY_DOES_NOT_EXIST::getError);
-
-            bill.setCategory(category);
-        }
 
         billRepository.save(bill);
     }
