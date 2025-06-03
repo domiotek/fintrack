@@ -1,9 +1,6 @@
 package com.example.fintrack.bill;
 
-import com.example.fintrack.bill.dto.AddBillDto;
-import com.example.fintrack.bill.dto.AddBillEventDto;
-import com.example.fintrack.bill.dto.BillDto;
-import com.example.fintrack.bill.dto.EventBillDto;
+import com.example.fintrack.bill.dto.*;
 import com.example.fintrack.category.Category;
 import com.example.fintrack.category.CategoryRepository;
 import com.example.fintrack.currency.Currency;
@@ -72,6 +69,37 @@ public class BillService {
         bill.setPaidBy(user);
 
         billRepository.save(bill);
+    }
+
+    public void updateBillInEvent(long eventId, long billId, UpdateBillEventDto updateBillEventDto) {
+        Event event = eventRepository.findById(eventId).orElseThrow(EVENT_DOES_NOT_EXIST::getError);
+
+        Bill bill = event.getBills().stream().filter(b -> b.getId() == billId).findFirst()
+                .orElseThrow(BILL_DOES_NOT_EXIST::getError);
+
+        if (updateBillEventDto.name() != null) {
+            bill.setName(updateBillEventDto.name());
+        }
+        if (updateBillEventDto.date() != null) {
+            bill.setDate(updateBillEventDto.date());
+        }
+        if (updateBillEventDto.amount() != null) {
+            BigDecimal amount = currencyConverter
+                    .convertFromGivenCurrencyToUSD(event.getCurrency(), updateBillEventDto.amount());
+
+            bill.setAmount(amount);
+        }
+
+        billRepository.save(bill);
+    }
+
+    public void deleteBillFromEvent(long eventId, long billId) {
+        Event event = eventRepository.findById(eventId).orElseThrow(EVENT_DOES_NOT_EXIST::getError);
+
+        Bill bill = event.getBills().stream().filter(b -> b.getId() == billId).findFirst()
+                .orElseThrow(BILL_DOES_NOT_EXIST::getError);
+
+        billRepository.delete(bill);
     }
 
     public Page<BillDto> getBills(

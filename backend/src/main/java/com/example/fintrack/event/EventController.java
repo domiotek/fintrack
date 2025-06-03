@@ -3,6 +3,7 @@ package com.example.fintrack.event;
 import com.example.fintrack.bill.dto.AddBillEventDto;
 import com.example.fintrack.bill.dto.EventBillDto;
 import com.example.fintrack.bill.BillService;
+import com.example.fintrack.bill.dto.UpdateBillEventDto;
 import com.example.fintrack.event.dto.EventSummaryDto;
 import com.example.fintrack.event.enums.EventSortField;
 import com.example.fintrack.event.enums.EventStatus;
@@ -65,6 +66,16 @@ public class EventController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @PutMapping("/{event-id}")
+    public ResponseEntity<Void> updateEvent(
+            @PathVariable("event-id") long eventId,
+            @RequestBody UpdateEventDto updateEventDto
+    ) {
+        eventService.updateEvent(eventId, updateEventDto);
+
+        return ResponseEntity.noContent().build();
+    }
+
     @DeleteMapping("/{event-id}")
     public ResponseEntity<Void> deleteEvent(@PathVariable("event-id") long eventId) {
         eventService.deleteEvent(eventId);
@@ -80,6 +91,27 @@ public class EventController {
         billService.addBillToEvent(addBillEventDto, eventId);
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @PutMapping("/{event-id}/bills/{bill-id}")
+    public ResponseEntity<Void> updateBillInEvent(
+            @PathVariable("event-id") long eventId,
+            @PathVariable("bill-id") long billId,
+            @RequestBody UpdateBillEventDto updateBillEventDto
+    ) {
+        billService.updateBillInEvent(eventId, billId, updateBillEventDto);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{event-id}/bills/{bill-id}")
+    public ResponseEntity<Void> deleteBillFromEvent(
+            @PathVariable("event-id") long eventId,
+            @PathVariable("bill-id") long billId
+    ) {
+        billService.deleteBillFromEvent(eventId, billId);
+
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{event-id}/users/{user-id}")
