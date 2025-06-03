@@ -1,5 +1,7 @@
 package com.example.fintrack.category.limit;
 
+import com.example.fintrack.category.Category;
+import com.example.fintrack.category.dto.AddLimitDto;
 import com.example.fintrack.category.dto.LimitDto;
 
 public class LimitMapper {
@@ -10,5 +12,16 @@ public class LimitMapper {
                 .startDateTime(limit.getStartDateTime())
                 .endDateTime(limit.getEndDateTime())
                 .build();
+    }
+
+    public static Limit addLimitDtoToLimit(AddLimitDto addLimitDto, Category category) {
+        Limit limit = new Limit();
+
+        limit.setCategory(category);
+        limit.setAmount(addLimitDto.amount());
+        limit.setStartDateTime(addLimitDto.startDateTime());
+        limit.setEndDateTime(addLimitDto.endDateTime());
+
+        return limit;
     }
 }
