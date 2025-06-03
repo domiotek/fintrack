@@ -111,6 +111,28 @@ public class EventService {
         userEventRepository.saveAll(userEvents);
     }
 
+    public void updateEvent(long eventId, UpdateEventDto updateEventDto) {
+        Event event = eventRepository.findById(eventId).orElseThrow(EVENT_DOES_NOT_EXIST::getError);
+
+        if (updateEventDto.name() != null) {
+            event.setName(updateEventDto.name());
+        }
+        if (updateEventDto.startDate() != null) {
+            event.setStartDateTime(updateEventDto.startDate());
+        }
+        if (updateEventDto.endDate() != null) {
+            event.setEndDateTime(updateEventDto.endDate());
+        }
+        if (updateEventDto.currencyId() != null) {
+            Currency currency = currencyRepository.findById(updateEventDto.currencyId())
+                    .orElseThrow(CURRENCY_DOES_NOT_EXIST::getError);
+
+            event.setCurrency(currency);
+        }
+
+        eventRepository.save(event);
+    }
+
     public EventSummaryDto getEventSummary(long eventId) {
         Event event = eventRepository.findById(eventId).orElseThrow(EVENT_DOES_NOT_EXIST::getError);
         User user = userProvider.getLoggedUser();

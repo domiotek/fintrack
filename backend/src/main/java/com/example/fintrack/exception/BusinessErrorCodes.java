@@ -26,10 +26,11 @@ public enum BusinessErrorCodes {
     USER_ALREADY_PAID(306, "User already paid", HttpStatus.CONFLICT),
     USER_IS_FOUNDER(307, "User is a founder", HttpStatus.CONFLICT),
     EVENT_ALREADY_CONTAINS_USER(308, "Event already contains user", HttpStatus.CONFLICT),
-    CURRENCY_DOES_NOT_EXIST(401, "Currency not found", HttpStatus.NOT_FOUND),
+    CURRENCY_DOES_NOT_EXIST(401, "Currency does not exist", HttpStatus.NOT_FOUND),
     EVENT_DOES_NOT_EXIST(402, "Event does not exist", HttpStatus.NOT_FOUND),
     USER_DOES_NOT_EXIST(403, "User does not exist", HttpStatus.NOT_FOUND),
-    CATEGORY_DOES_NOT_EXIST(404, "Category not found", HttpStatus.NOT_FOUND),
+    CATEGORY_DOES_NOT_EXIST(404, "Category does not exist", HttpStatus.NOT_FOUND),
+    BILL_DOES_NOT_EXIST(405, "Bill does not exist", HttpStatus.NOT_FOUND),
     MISSING_REQUEST_BODY(501, "Missing request body", HttpStatus.FAILED_DEPENDENCY),
     REQUEST_FAILED(502, "Request failed", HttpStatus.BAD_GATEWAY);
 
