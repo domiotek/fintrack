@@ -39,8 +39,8 @@ public class BillMapper {
                 .date(bill.getDate())
                 .paidBy(EventBillUserDto.builder()
                         .id(bill.getPaidBy().getId())
-                        .firstName(bill.getPaidBy().getFirstName())
-                        .lastName(bill.getPaidBy().getLastName())
+                        .firstname(bill.getPaidBy().getFirstName())
+                        .lastname(bill.getPaidBy().getLastName())
                         .build()
                 )
                 .eventCurrency(EventBillCurrencyDto.builder()
@@ -68,7 +68,7 @@ public class BillMapper {
         return BillDto.builder()
                 .id(bill.getId())
                 .name(bill.getName())
-                .category(categoryDto)
+                .categoryDto(categoryDto)
                 .date(bill.getDate())
                 .userValue(userAmountInUsersCurrency)
                 .billValue(bill.getAmount())
@@ -77,7 +77,7 @@ public class BillMapper {
     }
 
     public static Bill addBillDtoToBill(AddBillDto addBillDto, Category category,
-                                        Currency currency, User user) {
+                                        Currency currency, Event event, User user) {
         Bill bill = new Bill();
 
         bill.setName(addBillDto.name());
@@ -85,7 +85,14 @@ public class BillMapper {
         bill.setCategory(category);
         bill.setCurrency(currency);
         bill.setDate(addBillDto.date());
-        bill.setUser(user);
+        if(addBillDto.eventId() != null) {
+            bill.setEvent(event);
+        }
+        if(addBillDto.userId() != null) {
+            bill.setUser(user);
+        } else {
+            bill.setPaidBy(user);
+        }
 
         return bill;
     }
