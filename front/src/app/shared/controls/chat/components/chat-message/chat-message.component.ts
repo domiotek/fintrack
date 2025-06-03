@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, input } from '@angular/core';
+import { Component, input, signal } from '@angular/core';
 
 @Component({
   selector: 'app-chat-message',
@@ -9,4 +9,6 @@ import { Component, input } from '@angular/core';
 })
 export class ChatMessageComponent {
   readonly type = input.required<'my' | 'their'>();
+
+  readonly hasReadIndicator = input(false);
 }

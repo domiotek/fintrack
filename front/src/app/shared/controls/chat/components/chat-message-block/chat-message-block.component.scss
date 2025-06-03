@@ -26,6 +26,11 @@
     display: flex;
     flex-direction: column;
     gap: 1px;
+
+    ::ng-deep app-chat-message:has(.read-indicators-spacer.active) + app-chat-message .message {
+      border-top-right-radius: 20px;
+      border-top-left-radius: 20px;
+    }
   }
 }
 
@@ -41,6 +46,23 @@
   .author-label {
     display: block;
   }
+}
+
+.read-indicators-spacer {
+  height: 0px;
+
+  &.active {
+    height: 24px;
+  }
+}
+
+:host:not(:last-of-type) .sent-at-message {
+  display: none;
+}
+
+.sent-at-message {
+  font-size: 0.65em;
+  text-align: right;
 }
 
 @media (width > 480px) {

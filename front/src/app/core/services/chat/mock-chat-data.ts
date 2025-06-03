@@ -952,4 +952,13 @@ export const mockChatMessages: ChatMessage[] = [
     sentAt: '2023-10-03T20:05:00Z',
     authorType: 'user',
   },
+  {
+    id: '101',
+    authorId: 0,
+    authorName: 'Damian',
+    authorSurname: 'Omiotek',
+    content: 'Lol',
+    sentAt: '2023-10-03T20:05:11Z',
+    authorType: 'user',
+  },
 ];

@@ -25,11 +25,19 @@
             [messages]="block.messages"
             [name]="block.name"
             [surname]="block.surname"
+            [readIndicators]="messagesWithReadIndicators()"
           />
         }
       } @empty {
         To początek czatu. Napisz coś, aby rozpocząć rozmowę!
       }
+      <div class="read-indicators">
+        @for (participant of otherChatParticipants(); track participant.id) {
+          <div #readIndicatorRef [attr.data-id]="participant.id" class="read-indicator">
+            <app-avatar [name]="participant.name" />
+          </div>
+        }
+      </div>
     </div>
   </ng-scrollbar>
 }
@@ -53,5 +61,5 @@
 @if (readonly()) {
   <app-chat-readonly-message />
 } @else {
-  <app-chat-input />
+  <app-chat-input (outputText)="onSendMessage($event)" />
 }

@@ -1,1 +1,2 @@
-<div [ngClass]="[type()]"><ng-content></ng-content></div>
+<div class="message" [ngClass]="[type()]"><ng-content></ng-content></div>
+<div class="read-indicators-spacer" [ngClass]="{ active: hasReadIndicator() }"></div>

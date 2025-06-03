@@ -3,16 +3,22 @@
   <div class="content">
     <div class="author-label">{{ name() }}</div>
     <div class="message-list">
-      <ng-container *ngFor="let message of messages()">
+      @for (message of messages(); track $index) {
         <app-chat-message
           [type]="type()"
           [matTooltip]="getSentAtString(message)"
           matTooltipPosition="before"
           [attr.data-message-id]="message.id"
+          [hasReadIndicator]="getReadIndicatorStatus(message)"
         >
           {{ message.content }}
         </app-chat-message>
-      </ng-container>
+      }
     </div>
   </div>
 </div>
+<div class="read-indicators-spacer" [ngClass]="{ active: getReadIndicatorStatus(lastMessage) }"></div>
+
+@if (type() === 'my' && !getReadIndicatorStatus(lastMessage)) {
+  <div class="sent-at-message">Wysłano {{ getSentAtString(lastMessage) }}</div>
+}

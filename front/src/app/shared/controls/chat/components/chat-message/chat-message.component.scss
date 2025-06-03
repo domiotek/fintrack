@@ -1,37 +1,54 @@
 @use '../../../../../styles/variables' as *;
 
 :host {
-  padding: 0.75em;
-  background: $light-blue-1;
-  color: white;
-  font-size: 0.9em;
-  width: fit-content;
+  .message {
+    padding: 0.75em;
+    font-size: 0.9em;
+    width: fit-content;
+  }
 
-  border-top-left-radius: 20px;
-  border-bottom-left-radius: 20px;
+  .read-indicators-spacer {
+    height: 0px;
+  }
 
-  &:first-child {
+  &:not(:last-child) .read-indicators-spacer.active {
+    height: 24px;
+  }
+}
+
+:host:has(.my) {
+  .message {
+    background: $light-blue-1;
+    color: white;
+    margin-left: auto;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+  }
+
+  &:first-child .message {
     border-top-right-radius: 20px;
   }
 
-  &:last-child {
+  &:last-child .message,
+  &:has(.read-indicators-spacer.active) .message {
     border-bottom-right-radius: 20px;
   }
 }
 
 :host:has(.their) {
-  background: $light-gray-2;
-  color: black;
-  border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
-  border-top-right-radius: 20px;
-  border-bottom-right-radius: 20px;
+  .message {
+    background: $light-gray-2;
+    color: black;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+  }
 
-  &:first-child {
+  &:first-child .message {
     border-top-left-radius: 20px;
   }
 
-  &:last-child {
+  &:last-child .message,
+  &:has(.read-indicators-spacer.active) .message {
     border-bottom-left-radius: 20px;
   }
 }
