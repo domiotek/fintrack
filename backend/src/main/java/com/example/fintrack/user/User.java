@@ -2,7 +2,6 @@ package com.example.fintrack.user;
 
 import com.example.fintrack.bill.Bill;
 import com.example.fintrack.category.Category;
-import com.example.fintrack.chat.UserChat;
 import com.example.fintrack.currency.Currency;
 import com.example.fintrack.friend.Friend;
 import com.example.fintrack.userevent.UserEvent;
@@ -40,10 +39,6 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user")
     @ToString.Exclude
     private Set<Category> categories;
-
-    @OneToMany(mappedBy =  "user")
-    @ToString.Exclude
-    private Set<UserChat> chats;
 
     @OneToMany(mappedBy = "user")
     @ToString.Exclude
