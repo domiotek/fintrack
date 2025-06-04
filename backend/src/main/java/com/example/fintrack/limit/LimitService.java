@@ -1,6 +1,7 @@
 package com.example.fintrack.limit;
 
 import com.example.fintrack.category.Category;
+import com.example.fintrack.currency.CurrencyConverter;
 import com.example.fintrack.limit.dto.AddLimitDto;
 import com.example.fintrack.security.service.UserProvider;
 import com.example.fintrack.user.User;
@@ -17,6 +18,7 @@ public class LimitService {
 
     private final LimitRepository limitRepository;
     private final UserProvider userProvider;
+    private final CurrencyConverter currencyConverter;
 
     public void addLimit(long categoryId, AddLimitDto addLimitDto) {
         User user = userProvider.getLoggedUser();
@@ -26,7 +28,7 @@ public class LimitService {
                 .findFirst()
                 .orElseThrow(CATEGORY_DOES_NOT_EXIST::getError);
 
-        Limit limit = LimitMapper.addLimitDtoToLimit(addLimitDto, category);
+        Limit limit = LimitMapper.addLimitDtoToLimit(addLimitDto, category, currencyConverter);
 
         limitRepository.save(limit);
     }

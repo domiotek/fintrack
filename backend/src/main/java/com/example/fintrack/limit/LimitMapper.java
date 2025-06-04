@@ -1,24 +1,23 @@
 package com.example.fintrack.limit;
 
 import com.example.fintrack.category.Category;
+import com.example.fintrack.currency.CurrencyConverter;
 import com.example.fintrack.limit.dto.AddLimitDto;
-import com.example.fintrack.limit.dto.LimitDto;
+
+import java.math.BigDecimal;
 
 public class LimitMapper {
 
-    public static LimitDto limitToLimitDto(Limit limit) {
-        return LimitDto.builder()
-                .amount(limit.getAmount())
-                .startDateTime(limit.getStartDateTime())
-                .endDateTime(limit.getEndDateTime())
-                .build();
-    }
-
-    public static Limit addLimitDtoToLimit(AddLimitDto addLimitDto, Category category) {
+    public static Limit addLimitDtoToLimit(
+            AddLimitDto addLimitDto, Category category, CurrencyConverter currencyConverter
+    ) {
         Limit limit = new Limit();
 
+        BigDecimal amountInUSD = currencyConverter
+                .convertFromGivenCurrencyToUSD(category.getUser().getCurrency(), addLimitDto.amount());
+
         limit.setCategory(category);
-        limit.setAmount(addLimitDto.amount());
+        limit.setAmount(amountInUSD);
         limit.setStartDateTime(addLimitDto.startDateTime());
         limit.setEndDateTime(addLimitDto.endDateTime());
 
