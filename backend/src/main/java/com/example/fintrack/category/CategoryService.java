@@ -1,6 +1,8 @@
 package com.example.fintrack.category;
 
+import com.example.fintrack.category.dto.AddCategoryDto;
 import com.example.fintrack.category.dto.CategoryDto;
+import com.example.fintrack.category.dto.UpdateCategoryDto;
 import com.example.fintrack.security.service.UserProvider;
 import com.example.fintrack.user.User;
 import com.example.fintrack.util.enums.SortDirection;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.time.ZonedDateTime;
 
 import static com.example.fintrack.category.CategorySpecification.*;
+import static com.example.fintrack.exception.BusinessErrorCodes.CATEGORY_DOES_NOT_EXIST;
 
 
 @Service
@@ -47,5 +50,40 @@ public class CategoryService {
         Page<Category> categories = categoryRepository.findAll(categorySpecification, pageRequest);
 
         return categories.map(CategoryMapper::categoryToCategoryDto);
+    }
+
+    public void addCategory(AddCategoryDto addCategoryDto) {
+        User user = userProvider.getLoggedUser();
+
+        Category category = CategoryMapper.addCategoryDtoToCategory(addCategoryDto, user);
+
+        categoryRepository.save(category);
+    }
+
+    public void updateCategory(long categoryId, UpdateCategoryDto updateCategoryDto) {
+        User user = userProvider.getLoggedUser();
+
+        Category category = user.getCategories().stream().filter(c -> c.getId() == categoryId).findFirst()
+                .orElseThrow(CATEGORY_DOES_NOT_EXIST::getError);
+
+        if (updateCategoryDto.name() != null) {
+            category.setName(updateCategoryDto.name());
+        }
+        if (updateCategoryDto.color() != null) {
+            category.setColor(updateCategoryDto.color());
+        }
+
+        categoryRepository.save(category);
+    }
+
+    public void deleteCategory(long categoryId) {
+        User user = userProvider.getLoggedUser();
+
+        Category category = user.getCategories().stream()
+                .filter(c -> c.getId() == categoryId)
+                .findFirst()
+                .orElseThrow(CATEGORY_DOES_NOT_EXIST::getError);
+
+        categoryRepository.delete(category);
     }
 }

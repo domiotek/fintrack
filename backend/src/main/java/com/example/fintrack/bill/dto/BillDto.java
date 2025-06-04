@@ -10,7 +10,7 @@ import java.time.ZonedDateTime;
 public record BillDto(
         Long id,
         String name,
-        BillCategoryDto categoryDto,
+        BillCategoryDto category,
         ZonedDateTime date,
         BigDecimal userValue,
         BigDecimal billValue,

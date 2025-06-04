@@ -5,7 +5,7 @@ import lombok.Builder;
 @Builder
 public record EventBillUserDto(
         Long id,
-        String firstname,
-        String lastname
+        String firstName,
+        String lastName
 ) {
 }

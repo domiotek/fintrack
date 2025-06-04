@@ -1,4 +1,4 @@
-package com.example.fintrack.category.dto;
+package com.example.fintrack.limit.dto;
 
 import lombok.Builder;
 
