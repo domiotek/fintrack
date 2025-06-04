@@ -11,4 +11,16 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
+
+  .activity-dot {
+    position: absolute;
+    bottom: -0.1em;
+    right: -0.1em;
+    border-radius: 50%;
+    width: 0.75em;
+    height: 0.75em;
+    background: $green;
+    border: solid 0.1em black;
+  }
 }

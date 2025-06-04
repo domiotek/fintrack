@@ -1,6 +1,5 @@
 import { Injectable, signal } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { Friend } from '../../models/friend/friend.model';
 import { BaseApiService } from '../base-api.service';
 import { FriendRequest } from '../../models/friend/friend-request.model';
 import { toObservable } from '@angular/core/rxjs-interop';
@@ -14,8 +13,8 @@ export class FriendService extends BaseApiService {
   private readonly friendRequests = signal<FriendRequest[]>([]);
   readonly friendRequests$: Observable<FriendRequest[]> = toObservable(this.friendRequests);
 
-  private readonly friends = new BehaviorSubject<Friend[]>([]);
-  private readonly friends$: Observable<Friend[]> = this.friends.asObservable();
+  private readonly friends = new BehaviorSubject<User[]>([]);
+  private readonly friends$: Observable<User[]> = this.friends.asObservable();
   private readonly lastFriendsFetch = signal<DateTime | null>(null);
   private readonly maxFriendsFreshnessTime = 360; // seconds
 

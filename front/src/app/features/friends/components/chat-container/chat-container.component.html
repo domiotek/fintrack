@@ -6,8 +6,11 @@
           <mat-icon>arrow_back</mat-icon>
         </button>
       }
-      <app-avatar [name]="chat()!.name" />
-      <h3>{{ chat()!.name }}</h3>
+      <app-avatar [name]="chat()!.name" [showOnline]="isActive()" />
+      <div>
+        <h3>{{ chat()!.name }}</h3>
+        <span class="activity-text">Aktywny(-a) {{ activityText() }}</span>
+      </div>
     </mat-card-header>
     <mat-card-content>
       <app-chat [chatId]="'d'" [readonly]="false" />

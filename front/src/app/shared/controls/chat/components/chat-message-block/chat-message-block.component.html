@@ -1,5 +1,5 @@
 <div class="wrapper" [ngClass]="[type()]">
-  <app-avatar [name]="name()" [matTooltip]="name() + ' ' + surname()" />
+  <app-avatar [name]="name()" [matTooltip]="name() + ' ' + surname()" [showOnline]="isAuthorActive()" />
   <div class="content">
     <div class="author-label">{{ name() }}</div>
     <div class="message-list">

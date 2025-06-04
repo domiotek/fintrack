@@ -4,3 +4,7 @@
     {{ surname()![0] | uppercase }}
   }
 </span>
+
+@if (showOnline()) {
+  <div class="activity-dot"></div>
+}

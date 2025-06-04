@@ -5,14 +5,15 @@ import { FullyFetchedChat, PrivateChat } from '../../models/chat/chat.model';
 import { ChatMessage } from '../../models/chat/message.model';
 import { mockedChats, mockChatMessages } from './mock-chat-data';
 import { BasePagingResponse } from '../../models/api/paging.model';
-import { User } from '../../models/user/user.model';
+import { Participant } from '../../models/chat/participant.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ChatService {
+  private readonly participants = new BehaviorSubject<Participant[]>([]);
   private readonly connectedChatId = signal<string | null>(null);
-  private readonly typingUsers = new BehaviorSubject<User[]>([]);
+  private readonly typingUsers = new BehaviorSubject<number[]>([]);
   private readonly messages = new BehaviorSubject<ChatMessage[]>([]);
   private readonly lastReadMessagesMap = new BehaviorSubject<Record<number, string>>({});
 
@@ -21,25 +22,29 @@ export class ChatService {
   readonly typingUsers$ = this.typingUsers.asObservable();
   readonly lastReadMessagesMap$ = this.lastReadMessagesMap.asObservable();
   readonly messages$ = this.messages.asObservable();
+  readonly participants$ = this.participants.asObservable();
 
-  private readonly mockUsers: User[] = [
+  private readonly mockUsers: Participant[] = [
     {
       id: 1,
       name: 'Konrad',
       surname: 'Serwa',
       email: 'konrad.serwa@example.com',
+      lastSeenAt: new Date().toISOString(),
     },
     {
       id: 2,
       name: 'Artur',
       surname: 'Pajor',
       email: 'artur.pajor@example.com',
+      lastSeenAt: new Date().toISOString(),
     },
     {
       id: 0,
       name: 'Damian',
       surname: 'Omiotek',
       email: 'damian.omiotek@example.com',
+      lastSeenAt: new Date().toISOString(),
     },
   ];
 
@@ -106,6 +111,8 @@ export class ChatService {
       this.messages.next([...this.messages.value, newMessage]);
     }, 5000);
 
+    this.participants.next([...this.mockUsers]);
+
     return of({
       participants: [...this.mockUsers],
       lastReadMessageByUserId: {},
@@ -141,7 +148,7 @@ export class ChatService {
         const numTypingUsers = Math.floor(Math.random() * 2) + 1; // 1-2 users
         const shuffledUsers = [...this.mockUsers].sort(() => Math.random() - 0.5);
         const typingUsers = shuffledUsers.slice(0, numTypingUsers);
-        this.typingUsers.next(typingUsers);
+        this.typingUsers.next(typingUsers.map((user) => user.id));
 
         // Stop typing after 2-5 seconds
         setTimeout(
@@ -196,11 +203,11 @@ export class ChatService {
   }
 
   signalStartedTyping(): void {
-    this.typingUsers.next([...this.typingUsers.value, this.mockUsers.filter((user) => user.id == 0)[0]]); // Simulate current user typing
+    this.typingUsers.next([...this.typingUsers.value, this.mockUsers.filter((user) => user.id == 0)[0].id]); // Simulate current user typing
   }
 
   signalStoppedTyping(): void {
-    this.typingUsers.next(this.typingUsers.value.filter((user) => user.id !== 0));
+    this.typingUsers.next(this.typingUsers.value.filter((userId) => userId !== 0));
   }
 
   updateLastReadMessage(messageId: string): void {

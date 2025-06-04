@@ -19,6 +19,7 @@ export class ChatMessageBlockComponent implements OnInit, OnDestroy {
   readonly messages = input.required<ChatMessage[]>();
   readonly readIndicators = input<Record<string, number[]>>({});
   readonly finalized = input<boolean>(false);
+  readonly isAuthorActive = input<boolean>(false);
   readonly messageReadEmit = output<string>();
 
   private readonly isInViewport = signal<boolean>(true);

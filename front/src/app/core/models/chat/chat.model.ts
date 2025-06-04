@@ -1,6 +1,7 @@
 import { User } from '../user/user.model';
 import { LastReadMessage } from './last-read-message.model';
 import { ChatMessage } from './message.model';
+import { Participant } from './participant.model';
 
 export interface Chat {
   id: string;
@@ -14,6 +15,6 @@ export interface PrivateChat extends Chat {
 }
 
 export interface FullyFetchedChat extends Chat {
-  participants: User[];
+  participants: Participant[];
   lastReadMessageByUserId: Record<number, LastReadMessage>;
 }

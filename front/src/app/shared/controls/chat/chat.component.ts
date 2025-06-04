@@ -38,9 +38,9 @@ import { AppStateStore } from '../../../core/store/app-state.store';
 import { DateTime } from 'luxon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { User } from '../../../core/models/user/user.model';
 import { AvatarComponent } from '../../components/avatar/avatar.component';
 import { callDebounced } from '../../../utils/debouncer';
+import { Participant } from '../../../core/models/chat/participant.model';
 
 @Component({
   selector: 'app-chat',
@@ -72,7 +72,7 @@ export class ChatComponent implements AfterViewInit {
   readonly scrollToBottomVisible = signal<boolean>(false);
   readonly typingUsers = signal<string[]>([]);
   readonly messages = signal<ChatMessage[]>([]);
-  readonly chatParticipants = signal<User[]>([]);
+  readonly chatParticipants = signal<Participant[]>([]);
   readonly lastReadMessagesMap = signal<Record<number, string>>({});
   readonly messagesWithReadIndicators = signal<Record<string, number[]>>({});
   readonly offset = signal<number>(0);
@@ -87,6 +87,15 @@ export class ChatComponent implements AfterViewInit {
 
   readonly otherChatParticipants = computed(() => {
     return this.chatParticipants().filter((user) => user.id !== this.currentUserId());
+  });
+
+  readonly activeChatParticipants = computed(() => {
+    return this.otherChatParticipants()
+      .filter((user) => {
+        const dateTime = DateTime.fromISO(user.lastSeenAt);
+        return dateTime.isValid && dateTime.plus({ minutes: 5 }) > DateTime.now();
+      })
+      .map((user) => user.id);
   });
 
   readonly messageBlocks = computed(() => {
@@ -160,8 +169,16 @@ export class ChatComponent implements AfterViewInit {
 
       this.fetchAndMergeMessages();
 
+      this.chatService.participants$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((participants) => {
+        this.chatParticipants.set(participants);
+      });
+
       this.chatService.typingUsers$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((typingUsers) => {
-        this.typingUsers.set(typingUsers.filter((user) => user.id !== this.currentUserId()).map((user) => user.name));
+        const newTypingUsers = this.chatParticipants()
+          .filter((user) => typingUsers.includes(user.id) && user.id !== this.currentUserId())
+          .map((user) => user.name);
+
+        this.typingUsers.set(newTypingUsers);
       });
 
       this.chatService.messages$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((messages) => {

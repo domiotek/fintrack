@@ -20,6 +20,10 @@ mat-card {
     button {
       color: $light-blue-1;
     }
+
+    .activity-text {
+      font-size: 0.75em;
+    }
   }
 
   mat-card-content {
