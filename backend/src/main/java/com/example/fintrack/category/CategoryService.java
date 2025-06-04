@@ -3,6 +3,7 @@ package com.example.fintrack.category;
 import com.example.fintrack.category.dto.AddCategoryDto;
 import com.example.fintrack.category.dto.CategoryDto;
 import com.example.fintrack.category.dto.UpdateCategoryDto;
+import com.example.fintrack.currency.CurrencyConverter;
 import com.example.fintrack.security.service.UserProvider;
 import com.example.fintrack.user.User;
 import com.example.fintrack.util.enums.SortDirection;
@@ -24,32 +25,24 @@ import static com.example.fintrack.exception.BusinessErrorCodes.CATEGORY_DOES_NO
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final CurrencyConverter currencyConverter;
     private final UserProvider userProvider;
 
     public Page<CategoryDto> getCategories(
             String name, ZonedDateTime from, ZonedDateTime to, SortDirection sortOrder, int page, int size
     ) {
-        User loggedUser = userProvider.getLoggedUser();
+        User user = userProvider.getLoggedUser();
 
-        Specification<Category> categorySpecification = hasUserId(loggedUser.getId());
-        if(name != null && !name.isEmpty()) {
+        Specification<Category> categorySpecification = hasUserId(user.getId());
+        if(name != null) {
             categorySpecification = categorySpecification.and(hasCategoryName(name));
-        }
-        if(from != null) {
-            categorySpecification = categorySpecification.and(hasCategoryLimitsAfter(from));
-        }
-        if(to != null) {
-            categorySpecification = categorySpecification.and(hasCategoryLimitsBefore(to));
-        }
-        if(from != null && to != null) {
-            categorySpecification = categorySpecification.and(hasCategoryBillsBetween(from, to));
         }
 
         Sort.Direction sortDirection = sortOrder.toSortDirection();
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(sortDirection, "name"));
         Page<Category> categories = categoryRepository.findAll(categorySpecification, pageRequest);
 
-        return categories.map(CategoryMapper::categoryToCategoryDto);
+        return categories.map(category -> CategoryMapper.categoryToCategoryDto(category, from, to, currencyConverter));
     }
 
     public void addCategory(AddCategoryDto addCategoryDto) {
