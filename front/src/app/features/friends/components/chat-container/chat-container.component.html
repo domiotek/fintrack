@@ -13,7 +13,9 @@
       </div>
     </mat-card-header>
     <mat-card-content>
-      <app-chat [chatId]="'d'" [readonly]="false" />
+      @if (chat()?.id && showChat()) {
+        <app-chat [chatId]="chat()!.id" [readonly]="false" />
+      }
     </mat-card-content>
   } @else if (!isMobile()) {
     <app-no-selected placeholder="Nie wybrano czatu" />

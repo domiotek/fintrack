@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, output } from '@angular/core';
+import { Component, inject, input, output, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -14,14 +14,19 @@ import { ChatService } from '../../../../../core/services/chat/chat.service';
   styleUrl: './chat-input.component.scss',
 })
 export class ChatInputComponent {
-  readonly messageInput = new FormControl<string>('');
+  readonly disabled = input<boolean>(false);
   readonly outputText = output<string>();
+
+  readonly messageInput = signal<string>('');
+
   private typingTimer?: ReturnType<typeof setTimeout>;
   private signaledTyping = false;
 
   private readonly chatService = inject(ChatService);
 
-  onInput(): void {
+  onInput(newValue: string): void {
+    this.messageInput.set(newValue);
+
     if (this.typingTimer) {
       clearTimeout(this.typingTimer);
     }
@@ -46,9 +51,9 @@ export class ChatInputComponent {
   }
 
   sendMessage(): void {
-    if (!this.messageInput.value?.trim()) return;
+    if (!this.messageInput().trim()) return;
 
-    this.outputText.emit(this.messageInput.value.trim());
-    this.messageInput.setValue('');
+    this.outputText.emit(this.messageInput().trim());
+    this.messageInput.set('');
   }
 }

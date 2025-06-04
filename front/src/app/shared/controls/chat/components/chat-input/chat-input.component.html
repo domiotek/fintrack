@@ -3,16 +3,23 @@
   <textarea
     #input
     matInput
-    [formControl]="messageInput"
     title="Wprowadź wiadomość"
     cdkTextareaAutosize
     cdkAutosizeMinRows=""
     cdkAutosizeMaxRows="6"
     (keydown.enter)="onEnterKey($any($event))"
-    (input)="onInput()"
+    (input)="onInput($any($event.target).value)"
+    [disabled]="disabled()"
+    [value]="messageInput()"
   >
   </textarea>
-  <button type="button" matSuffix mat-icon-button (click)="sendMessage()" [disabled]="!input.value.trim()">
+  <button
+    type="button"
+    matSuffix
+    mat-icon-button
+    (click)="sendMessage()"
+    [disabled]="!input.value.trim() || disabled()"
+  >
     <mat-icon>send</mat-icon>
   </button>
 </mat-form-field>

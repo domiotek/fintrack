@@ -1,4 +1,6 @@
-@if (loading() && offset() === 0) {
+@let isInitializing = loading() && offset() === 0;
+
+@if (isInitializing) {
   <div class="preloader">
     <mat-spinner diameter="50" mode="indeterminate" />
   </div>
@@ -64,5 +66,5 @@
 @if (readonly()) {
   <app-chat-readonly-message />
 } @else {
-  <app-chat-input (outputText)="onSendMessage($event)" />
+  <app-chat-input (outputText)="onSendMessage($event)" [disabled]="isInitializing" />
 }

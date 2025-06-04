@@ -1,4 +1,15 @@
-import { Component, computed, DestroyRef, inject, input, OnDestroy, OnInit, output, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  inject,
+  input,
+  OnDestroy,
+  OnInit,
+  output,
+  signal,
+} from '@angular/core';
 import { NoSelectedComponent } from '../../../../shared/components/no-selected/no-selected.component';
 import { Chat } from '../../../../core/models/chat/chat.model';
 import { CommonModule } from '@angular/common';
@@ -36,6 +47,7 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
   readonly otherParticiapnt = signal<Participant | null>(null);
   readonly currentUserId = signal<number | null>(null);
   readonly activityText = signal<string>('');
+  readonly showChat = signal<boolean>(true);
 
   readonly isActive = computed(() => {
     return this.activityText() === 'teraz';
@@ -47,6 +59,14 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
   private readonly chatService = inject(ChatService);
   private readonly appStateStore = inject(AppStateStore);
   private readonly destroyRef = inject(DestroyRef);
+
+  constructor() {
+    effect(() => {
+      void this.chat();
+      this.showChat.set(false);
+      setTimeout(() => this.showChat.set(true), 0);
+    });
+  }
 
   ngOnInit(): void {
     this.appStateStore.appState$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((state) => {
