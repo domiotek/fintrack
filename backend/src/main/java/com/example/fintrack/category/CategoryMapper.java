@@ -54,7 +54,7 @@ public class CategoryMapper {
                     return l.getStartDateTime();
                 }))
                 .map(limit -> currencyConverter.convertFromUSDToGivenCurrency(
-                        category.getUser().getCurrency(), from.toLocalDate(), limit.getAmount()
+                        category.getUser().getCurrency(), limit.getStartDateTime().toLocalDate(), limit.getAmount()
                 ))
                 .orElse(null);
     }
