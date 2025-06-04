@@ -1,9 +1,12 @@
 package com.example.fintrack.friendchatmessage;
 
 import com.example.fintrack.friend.Friend;
+import com.example.fintrack.message.LastReadMessage;
+import com.example.fintrack.message.Message;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -22,6 +25,14 @@ public class FriendChatMessage {
     @OneToMany(mappedBy = "friendChatMessage")
     @ToString.Exclude
     private Set<Friend> friends;
+
+    @OneToMany(mappedBy = "friendChatMessage")
+    @ToString.Exclude
+    private Set<LastReadMessage> lastReadMessages;
+
+    @OneToMany(mappedBy = "friendChatMessage")
+    @ToString.Exclude
+    private List<Message> messages;
 
     @Override
     public boolean equals(Object o) {

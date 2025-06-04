@@ -62,6 +62,7 @@ public class BillMapper {
         BillCategoryDto categoryDto = BillCategoryDto.builder()
                 .id(bill.getCategory().getId())
                 .name(bill.getCategory().getName())
+                .color(bill.getCategory().getColor())
                 .build();
 
         return BillDto.builder()
