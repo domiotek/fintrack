@@ -39,7 +39,7 @@
       <div class="read-indicators">
         @for (participant of otherChatParticipants(); track participant.id) {
           <div #readIndicatorRef [attr.data-id]="participant.id" class="read-indicator">
-            <app-avatar [name]="participant.name" />
+            <app-avatar [name]="participant.firstName" />
           </div>
         }
       </div>

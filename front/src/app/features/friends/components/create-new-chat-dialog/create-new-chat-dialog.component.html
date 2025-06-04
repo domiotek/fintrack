@@ -1,4 +1,5 @@
 <h2 mat-dialog-title>Utwórz nowy czat</h2>
+<app-form-progress-bar [active]="loading()" />
 
 <mat-dialog-content>
   <p>
@@ -7,13 +8,16 @@
   </p>
 
   <app-search-input placeholder="Wyszukaj" (emitSearch)="onSearch($event)" [(ngModel)]="searchValue" />
-
-  <app-custom-list
-    [items]="friends()"
-    [itemTemplate]="requestItemTemplate"
-    [isSelectable]="true"
-    (selectEmit)="onUserSelected($event)"
-  />
+  @if (!loading()) {
+    <app-custom-list
+      [items]="friends()"
+      [itemTemplate]="requestItemTemplate"
+      [isSelectable]="true"
+      (selectEmit)="onUserSelected($event)"
+    />
+  } @else {
+    <div class="loading-indicator">Jeszcze chwila...</div>
+  }
 </mat-dialog-content>
 <mat-dialog-actions>
   <button mat-button type="button" color="primary" mat-dialog-close>Anuluj</button>

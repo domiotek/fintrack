@@ -1,7 +1,7 @@
 export interface FriendRequest {
   id: number;
-  name: string;
-  surname: string;
+  firstName: string;
+  lastName: string;
   email: string;
   createdAt: string;
 }

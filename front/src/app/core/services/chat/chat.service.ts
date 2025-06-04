@@ -27,22 +27,22 @@ export class ChatService {
   private readonly mockUsers: Participant[] = [
     {
       id: 1,
-      name: 'Konrad',
-      surname: 'Serwa',
+      firstName: 'Konrad',
+      lastName: 'Serwa',
       email: 'konrad.serwa@example.com',
       lastSeenAt: new Date().toISOString(),
     },
     {
       id: 2,
-      name: 'Artur',
-      surname: 'Pajor',
+      firstName: 'Artur',
+      lastName: 'Pajor',
       email: 'artur.pajor@example.com',
       lastSeenAt: new Date().toISOString(),
     },
     {
       id: 0,
-      name: 'Damian',
-      surname: 'Omiotek',
+      firstName: 'Damian',
+      lastName: 'Omiotek',
       email: 'damian.omiotek@example.com',
       lastSeenAt: new Date().toISOString(),
     },
@@ -53,7 +53,7 @@ export class ChatService {
   }
 
   getUserIdsWithPrivateChat(): Observable<number[]> {
-    return of([1, 2, 4]);
+    return of([2]);
   }
 
   connectToChat(chatId: string): Observable<FullyFetchedChat> {
@@ -100,11 +100,11 @@ export class ChatService {
       const randomUser = this.mockUsers[Math.floor(Math.random() * (this.mockUsers.length - 1)) + 1]; // Exclude user with id 0
       const newMessage: ChatMessage = {
         id: (this.messages.value[this.messages.value.length - 1].id + 1).toString(),
-        content: `Message from ${randomUser.name} ${randomUser.surname}`,
+        content: `Message from ${randomUser.firstName} ${randomUser.lastName}`,
         sentAt: new Date().toISOString(),
         authorId: randomUser.id,
-        authorName: randomUser.name,
-        authorSurname: randomUser.surname,
+        authorName: randomUser.firstName,
+        authorSurname: randomUser.lastName,
         authorType: 'user',
       };
 
@@ -128,8 +128,8 @@ export class ChatService {
       content: message,
       sentAt: new Date().toISOString(),
       authorId: 0,
-      authorName: this.mockUsers[0].name,
-      authorSurname: this.mockUsers[0].surname,
+      authorName: this.mockUsers[0].firstName,
+      authorSurname: this.mockUsers[0].lastName,
       authorType: 'user',
     };
 

@@ -176,7 +176,7 @@ export class ChatComponent implements AfterViewInit {
       this.chatService.typingUsers$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((typingUsers) => {
         const newTypingUsers = this.chatParticipants()
           .filter((user) => typingUsers.includes(user.id) && user.id !== this.currentUserId())
-          .map((user) => user.name);
+          .map((user) => user.firstName);
 
         this.typingUsers.set(newTypingUsers);
       });

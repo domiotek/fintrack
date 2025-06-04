@@ -1,6 +1,6 @@
-<app-avatar [name]="item().name"></app-avatar>
+<app-avatar [name]="item().firstName"></app-avatar>
 <div class="middle-container">
-  <div class="name">{{ item().name }} {{ item().surname }}</div>
+  <div class="name">{{ item().firstName }} {{ item().lastName }}</div>
   @if (showEmail()) {
     <div class="secondary-text">
       {{ item().email }}

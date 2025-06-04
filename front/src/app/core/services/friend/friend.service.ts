@@ -1,156 +1,45 @@
-import { Injectable, signal } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { inject, Injectable, signal } from '@angular/core';
+import { BehaviorSubject, Observable, of, tap } from 'rxjs';
 import { BaseApiService } from '../base-api.service';
 import { FriendRequest } from '../../models/friend/friend-request.model';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { User } from '../../models/user/user.model';
 import { DateTime } from 'luxon';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environments';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FriendService extends BaseApiService {
+  private readonly apiUrl = `${environment.apiUrl}/friends`;
+
   private readonly friendRequests = signal<FriendRequest[]>([]);
-  readonly friendRequests$: Observable<FriendRequest[]> = toObservable(this.friendRequests);
-
   private readonly friends = new BehaviorSubject<User[]>([]);
-  private readonly friends$: Observable<User[]> = this.friends.asObservable();
-  private readonly lastFriendsFetch = signal<DateTime | null>(null);
-  private readonly maxFriendsFreshnessTime = 360; // seconds
 
-  readonly mockedRequests = [
-    { id: 1, name: 'John', surname: 'Doe', email: 'johndoe@example.com', createdAt: '2025-05-01T13:00:00' },
-  ];
+  readonly friendRequests$: Observable<FriendRequest[]> = toObservable(this.friendRequests);
+  readonly friends$: Observable<User[]> = this.friends.asObservable();
 
-  readonly mockedFriends = [
-    {
-      id: 1,
-      name: 'Damian',
-      surname: 'Omiotek',
-      email: 'domiotek@example.com',
-    },
-    {
-      id: 2,
-      name: 'Artur',
-      surname: 'Pajor',
-      email: 'apajor@example.com',
-    },
-    {
-      id: 3,
-      name: 'Konrad',
-      surname: 'Serwa',
-      email: 'kserwa@example.com',
-    },
-    {
-      id: 3,
-      name: 'Konrad',
-      surname: 'Serwa',
-      email: 'kserwa@example.com',
-    },
+  private readonly http = inject(HttpClient);
 
-    {
-      id: 3,
-      name: 'Konrad',
-      surname: 'Serwa',
-      email: 'kserwa@example.com',
-    },
-    {
-      id: 3,
-      name: 'Konrad',
-      surname: 'Serwa',
-      email: 'kserwa@example.com',
-    },
-    {
-      id: 3,
-      name: 'Konrad',
-      surname: 'Serwa',
-      email: 'kserwa@example.com',
-    },
-    {
-      id: 3,
-      name: 'Konrad',
-      surname: 'Serwa',
-      email: 'kserwa@example.com',
-    },
-    {
-      id: 3,
-      name: 'Konrad',
-      surname: 'Serwa',
-      email: 'kserwa@example.com',
-    },
-    {
-      id: 3,
-      name: 'Konrad',
-      surname: 'Serwa',
-      email: 'kserwa@example.com',
-    },
-    {
-      id: 3,
-      name: 'Konrad',
-      surname: 'Serwa',
-      email: 'kserwa@example.com',
-    },
-    {
-      id: 3,
-      name: 'Konrad',
-      surname: 'Serwa',
-      email: 'kserwa@example.com',
-    },
-    {
-      id: 3,
-      name: 'Konrad',
-      surname: 'Serwa',
-      email: 'kserwa@example.com',
-    },
-    {
-      id: 3,
-      name: 'Konrad',
-      surname: 'Serwa',
-      email: 'kserwa@example.com',
-    },
-    {
-      id: 3,
-      name: 'Konrad',
-      surname: 'Serwa',
-      email: 'kserwa@example.com',
-    },
-    {
-      id: 3,
-      name: 'Konrad',
-      surname: 'Serwa',
-      email: 'kserwa@example.com',
-    },
-    {
-      id: 4,
-      name: 'Mateusz',
-      surname: 'Płatek',
-      email: 'mplatek@example.com',
-    },
-  ];
-
-  invalidateAndRefetchFriendsList(): Observable<User[]> {
-    this.friends.next(this.mockedFriends);
-    this.lastFriendsFetch.set(DateTime.now());
-
-    return this.friends$;
-  }
-
-  getFriendsList(): Observable<User[]> {
-    if (!this.lastFriendsFetch() || this.lastFriendsFetch()!.diffNow().as('seconds') > this.maxFriendsFreshnessTime) {
-      return this.invalidateAndRefetchFriendsList();
-    }
-
-    return this.friends$;
+  getFriendsList(search: string): Observable<User[]> {
+    return this.http.get<User[]>(`${this.apiUrl}?search=${search}`).pipe(
+      tap((friends) => {
+        this.friends.next(friends);
+      }),
+    );
   }
 
   sendFriendRequest(email: string): Observable<void> {
-    return of();
+    return this.http.post<void>(`${this.apiUrl}/requests`, { email });
   }
 
-  getPendingFriendRequests(): Observable<void> {
-    this.friendRequests.set(this.mockedRequests);
-
-    return of();
+  getPendingFriendRequests(): Observable<FriendRequest[]> {
+    return this.http.get<FriendRequest[]>(`${this.apiUrl}/requests`).pipe(
+      tap((requests) => {
+        this.friendRequests.set(requests);
+      }),
+    );
   }
 
   answerFriendRequest(id: number, accept: boolean): Observable<void> {
@@ -158,15 +47,10 @@ export class FriendService extends BaseApiService {
       return requests.filter((request) => request.id !== id);
     });
 
-    if (accept) {
-      this.invalidateAndRefetchFriendsList();
-    }
-
-    return of();
+    return this.http.put<void>(`${this.apiUrl}/requests/${id}`, { accept });
   }
 
   removeFriend(userId: number): Observable<void> {
-    this.invalidateAndRefetchFriendsList();
-    return of();
+    return this.http.delete<void>(`${this.apiUrl}/${userId}`);
   }
 }

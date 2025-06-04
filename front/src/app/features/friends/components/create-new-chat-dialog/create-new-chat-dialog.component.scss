@@ -10,3 +10,12 @@ mat-dialog-content {
     min-height: 150px;
   }
 }
+
+.loading-indicator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  min-height: 150px;
+}
