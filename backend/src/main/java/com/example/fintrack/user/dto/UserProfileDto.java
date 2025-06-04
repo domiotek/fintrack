@@ -4,6 +4,7 @@ import lombok.Builder;
 
 @Builder
 public record UserProfileDto(
+        Long id,
         String firstName,
         String email,
         UserProfileCurrencyDto currency

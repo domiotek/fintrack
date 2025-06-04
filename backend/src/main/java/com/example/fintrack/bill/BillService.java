@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
+import java.util.List;
 
 import static com.example.fintrack.bill.BillSpecification.*;
 import static com.example.fintrack.bill.BillSpecification.hasCategoryId;
@@ -50,9 +51,12 @@ public class BillService {
 
     public void addBillToEvent(AddBillEventDto addBillEventDto, long eventId) {
         User user = userRepository.findById(addBillEventDto.paidById()).orElseThrow(USER_DOES_NOT_EXIST::getError);
+
         Category category = categoryRepository.findById(addBillEventDto.categoryId())
                 .orElseThrow(CATEGORY_DOES_NOT_EXIST::getError);
+
         Event event = eventRepository.findById(eventId).orElseThrow(EVENT_DOES_NOT_EXIST::getError);
+
         Currency currency = event.getCurrency();
 
         BigDecimal amountInEventCurrency = addBillEventDto.amount();
@@ -72,10 +76,7 @@ public class BillService {
     }
 
     public void updateUserBill(long billId, UpdateBillDto updateBillDto) {
-        User user = userProvider.getLoggedUser();
-
-        Bill bill = user.getBills().stream().filter(b -> b.getId() == billId).findFirst()
-                .orElseThrow(BILL_DOES_NOT_EXIST::getError);
+        Bill bill = findUserBill(billId);
 
         if (updateBillDto.name() != null) {
             bill.setName(updateBillDto.name());
@@ -166,11 +167,21 @@ public class BillService {
     }
 
     public void deleteUserBill(long billId) {
-        User user = userProvider.getLoggedUser();
-
-        Bill bill = user.getBills().stream().filter(b -> b.getId() == billId).findFirst()
-                .orElseThrow(BILL_DOES_NOT_EXIST::getError);
+        Bill bill = findUserBill(billId);
 
         billRepository.delete(bill);
+    }
+
+    private Bill findUserBill(long billId) {
+        User user = userProvider.getLoggedUser();
+
+        Specification<Bill> billSpecification = hasUserId(user.getId());
+
+        List<Bill> bills = billRepository.findAll(billSpecification);
+
+        return bills.stream()
+                .filter(b -> b.getId() == billId)
+                .findFirst()
+                .orElseThrow(BILL_DOES_NOT_EXIST::getError);
     }
 }

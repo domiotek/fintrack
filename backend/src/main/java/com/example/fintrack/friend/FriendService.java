@@ -17,6 +17,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static com.example.fintrack.exception.BusinessErrorCodes.*;
 import static com.example.fintrack.friend.FriendSpecification.*;
 
 @Service
@@ -53,6 +54,10 @@ public class FriendService {
     public void sendFriendRequest(SendFriendRequestDto sendFriendRequestDto) {
         User user = userProvider.getLoggedUser();
 
+        if (user.getEmail().equals(sendFriendRequestDto.email())) {
+            throw CANNOT_INVITE_YOURSELF.getError();
+        }
+
         Optional<User> userOptional = userRepository.findUserByEmail(sendFriendRequestDto.email());
         if (userOptional.isEmpty()) {
             return;
@@ -64,7 +69,7 @@ public class FriendService {
 
         List<Friend> friends = friendRepository.findAll(friendSpecification);
         if (!friends.isEmpty()) {
-            return;
+            throw ALREADY_FRIENDS.getError();
         }
 
         FriendChatMessage friendChatMessage = new FriendChatMessage();

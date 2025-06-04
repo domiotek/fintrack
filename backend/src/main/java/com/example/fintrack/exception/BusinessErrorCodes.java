@@ -34,7 +34,9 @@ public enum BusinessErrorCodes {
     LIMIT_DOES_NOT_EXIST(406, "Limit does not exist", HttpStatus.NOT_FOUND),
     RATE_DOES_NOT_EXIST(407, "Rate does not exist", HttpStatus.NOT_FOUND),
     MISSING_REQUEST_BODY(501, "Missing request body", HttpStatus.FAILED_DEPENDENCY),
-    REQUEST_FAILED(502, "Request failed", HttpStatus.BAD_GATEWAY);
+    REQUEST_FAILED(502, "Request failed", HttpStatus.BAD_GATEWAY),
+    CANNOT_INVITE_YOURSELF(601, "Cannot invite yourself", HttpStatus.CONFLICT),
+    ALREADY_FRIENDS(602, "Users are already friends", HttpStatus.CONFLICT),;
 
     private final int code;
     private final String description;

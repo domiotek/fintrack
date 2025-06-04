@@ -12,6 +12,7 @@ public class UserMapper {
                 .code(user.getCurrency().getCode())
                 .build();
         return UserProfileDto.builder()
+                .id(user.getId())
                 .firstName(user.getFirstName())
                 .email(user.getEmail())
                 .currency(userProfileCurrencyDto)
