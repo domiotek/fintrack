@@ -71,6 +71,31 @@ public class BillService {
         billRepository.save(bill);
     }
 
+    public void updateUserBill(long billId, UpdateBillDto updateBillDto) {
+        User user = userProvider.getLoggedUser();
+
+        Bill bill = user.getBills().stream().filter(b -> b.getId() == billId).findFirst()
+                .orElseThrow(BILL_DOES_NOT_EXIST::getError);
+
+        if (updateBillDto.name() != null) {
+            bill.setName(updateBillDto.name());
+        }
+        if (updateBillDto.date() != null) {
+            bill.setDate(updateBillDto.date());
+        }
+        if (updateBillDto.amount() != null) {
+            bill.setAmount(updateBillDto.amount());
+        }
+        if (updateBillDto.categoryId() != null) {
+            Category category = categoryRepository.findById(updateBillDto.categoryId())
+                    .orElseThrow(CATEGORY_DOES_NOT_EXIST::getError);
+
+            bill.setCategory(category);
+        }
+
+        billRepository.save(bill);
+    }
+
     public void updateBillInEvent(long eventId, long billId, UpdateBillEventDto updateBillEventDto) {
         Event event = eventRepository.findById(eventId).orElseThrow(EVENT_DOES_NOT_EXIST::getError);
 
@@ -102,13 +127,13 @@ public class BillService {
         billRepository.delete(bill);
     }
 
-    public Page<BillDto> getBills(
+    public Page<BillDto> getUserBills(
             ZonedDateTime from, ZonedDateTime to, Long categoryId, SortDirection sortDirection, int page, int size
     ) {
-        User loggedUser = userProvider.getLoggedUser();
+        User user = userProvider.getLoggedUser();
 
-        Specification<Bill> billSpecification = hasUserId(loggedUser.getId());
-        billSpecification = billSpecification.or(hasPaidById(loggedUser.getId()));
+        Specification<Bill> billSpecification = hasUserId(user.getId());
+        billSpecification = billSpecification.or(hasPaidById(user.getId()));
         if(from != null && to != null) {
             billSpecification = billSpecification.and(hasBillsBetweenDates(from, to));
         }
@@ -121,25 +146,31 @@ public class BillService {
 
         Page<Bill> bills = billRepository.findAll(billSpecification, pageRequest);
 
-        return bills.map(bill -> BillMapper.billToBillDto(bill, currencyConverter, loggedUser));
+        return bills.map(bill -> BillMapper.billToBillDto(bill, currencyConverter, user));
     }
 
-    public void addBill(AddBillDto addBillDto) {
-        Category category = null;
+    public void addUserBill(AddBillDto addBillDto) {
         User user = userProvider.getLoggedUser();
-        if(addBillDto.categoryId() != null) {
-            category = categoryRepository.findById(addBillDto.categoryId())
-                    .orElseThrow(CATEGORY_DOES_NOT_EXIST::getError);
-        }
-        Currency currency = currencyRepository.getReferenceById(addBillDto.currencyId());
+
+        Category category = user.getCategories().stream()
+                .filter(c -> c.getId().equals(addBillDto.categoryId()))
+                .findFirst()
+                .orElseThrow(CATEGORY_DOES_NOT_EXIST::getError);
+
+        Currency currency = currencyRepository.findById(addBillDto.currencyId())
+                .orElseThrow(CURRENCY_DOES_NOT_EXIST::getError);
+
         Bill bill = BillMapper.addBillDtoToBill(addBillDto, category, currency, user);
 
         billRepository.save(bill);
     }
 
-    public void deleteBill(Long id) {
-        var deletedBill = billRepository.findById(id).orElseThrow(BILL_DOES_NOT_EXIST::getError);
+    public void deleteUserBill(long billId) {
+        User user = userProvider.getLoggedUser();
 
-        billRepository.delete(deletedBill);
+        Bill bill = user.getBills().stream().filter(b -> b.getId() == billId).findFirst()
+                .orElseThrow(BILL_DOES_NOT_EXIST::getError);
+
+        billRepository.delete(bill);
     }
 }

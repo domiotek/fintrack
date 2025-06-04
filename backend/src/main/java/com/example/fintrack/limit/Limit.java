@@ -1,4 +1,4 @@
-package com.example.fintrack.category.limit;
+package com.example.fintrack.limit;
 
 import com.example.fintrack.category.Category;
 import jakarta.persistence.*;

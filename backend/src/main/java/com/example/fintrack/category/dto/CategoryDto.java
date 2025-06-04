@@ -1,5 +1,6 @@
 package com.example.fintrack.category.dto;
 
+import com.example.fintrack.limit.dto.LimitDto;
 import lombok.Builder;
 
 import java.util.List;

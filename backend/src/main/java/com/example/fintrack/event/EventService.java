@@ -168,6 +168,12 @@ public class EventService {
                 .build();
     }
 
+    public void deleteEvent(long eventId) {
+        Event event = eventRepository.findById(eventId).orElseThrow(EVENT_DOES_NOT_EXIST::getError);
+
+        eventRepository.delete(event);
+    }
+
     public List<Long> getUsersWhoPaidInEvent(long eventId) {
         Event event = eventRepository.findById(eventId).orElseThrow(EVENT_DOES_NOT_EXIST::getError);
 
@@ -270,11 +276,5 @@ public class EventService {
         }
 
         return settlements;
-    }
-
-    public void deleteEvent(long eventId) {
-        Event event = eventRepository.findById(eventId).orElseThrow(EVENT_DOES_NOT_EXIST::getError);
-
-        eventRepository.delete(event);
     }
 }

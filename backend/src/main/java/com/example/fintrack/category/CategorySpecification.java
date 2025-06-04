@@ -1,7 +1,7 @@
 package com.example.fintrack.category;
 
 import com.example.fintrack.bill.Bill;
-import com.example.fintrack.category.limit.Limit;
+import com.example.fintrack.limit.Limit;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import org.springframework.data.jpa.domain.Specification;

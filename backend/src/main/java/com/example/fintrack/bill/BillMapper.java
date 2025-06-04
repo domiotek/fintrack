@@ -8,7 +8,6 @@ import com.example.fintrack.category.Category;
 import com.example.fintrack.category.dto.BillCategoryDto;
 import com.example.fintrack.currency.Currency;
 import com.example.fintrack.currency.CurrencyConverter;
-import com.example.fintrack.event.Event;
 import com.example.fintrack.event.dto.EventBillCurrencyDto;
 import com.example.fintrack.user.User;
 
@@ -76,8 +75,7 @@ public class BillMapper {
                 .build();
     }
 
-    public static Bill addBillDtoToBill(AddBillDto addBillDto, Category category,
-                                        Currency currency, User user) {
+    public static Bill addBillDtoToBill(AddBillDto addBillDto, Category category, Currency currency, User user) {
         Bill bill = new Bill();
 
         bill.setName(addBillDto.name());

@@ -3,7 +3,8 @@ package com.example.fintrack.category;
 import com.example.fintrack.bill.Bill;
 import com.example.fintrack.category.dto.AddCategoryDto;
 import com.example.fintrack.category.dto.CategoryDto;
-import com.example.fintrack.category.limit.LimitMapper;
+import com.example.fintrack.limit.LimitMapper;
+import com.example.fintrack.user.User;
 
 import java.math.BigDecimal;
 
@@ -30,10 +31,11 @@ public class CategoryMapper {
 
     }
 
-    public static Category addCategoryDtoToCategory(AddCategoryDto addCategoryDto) {
+    public static Category addCategoryDtoToCategory(AddCategoryDto addCategoryDto, User user) {
         Category category = new Category();
         category.setName(addCategoryDto.name());
         category.setColor(addCategoryDto.color());
+        category.setUser(user);
         return category;
     }
 

@@ -1,8 +1,8 @@
-package com.example.fintrack.category.limit;
+package com.example.fintrack.limit;
 
 import com.example.fintrack.category.Category;
-import com.example.fintrack.category.dto.AddLimitDto;
-import com.example.fintrack.category.dto.LimitDto;
+import com.example.fintrack.limit.dto.AddLimitDto;
+import com.example.fintrack.limit.dto.LimitDto;
 
 public class LimitMapper {
 
