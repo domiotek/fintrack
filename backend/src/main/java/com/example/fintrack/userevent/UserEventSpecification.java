@@ -7,8 +7,8 @@ import java.time.ZonedDateTime;
 
 public class UserEventSpecification {
 
-    public static Specification<UserEvent> hasUserId(long id) {
-        return (root, query, builder) -> builder.equal(root.get("user").get("id"), id);
+    public static Specification<UserEvent> hasUserId(long userId) {
+        return (root, query, builder) -> builder.equal(root.get("user").get("id"), userId);
     }
 
     public static Specification<UserEvent> hasEventName(String name) {

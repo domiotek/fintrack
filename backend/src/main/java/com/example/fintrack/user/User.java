@@ -4,6 +4,7 @@ import com.example.fintrack.bill.Bill;
 import com.example.fintrack.category.Category;
 import com.example.fintrack.chat.UserChat;
 import com.example.fintrack.currency.Currency;
+import com.example.fintrack.friend.Friend;
 import com.example.fintrack.userevent.UserEvent;
 import com.example.fintrack.message.LastReadMessage;
 import jakarta.persistence.*;
@@ -60,23 +61,13 @@ public class User implements UserDetails {
     @ToString.Exclude
     private Set<Bill> paidBills;
 
-    @ManyToMany
-    @JoinTable(
-            name="friends",
-            joinColumns=@JoinColumn(name="user_id"),
-            inverseJoinColumns=@JoinColumn(name="user_friend_id")
-    )
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     @ToString.Exclude
-    private Set<User> friends;
+    private Set<Friend> friends;
 
-    @ManyToMany
-    @JoinTable(
-            name="friends",
-            joinColumns=@JoinColumn(name="user_friend_id"),
-            inverseJoinColumns=@JoinColumn(name="user_id")
-    )
+    @OneToMany(mappedBy = "friend", fetch = FetchType.EAGER)
     @ToString.Exclude
-    private Set<User> friendOf;
+    private Set<Friend> friendOf;
 
     @Column(nullable = false)
     private String firstName;
