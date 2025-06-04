@@ -156,16 +156,22 @@ public class EventService {
 
         return EventSummaryDto.builder()
                 .eventCurrency(EventSummaryCurrencyDto.builder()
-                        .totalSum(totalSumInEventCurrency)
+                        .amount(totalSumInEventCurrency)
                         .costPerUser(totalCostPerUserInEventCurrency)
                         .build()
                 )
                 .userCurrency(EventSummaryCurrencyDto.builder()
-                        .totalSum(totalSumInUserCurrency)
+                        .amount(totalSumInUserCurrency)
                         .costPerUser(totalCostPerUserInUserCurrency)
                         .build()
                 )
                 .build();
+    }
+
+    public void deleteEvent(long eventId) {
+        Event event = eventRepository.findById(eventId).orElseThrow(EVENT_DOES_NOT_EXIST::getError);
+
+        eventRepository.delete(event);
     }
 
     public List<Long> getUsersWhoPaidInEvent(long eventId) {
@@ -270,11 +276,5 @@ public class EventService {
         }
 
         return settlements;
-    }
-
-    public void deleteEvent(long eventId) {
-        Event event = eventRepository.findById(eventId).orElseThrow(EVENT_DOES_NOT_EXIST::getError);
-
-        eventRepository.delete(event);
     }
 }

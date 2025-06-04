@@ -8,7 +8,6 @@ import com.example.fintrack.category.Category;
 import com.example.fintrack.category.dto.BillCategoryDto;
 import com.example.fintrack.currency.Currency;
 import com.example.fintrack.currency.CurrencyConverter;
-import com.example.fintrack.event.Event;
 import com.example.fintrack.event.dto.EventBillCurrencyDto;
 import com.example.fintrack.user.User;
 
@@ -39,8 +38,8 @@ public class BillMapper {
                 .date(bill.getDate())
                 .paidBy(EventBillUserDto.builder()
                         .id(bill.getPaidBy().getId())
-                        .firstname(bill.getPaidBy().getFirstName())
-                        .lastname(bill.getPaidBy().getLastName())
+                        .firstName(bill.getPaidBy().getFirstName())
+                        .lastName(bill.getPaidBy().getLastName())
                         .build()
                 )
                 .eventCurrency(EventBillCurrencyDto.builder()
@@ -68,7 +67,7 @@ public class BillMapper {
         return BillDto.builder()
                 .id(bill.getId())
                 .name(bill.getName())
-                .categoryDto(categoryDto)
+                .category(categoryDto)
                 .date(bill.getDate())
                 .userValue(userAmountInUsersCurrency)
                 .billValue(bill.getAmount())
@@ -76,8 +75,7 @@ public class BillMapper {
                 .build();
     }
 
-    public static Bill addBillDtoToBill(AddBillDto addBillDto, Category category,
-                                        Currency currency, Event event, User user) {
+    public static Bill addBillDtoToBill(AddBillDto addBillDto, Category category, Currency currency, User user) {
         Bill bill = new Bill();
 
         bill.setName(addBillDto.name());
@@ -85,14 +83,7 @@ public class BillMapper {
         bill.setCategory(category);
         bill.setCurrency(currency);
         bill.setDate(addBillDto.date());
-        if(addBillDto.eventId() != null) {
-            bill.setEvent(event);
-        }
-        if(addBillDto.userId() != null) {
-            bill.setUser(user);
-        } else {
-            bill.setPaidBy(user);
-        }
+        bill.setUser(user);
 
         return bill;
     }
