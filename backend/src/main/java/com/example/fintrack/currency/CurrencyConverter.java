@@ -43,15 +43,29 @@ public class CurrencyConverter {
 
         List<Rate> rates = rateRepository.findRatesByDateBetween(startDate, endDate);
 
+        LocalDate now = LocalDate.now();
+        ZonedDateTime nowStartDate = now.atStartOfDay().atZone(ZoneId.systemDefault());
+        ZonedDateTime nowEndDate = startDate.plusDays(1);
+
+        List<Rate> latestRates = rateRepository.findRatesByDateBetween(nowStartDate, nowEndDate);
+
         Rate fromRate = rates.stream()
                 .filter(rate -> rate.getCurrency().equals(fromCurrency))
                 .findFirst()
-                .orElseThrow();
+                .orElseGet(() -> latestRates.stream()
+                        .filter(rate -> rate.getCurrency().equals(fromCurrency))
+                        .findFirst()
+                        .orElseThrow(RATE_DOES_NOT_EXIST::getError)
+                );
 
         Rate toRate = rates.stream()
                 .filter(rate -> rate.getCurrency().equals(toCurrency))
                 .findFirst()
-                .orElseThrow();
+                .orElseGet(() -> latestRates.stream()
+                        .filter(rate -> rate.getCurrency().equals(fromCurrency))
+                        .findFirst()
+                        .orElseThrow(RATE_DOES_NOT_EXIST::getError)
+                );
 
         return amount.divide(fromRate.getAmount(), 2, RoundingMode.HALF_UP).multiply(toRate.getAmount())
                 .setScale(2, RoundingMode.HALF_UP);
