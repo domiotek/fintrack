@@ -3,6 +3,7 @@ package com.example.fintrack.bill;
 import com.example.fintrack.bill.dto.*;
 import com.example.fintrack.category.Category;
 import com.example.fintrack.category.CategoryRepository;
+import com.example.fintrack.category.CategorySpecification;
 import com.example.fintrack.currency.Currency;
 import com.example.fintrack.currency.CurrencyConverter;
 import com.example.fintrack.currency.CurrencyRepository;
@@ -153,7 +154,11 @@ public class BillService {
     public void addUserBill(AddBillDto addBillDto) {
         User user = userProvider.getLoggedUser();
 
-        Category category = user.getCategories().stream()
+        Specification<Category> categorySpecification = CategorySpecification.hasUserId(user.getId());
+
+        List<Category> categories = categoryRepository.findAll(categorySpecification);
+
+        Category category = categories.stream()
                 .filter(c -> c.getId().equals(addBillDto.categoryId()))
                 .findFirst()
                 .orElseThrow(CATEGORY_DOES_NOT_EXIST::getError);
