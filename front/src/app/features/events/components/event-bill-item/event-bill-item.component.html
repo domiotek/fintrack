@@ -31,7 +31,7 @@
   <div class="middle_container" #middleContainer>
     <p>Do zapłaty: &nbsp;</p>
     <div class="to_paid_container">
-      @if (billCurrency().id) {
+      @if (billCurrency().id === userCurrency().id) {
         <p class="main_amount bold">{{ bill().userCurrency.costPerUser }} {{ userCurrency().code }}</p>
       } @else {
         <p class="main_amount bold">~ {{ bill().userCurrency.costPerUser }} {{ userCurrency().code }}</p>
@@ -41,7 +41,7 @@
   </div>
 }
 <div class="right_container" #rightContainer>
-  @if (billCurrency().id) {
+  @if (billCurrency().id === userCurrency().id) {
     <p class="main_amount bold">{{ bill().userCurrency.amount }} {{ userCurrency().code }}</p>
   } @else {
     <p class="main_amount bold">~ {{ bill().userCurrency.amount }} {{ userCurrency().code }}</p>

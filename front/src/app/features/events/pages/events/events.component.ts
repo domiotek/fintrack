@@ -133,7 +133,6 @@ export class EventsComponent implements OnInit {
     if (!event) {
       this.selectedEvent.set(null);
       return;
-      // return; sonar sie czepia
     }
     this.reload.set(true);
     setTimeout(() => {

@@ -1,5 +1,9 @@
 @let userCurrency = userCurrency$ | async;
 
+@if (isMobile()) {
+  <button class="back-button" mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
+}
+
 <mat-tab-group>
   <mat-tab label="Wiadomości">
     <ng-template matTabContent>
@@ -18,7 +22,7 @@
   </mat-tab>
   <mat-tab label="Podsumowanie wydatków">
     <ng-template matTabContent>
-      <app-event-details-settlements />
+      <app-event-details-settlements [event]="event()" [userCurrency]="userCurrency!" [isMobile]="isMobile()" />
     </ng-template>
   </mat-tab>
   <mat-tab label="Ustawienia">

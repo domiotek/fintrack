@@ -32,8 +32,8 @@ export class CategoriesWidgetComponent extends BaseWidgetComponent implements IW
     this.categoryService
       .getCategoriesList({
         size: 5,
-        from: this.timeRange().from.toUTC().toISO()!,
-        to: this.timeRange().to.toUTC().toISO()!,
+        from: this.timeRange().from.toISO()!,
+        to: this.timeRange().to.toISO()!,
       })
       .subscribe({
         next: (categories) => {

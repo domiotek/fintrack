@@ -2,7 +2,7 @@ import { User } from '../users/user';
 
 export interface EventSettlements {
   user: User;
-  settlements: Settlements;
+  settlement: Settlements;
 }
 
 export interface Settlements {

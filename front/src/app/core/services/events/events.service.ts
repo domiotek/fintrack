@@ -1,3 +1,4 @@
+import { UpdateEventRequest } from './../../models/events/update-event-request';
 import { Observable, Subject, tap } from 'rxjs';
 import { inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../../environments/environments';
@@ -83,6 +84,22 @@ export class EventsService extends BaseApiService {
     return this.http.post<void>(`${this.apiUrl}/${eventId}/bills`, bill).pipe(
       tap(() => {
         // tutaj będzie toast że pomyślnie dodano rachunek do wydarzenia
+      }),
+    );
+  }
+
+  updateEventBill(eventId: number, billId: number, req: UpdateEventRequest): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${eventId}/bills/${billId}`, req).pipe(
+      tap(() => {
+        // tutaj będzie toast że pomyślnie zaktualizowano wydarzenie
+      }),
+    );
+  }
+
+  deleteEventBill(eventId: number, billId: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${eventId}/bills/${billId}`).pipe(
+      tap(() => {
+        // tutaj będzie toast że pomyślnie usunięto rachunek z wydarzenia
       }),
     );
   }

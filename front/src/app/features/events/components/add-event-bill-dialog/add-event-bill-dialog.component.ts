@@ -10,12 +10,13 @@ import { MatTimepickerModule } from '@angular/material/timepicker';
 import { DateTime } from 'luxon';
 import { EventsService } from '../../../../core/services/events/events.service';
 import { ApiErrorCode } from '../../../../core/models/error-codes.enum';
-import { AddEventBillDialogData } from '../../models/add-event-bill-dialog-data';
-import { AppStateStore } from '../../../../core/store/app-state.store';
+import { EventBillDialogData } from '../../models/add-event-bill-dialog-data';
 import { AddBillEventRequest } from '../../../../core/models/events/add-bill-event-request';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormProgressBarComponent } from '../../../../shared/components/form-progress-bar/form-progress-bar.component';
 import { AlertPanelComponent } from '../../../../shared/components/alert-panel/alert-panel.component';
+import { EventBill } from '../../../../core/models/events/event-bill';
+import { UpdateEventRequest } from '../../../../core/models/events/update-event-request';
 
 @Component({
   selector: 'app-add-event-bill-dialog',
@@ -38,10 +39,12 @@ export class AddEventBillDialogComponent implements OnInit {
   protected readonly eventsService = inject(EventsService);
   private readonly dialogRef = inject(MatDialogRef<AddEventBillDialogComponent>);
   private readonly destroyRef = inject(DestroyRef);
-  protected readonly data = inject<AddEventBillDialogData>(MAT_DIALOG_DATA);
+  protected readonly data = inject<EventBillDialogData>(MAT_DIALOG_DATA);
 
   errorCode = signal<ApiErrorCode | null>(null);
   submitting = signal<boolean>(false);
+  title = signal<string>('Dodaj rachunek');
+  submitText = signal<string>('Dodaj');
 
   form = new FormGroup({
     name: new FormControl<string>('', { validators: [Validators.required, Validators.minLength(3)] }),
@@ -65,7 +68,17 @@ export class AddEventBillDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('Data', this.data);
+    if (this.data.bill) {
+      this.form.patchValue({
+        name: this.data.bill.name,
+        date: DateTime.fromISO(this.data.bill.date).toISODate(),
+        time: DateTime.fromISO(this.data.bill.date).toFormat('HH:mm'),
+        amount: this.data.bill.eventCurrency.amount,
+      });
+
+      this.title.set('Edytuj rachunek');
+      this.submitText.set('Zapisz');
+    }
   }
 
   protected dateFilter(date: DateTime | null): boolean {
@@ -86,6 +99,17 @@ export class AddEventBillDialogComponent implements OnInit {
     });
 
     this.submitting.set(true);
+
+    if (this.data.bill) {
+      const updatedBill: UpdateEventRequest = {
+        name: this.form.value.name!,
+        date: dateTime.toISO()!,
+        amount: this.form.value.amount!,
+      };
+      this.dialogRef.close({ type: 'edit', bill: updatedBill });
+      return;
+    }
+
     const req: AddBillEventRequest = {
       name: this.form.value.name!,
       date: dateTime.toISO()!,
@@ -95,7 +119,7 @@ export class AddEventBillDialogComponent implements OnInit {
     };
 
     this.eventsService
-      .addBillToEvent(this.data.eventId, req)
+      .addBillToEvent(this.data.event.id, req)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {

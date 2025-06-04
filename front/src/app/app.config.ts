@@ -15,9 +15,13 @@ import { firstValueFrom, switchMap } from 'rxjs';
 import { ConfigService } from './core/services/config/config.service';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { loadingInterceptor } from './core/interceptors/loading/loading.interceptor';
+import localePl from '@angular/common/locales/pl';
+import { registerLocaleData } from '@angular/common';
 
 async function initializeAppFactory(configService: ConfigService) {
   try {
+    registerLocaleData(localePl, 'pl');
+
     await firstValueFrom(configService.getCurrencyList().pipe(switchMap(() => configService.getConfig())));
   } catch (error) {
     return Promise.resolve();
