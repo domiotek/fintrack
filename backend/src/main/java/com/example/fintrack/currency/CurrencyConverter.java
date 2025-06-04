@@ -45,7 +45,7 @@ public class CurrencyConverter {
 
         LocalDate now = LocalDate.now();
         ZonedDateTime nowStartDate = now.atStartOfDay().atZone(ZoneId.systemDefault());
-        ZonedDateTime nowEndDate = startDate.plusDays(1);
+        ZonedDateTime nowEndDate = nowStartDate.plusDays(1);
 
         List<Rate> latestRates = rateRepository.findRatesByDateBetween(nowStartDate, nowEndDate);
 
