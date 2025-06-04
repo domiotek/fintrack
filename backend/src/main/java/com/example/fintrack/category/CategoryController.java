@@ -25,8 +25,8 @@ public class CategoryController {
     @GetMapping
     public ResponseEntity<Page<CategoryDto>> getCategories(
             @RequestParam(required = false) String name,
-            @RequestParam(required = false) ZonedDateTime from,
-            @RequestParam(required = false) ZonedDateTime to,
+            @RequestParam ZonedDateTime from,
+            @RequestParam ZonedDateTime to,
             @RequestParam(defaultValue = "ASC") SortDirection sortDirection,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
@@ -62,8 +62,8 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{category-id}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable("category-id") Long id) {
-        categoryService.deleteCategory(id);
+    public ResponseEntity<Void> deleteCategory(@PathVariable("category-id") long categoryId) {
+        categoryService.deleteCategory(categoryId);
 
         return ResponseEntity.noContent().build();
     }
