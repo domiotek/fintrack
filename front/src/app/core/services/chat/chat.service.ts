@@ -202,4 +202,13 @@ export class ChatService {
   signalStoppedTyping(): void {
     this.typingUsers.next(this.typingUsers.value.filter((user) => user.id !== 0));
   }
+
+  updateLastReadMessage(messageId: string): void {
+    const currentUserId = this.mockUsers.filter((user) => user.id === 0)[0].id; // Assuming the first user is the current user
+    const lastReadMessages = this.lastReadMessagesMap.value;
+    if (lastReadMessages[currentUserId] !== messageId) {
+      lastReadMessages[currentUserId] = messageId;
+      this.lastReadMessagesMap.next(lastReadMessages);
+    }
+  }
 }

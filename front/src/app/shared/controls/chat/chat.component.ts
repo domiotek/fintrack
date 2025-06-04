@@ -40,6 +40,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { User } from '../../../core/models/user/user.model';
 import { AvatarComponent } from '../../components/avatar/avatar.component';
+import { callDebounced } from '../../../utils/debouncer';
 
 @Component({
   selector: 'app-chat',
@@ -79,6 +80,10 @@ export class ChatComponent implements AfterViewInit {
   readonly scrollSnapMessageId = signal<string | null>(null);
   readonly loading = signal<boolean>(true);
   readonly hasMorePages = signal<boolean>(false);
+
+  readonly myLastReadMessageId = computed(() => {
+    return this.currentUserId() !== null ? this.lastReadMessagesMap()[this.currentUserId()!] : null;
+  });
 
   readonly otherChatParticipants = computed(() => {
     return this.chatParticipants().filter((user) => user.id !== this.currentUserId());
@@ -202,8 +207,32 @@ export class ChatComponent implements AfterViewInit {
     this.scrollSnapMessageId.set(null);
   }
 
+  onMessageRead = callDebounced((messageId: string) => {
+    const message = this.messages().find((msg) => msg.id === messageId);
+    const lastReadMessage = this.messages().find((msg) => msg.id === this.myLastReadMessageId());
+
+    if (!message) return;
+
+    if (lastReadMessage && DateTime.fromISO(message.sentAt) < DateTime.fromISO(lastReadMessage.sentAt)) {
+      return;
+    }
+
+    this.chatService.updateLastReadMessage(messageId);
+  }, 300);
+
   scrollToBottom(instant: boolean = false): void {
     this.scrollbarRef?.scrollTo({ bottom: 0, duration: instant ? 0 : DEFAULT_CHAT_SCROLL_BOTTOM_DURATION });
+  }
+
+  isMessageBlockFinalized(blockLastMessage: ChatMessage): boolean {
+    const myLastReadMessage = this.messages().find((msg) => msg.id === this.myLastReadMessageId());
+
+    if (!myLastReadMessage) return false;
+
+    const blockLastMessageSentAt = DateTime.fromISO(blockLastMessage.sentAt);
+    const myLastReadMessageSentAt = DateTime.fromISO(myLastReadMessage.sentAt);
+
+    return blockLastMessageSentAt <= myLastReadMessageSentAt;
   }
 
   private fetchAndMergeMessages(): void {

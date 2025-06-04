@@ -26,6 +26,8 @@
             [name]="block.name"
             [surname]="block.surname"
             [readIndicators]="messagesWithReadIndicators()"
+            [finalized]="isMessageBlockFinalized(block.messages[block.messages.length - 1])"
+            (messageReadEmit)="onMessageRead($event)"
           />
         }
       } @empty {
