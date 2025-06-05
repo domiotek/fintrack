@@ -38,7 +38,7 @@ export class ChatItemComponent implements OnInit {
 
   ngOnInit(): void {
     this.appStateStore.state$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((state) => {
-      this.currentUserId.set(state.userId);
+      this.currentUserId.set(state.userId!);
     });
   }
 }

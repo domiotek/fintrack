@@ -64,8 +64,10 @@
   }
 }
 
-@media (width > 768px) {
-  .content {
-    padding: 32px !important;
+@media (width < 768px) {
+  :host {
+    .content {
+      padding: 16px;
+    }
   }
 }

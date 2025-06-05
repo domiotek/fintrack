@@ -5,6 +5,7 @@ import lombok.Builder;
 @Builder
 public record BillCategoryDto(
         Long id,
-        String name
+        String name,
+        String color
 ) {
 }
