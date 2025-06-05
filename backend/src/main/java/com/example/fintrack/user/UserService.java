@@ -1,6 +1,7 @@
 package com.example.fintrack.user;
 
 import com.example.fintrack.bill.Bill;
+import com.example.fintrack.bill.BillRepository;
 import com.example.fintrack.event.Event;
 import com.example.fintrack.event.EventRepository;
 import com.example.fintrack.security.service.UserProvider;
@@ -26,6 +27,7 @@ public class UserService implements UserDetailsService {
     private final UserEventRepository userEventRepository;
     private final EventRepository eventRepository;
     private final UserProvider userProvider;
+    private final BillRepository billRepository;
 
     public UserProfileDto profile() {
         User user = userProvider.getLoggedUser();
@@ -55,24 +57,20 @@ public class UserService implements UserDetailsService {
     }
 
     public void deleteUserFromEvent(long eventId, long userId) {
-        Event event = eventRepository.findById(eventId).orElseThrow(EVENT_DOES_NOT_EXIST::getError);
-
-        Set<UserEvent> userEvents = event.getUsers();
-        UserEvent userEvent = userEvents.stream()
-                .filter(ue -> ue.getUser().getId() == userId)
-                .findFirst()
-                .orElseThrow(USER_DOES_NOT_EXIST::getError);
+        UserEvent userEvent = userEventRepository.findUserEventByUserIdAndEventId(userId, eventId).orElseThrow();
 
         if (userEvent.getIsFounder()) {
             throw USER_IS_FOUNDER.getError();
         }
 
-        User user = userEvent.getUser();
+        List<Bill> bills = billRepository.findBillsByEventId(userEvent.getEvent().getId());
 
-        List<User> usersWhoPaidForBills = event.getBills().stream()
+        List<User> usersWhoPaidForBills = bills.stream()
                 .map(Bill::getPaidBy)
                 .distinct()
                 .toList();
+
+        User user = userEvent.getUser();
 
         if (usersWhoPaidForBills.contains(user)) {
             throw USER_ALREADY_PAID.getError();

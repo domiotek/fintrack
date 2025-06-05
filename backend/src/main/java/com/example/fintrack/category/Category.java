@@ -12,6 +12,8 @@ import lombok.ToString;
 import java.util.Objects;
 import java.util.Set;
 
+import static jakarta.persistence.CascadeType.*;
+
 @Entity
 @Getter
 @Setter
@@ -27,7 +29,7 @@ public class Category {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "category")
+    @OneToMany(mappedBy = "category", cascade = {MERGE, PERSIST, REMOVE}, orphanRemoval = true)
     @ToString.Exclude
     private Set<Limit> limits;
 

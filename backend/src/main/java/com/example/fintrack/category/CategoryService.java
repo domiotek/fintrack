@@ -15,7 +15,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
-import java.util.List;
 
 import static com.example.fintrack.category.CategorySpecification.*;
 import static com.example.fintrack.exception.BusinessErrorCodes.CATEGORY_DOES_NOT_EXIST;
@@ -55,7 +54,10 @@ public class CategoryService {
     }
 
     public void updateCategory(long categoryId, UpdateCategoryDto updateCategoryDto) {
-        Category category = findCategory(categoryId);
+        User user = userProvider.getLoggedUser();
+
+        Category category = categoryRepository.findCategoryByIdAndUserId(categoryId, user.getId())
+                .orElseThrow(CATEGORY_DOES_NOT_EXIST::getError);
 
         if (updateCategoryDto.name() != null) {
             category.setName(updateCategoryDto.name());
@@ -68,21 +70,11 @@ public class CategoryService {
     }
 
     public void deleteCategory(long categoryId) {
-        Category category = findCategory(categoryId);
-
-        categoryRepository.delete(category);
-    }
-
-    private Category findCategory(long categoryId) {
         User user = userProvider.getLoggedUser();
 
-        Specification<Category> categorySpecification = hasUserId(user.getId());
-
-        List<Category> categories = categoryRepository.findAll(categorySpecification);
-
-        return categories.stream()
-                .filter(c -> c.getId() == categoryId)
-                .findFirst()
+        Category category = categoryRepository.findCategoryByIdAndUserId(categoryId, user.getId())
                 .orElseThrow(CATEGORY_DOES_NOT_EXIST::getError);
+
+        categoryRepository.delete(category);
     }
 }

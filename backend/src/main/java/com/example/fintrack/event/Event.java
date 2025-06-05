@@ -31,11 +31,11 @@ public class Event {
     @JoinColumn(name = "currency_id", nullable = false)
     private Currency currency;
 
-    @OneToMany(mappedBy = "event", cascade = {PERSIST, MERGE, REMOVE})
+    @OneToMany(mappedBy = "event", cascade = {MERGE, PERSIST, REMOVE}, orphanRemoval = true)
     @ToString.Exclude
     private Set<UserEvent> users;
 
-    @OneToMany(mappedBy = "event", cascade = {PERSIST, MERGE, REMOVE})
+    @OneToMany(mappedBy = "event", cascade = {MERGE, PERSIST, REMOVE}, orphanRemoval = true)
     @ToString.Exclude
     private Set<Bill> bills;
 
