@@ -123,7 +123,7 @@ export class AddEventBillDialogComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.eventsService.emitBIllRefresh();
+          this.eventsService.emitBillRefresh();
           this.dialogRef.close();
           this.submitting.set(false);
         },

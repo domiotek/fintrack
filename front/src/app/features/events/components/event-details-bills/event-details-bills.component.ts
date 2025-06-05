@@ -109,8 +109,8 @@ export class EventDetailsBillsComponent implements OnInit, OnDestroy {
         next: (result: EventBillDetailsDialogResponse) => {
           if (result?.type === 'delete') {
             this.eventsService.deleteEventBill(this.event().id, bill.id).subscribe({
-              next: () => {
-                this.handleGetBillsWithPaginationReset();
+              complete: () => {
+                this.eventsService.emitBillRefresh();
               },
               error: (error) => {
                 console.error('Error deleting bill:', error);
@@ -121,8 +121,8 @@ export class EventDetailsBillsComponent implements OnInit, OnDestroy {
               .updateEventBill(this.event().id, bill.id, result.bill)
               .pipe(takeUntilDestroyed(this.destroyRef))
               .subscribe({
-                next: () => {
-                  this.handleGetBillsWithPaginationReset();
+                complete: () => {
+                  this.eventsService.emitBillRefresh();
                 },
                 error: (error) => {
                   console.error('Error updating bill:', error);

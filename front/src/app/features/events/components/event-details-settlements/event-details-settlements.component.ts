@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, input, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, inject, input, OnInit, signal } from '@angular/core';
 import { EventDetails } from '../../../../core/models/events/event';
 import { Currency } from '../../../../core/models/currency/currency.model';
 import { LoadingService } from '../../../../core/services/loading/loading.service';
@@ -14,7 +14,7 @@ import { SpinnerComponent } from '../../../../core/components/spinner/spinner.co
   templateUrl: './event-details-settlements.component.html',
   styleUrl: './event-details-settlements.component.scss',
 })
-export class EventDetailsSettlementsComponent implements OnInit, OnDestroy {
+export class EventDetailsSettlementsComponent implements OnInit {
   private readonly eventsService = inject(EventsService);
 
   private readonly loadingService = inject(LoadingService);
@@ -24,8 +24,6 @@ export class EventDetailsSettlementsComponent implements OnInit, OnDestroy {
   event = input.required<EventDetails>();
 
   userCurrency = input.required<Currency>();
-
-  isMobile = input.required<boolean>();
 
   isLoading = this.loadingService.getLoadingState();
 
@@ -48,7 +46,6 @@ export class EventDetailsSettlementsComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (res) => {
           this.event().eventSettlements = res;
-          console.log(res);
           this.bilance.set({
             event: res.reduce((acc, settlement) => acc + settlement.settlement.eventCurrency, 0),
             user: res.reduce((acc, settlement) => acc + settlement.settlement.userCurrency, 0),
@@ -58,9 +55,5 @@ export class EventDetailsSettlementsComponent implements OnInit, OnDestroy {
           console.error('Error fetching settlements:', err);
         },
       });
-  }
-
-  ngOnDestroy(): void {
-    console.log('EventDetailsSettlementsComponent destroyed');
   }
 }

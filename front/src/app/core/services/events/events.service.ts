@@ -25,7 +25,7 @@ export class EventsService extends BaseApiService {
 
   billRefresh$ = this.billRefreshSubject.asObservable();
 
-  emitBIllRefresh(): void {
+  emitBillRefresh(): void {
     this.billRefreshSubject.next();
   }
 
