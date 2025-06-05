@@ -1,0 +1,51 @@
+@use '../../../../styles/variables' as *;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  padding: 32px;
+
+  hr {
+    border: 1px solid $light-gray-1;
+    opacity: 0.3;
+    margin: 0.5rem 0 2rem;
+  }
+
+  .info {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .user_container {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+
+    .left_container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+
+      .avatar {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 40px;
+        height: 40px;
+        border: 1px solid $dark-blue-2;
+        border-radius: 50%;
+        text-transform: uppercase;
+      }
+    }
+  }
+}
+
+@media (width < 768px) {
+  :host {
+    padding: 16px 8px 0 0;
+  }
+}

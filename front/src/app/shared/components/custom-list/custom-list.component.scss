@@ -15,7 +15,7 @@
     width: 100%;
     align-items: center;
     justify-content: space-between;
-    height: 50px;
+    height: 64px;
     padding: 12px;
     background-color: $light-gray-2;
     border-radius: 10px;
@@ -25,5 +25,9 @@
     &.selected {
       background-color: $light-blue-2;
     }
+  }
+
+  .empty-data__text {
+    text-align: center;
   }
 }

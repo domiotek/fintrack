@@ -1,0 +1,95 @@
+<h2 mat-dialog-title>{{ title() }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <app-form-progress-bar [active]="submitting()" />
+
+    <div class="message-container">
+      @if (this.errorCode() !== null) {
+        <app-alert-panel severity="error">{{ eventsService.getErrorMessage(this.errorCode()!) }}</app-alert-panel>
+      }
+    </div>
+
+    <mat-form-field appearance="outline">
+      <mat-label for="name">Tytuł</mat-label>
+      <input
+        matInput
+        formControlName="name"
+        name="name"
+        type="text"
+        required
+        placeholder="Wprowadź nazwę rachunku"
+        title="Nazwa"
+      />
+      @if (form.get('name')?.hasError('required')) {
+        <mat-error> Nazwa jest wymagany </mat-error>
+      }
+
+      @if (form.get('name')?.hasError('minlength')) {
+        <mat-error> Nazwa nie może być krótsza niż 3 znaki.</mat-error>
+      }
+    </mat-form-field>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline">
+        <mat-label for="date">Data</mat-label>
+        <input
+          matInput
+          formControlName="date"
+          name="date"
+          placeholder="Wprowadź datę wydatku"
+          required
+          [matDatepicker]="date_picker"
+        />
+        <mat-datepicker-toggle matIconSuffix [for]="date_picker" />
+        <mat-datepicker #date_picker />
+        @if (form.get('date')?.hasError('required')) {
+          <mat-error> Data jest wymagana </mat-error>
+        }
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label for="time">Godzina</mat-label>
+        <input
+          matInput
+          formControlName="time"
+          name="time"
+          placeholder="Wprowadź godzinę wydatku"
+          required
+          [matTimepicker]="time_picker"
+        />
+        <mat-timepicker-toggle matIconSuffix [for]="time_picker" />
+        <mat-timepicker #time_picker />
+        @if (form.get('time')?.hasError('required')) {
+          <mat-error> Godzina jest wymagana </mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline">
+      <mat-label for="amount">Kwota</mat-label>
+      <input
+        matInput
+        formControlName="amount"
+        name="amount"
+        type="number"
+        required
+        placeholder="Wprowadź kwotę wydatku"
+        [title]="`Kwota w walucie wydarzenia: ${data.eventCurrency.code}`"
+        step="0.01"
+        min="0.01"
+      />
+      @if (form.get('amount')?.hasError('required') || form.get('amount')?.hasError('min')) {
+        <mat-error> Kwota jest wymagana </mat-error>
+      } @else if (data.eventCurrency.id !== data.userCurrency.id) {
+        <mat-hint>{{ `${amountInotherCurrencyText} ${data.userCurrency.code}` }}</mat-hint>
+      }
+    </mat-form-field>
+
+    <mat-dialog-actions>
+      <button mat-button type="button" [disabled]="submitting()" mat-dialog-close>Anuluj</button>
+      <button mat-flat-button color="primary" type="submit" [disabled]="submitting() || !form.valid">
+        {{ submitText() }}
+      </button>
+    </mat-dialog-actions>
+  </form>
+</mat-dialog-content>
