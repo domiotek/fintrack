@@ -15,8 +15,7 @@ import { AddBillEventRequest } from '../../../../core/models/events/add-bill-eve
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormProgressBarComponent } from '../../../../shared/components/form-progress-bar/form-progress-bar.component';
 import { AlertPanelComponent } from '../../../../shared/components/alert-panel/alert-panel.component';
-import { EventBill } from '../../../../core/models/events/event-bill';
-import { UpdateEventRequest } from '../../../../core/models/events/update-event-request';
+import { UpdateEventBillRequest } from '../../../../core/models/events/update-event-bill-request';
 
 @Component({
   selector: 'app-add-event-bill-dialog',
@@ -101,7 +100,7 @@ export class AddEventBillDialogComponent implements OnInit {
     this.submitting.set(true);
 
     if (this.data.bill) {
-      const updatedBill: UpdateEventRequest = {
+      const updatedBill: UpdateEventBillRequest = {
         name: this.form.value.name!,
         date: dateTime.toISO()!,
         amount: this.form.value.amount!,

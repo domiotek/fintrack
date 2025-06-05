@@ -103,6 +103,16 @@ export class EventsComponent implements OnInit {
 
     this.getEvents();
 
+    this.eventsService.eventRefresh$
+      .pipe(
+        tap(() => {
+          this.getEvents();
+          this.selectedEvent.set(null);
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
+
     this.observer
       .observe('(max-width: 1024px)')
       .pipe(

@@ -1,6 +1,6 @@
-import { UpdateEventRequest } from '../../../core/models/events/update-event-request';
+import { UpdateEventBillRequest } from '../../../core/models/events/update-event-bill-request';
 
 export interface EventBillDetailsDialogResponse {
   type: 'edit' | 'delete';
-  bill: UpdateEventRequest | null;
+  bill: UpdateEventBillRequest | null;
 }

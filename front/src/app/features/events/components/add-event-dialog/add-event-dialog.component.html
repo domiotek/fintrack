@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>Dodaj wydarzenie</h2>
+<h2 mat-dialog-title>{{ title() }}</h2>
 
 <mat-dialog-content>
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
@@ -31,44 +31,46 @@
     </mat-form-field>
 
     <mat-form-field appearance="outline">
-        <mat-label for="startDate">Data rozpoczęcia</mat-label>
-        <input
-          matInput
-          formControlName="startDate"
-          name="startDate"
-          placeholder="Wprowadź datę rozpoczęcia wydarzenia"
-          required
-          [matDatepicker]="date_picker_from"
-        />
-        <mat-datepicker-toggle matIconSuffix [for]="date_picker_from" />
-        <mat-datepicker #date_picker_from />
-        @if (form.get('startDate')?.hasError('required')) {
-          <mat-error> Data jest wymagana </mat-error>
-        }
-      </mat-form-field>
+      <mat-label for="startDate">Data rozpoczęcia</mat-label>
+      <input
+        matInput
+        formControlName="startDate"
+        name="startDate"
+        placeholder="Wprowadź datę rozpoczęcia wydarzenia"
+        required
+        [matDatepicker]="date_picker_from"
+      />
+      <mat-datepicker-toggle matIconSuffix [for]="date_picker_from" />
+      <mat-datepicker #date_picker_from />
+      @if (form.get('startDate')?.hasError('required')) {
+        <mat-error> Data jest wymagana </mat-error>
+      }
+    </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label for="endDate">Data zakończenia</mat-label>
-        <input
-          matInput
-          formControlName="endDate"
-          name="endDate"
-          placeholder="Wprowadź datę zakończenia wydarzenia"
-          required
-          [matDatepicker]="date_picker"
-        />
-        <mat-datepicker-toggle matIconSuffix [for]="date_picker" />
-        <mat-datepicker #date_picker />
-        @if (form.get('endDate')?.hasError('required')) {
-          <mat-error> Data jest wymagana </mat-error>
-        }
-      </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label for="endDate">Data zakończenia</mat-label>
+      <input
+        matInput
+        formControlName="endDate"
+        name="endDate"
+        placeholder="Wprowadź datę zakończenia wydarzenia"
+        required
+        [matDatepicker]="date_picker"
+      />
+      <mat-datepicker-toggle matIconSuffix [for]="date_picker" />
+      <mat-datepicker #date_picker />
+      @if (form.get('endDate')?.hasError('required')) {
+        <mat-error> Data jest wymagana </mat-error>
+      }
+    </mat-form-field>
 
-      <app-currency-selector [parentForm]="form" inputName="currencyId" />
+    <app-currency-selector [parentForm]="form" inputName="currencyId" />
 
     <mat-dialog-actions>
       <button mat-button type="button" [disabled]="submitting()" mat-dialog-close>Anuluj</button>
-      <button mat-flat-button color="primary" type="submit" [disabled]="submitting() || !form.valid">Dodaj</button>
+      <button mat-flat-button color="primary" type="submit" [disabled]="submitting() || !form.valid">
+        {{ submitText() }}
+      </button>
     </mat-dialog-actions>
   </form>
 </mat-dialog-content>

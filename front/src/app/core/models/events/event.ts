@@ -9,6 +9,8 @@ export interface Event {
   id: number;
   name: string;
   status: EventStatus;
+  startDate: string;
+  endDate: string;
   isFounder: boolean;
   numberOfNotifications: number;
   currency: Currency;

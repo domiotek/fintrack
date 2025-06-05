@@ -1,4 +1,4 @@
-import { UpdateEventRequest } from './../../models/events/update-event-request';
+import { UpdateEventBillRequest } from '../../models/events/update-event-bill-request';
 import { Observable, Subject, tap } from 'rxjs';
 import { inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../../environments/environments';
@@ -12,6 +12,8 @@ import { EventSettlements } from '../../models/events/event-settlements';
 import { CreateEventRequest } from '../../models/events/create-event-request';
 import { AddBillEventRequest } from '../../models/events/add-bill-event-request';
 import { BaseApiService } from '../base-api.service';
+import { DateTime } from 'luxon';
+import { UpdateEventRequest } from '../../models/events/update-event-request';
 
 @Injectable({
   providedIn: 'root',
@@ -23,10 +25,18 @@ export class EventsService extends BaseApiService {
 
   private readonly billRefreshSubject = new Subject<void>();
 
+  private readonly eventRefreshSubject = new Subject<void>();
+
   billRefresh$ = this.billRefreshSubject.asObservable();
+
+  eventRefresh$ = this.eventRefreshSubject.asObservable();
 
   emitBillRefresh(): void {
     this.billRefreshSubject.next();
+  }
+
+  emitEventRefresh(): void {
+    this.eventRefreshSubject.next();
   }
 
   readonly events = signal<Event[]>([]);
@@ -41,7 +51,12 @@ export class EventsService extends BaseApiService {
 
     return this.http.get<EventResponse>(this.apiUrl, { params }).pipe(
       tap((res) => {
-        this.events.set(res.content);
+        const eventsMockedDate = res.content.map((event) => ({
+          ...event,
+          startDate: DateTime.now().minus({ days: 1 }).toISO(),
+          endDate: DateTime.now().plus({ days: 1 }).toISO(),
+        }));
+        this.events.set(eventsMockedDate);
       }),
     );
   }
@@ -88,7 +103,11 @@ export class EventsService extends BaseApiService {
     );
   }
 
-  updateEventBill(eventId: number, billId: number, req: UpdateEventRequest): Observable<void> {
+  updateEvent(eventId: number, req: UpdateEventRequest): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${eventId}`, req).pipe(tap(() => {}));
+  }
+
+  updateEventBill(eventId: number, billId: number, req: UpdateEventBillRequest): Observable<void> {
     return this.http.put<void>(`${this.apiUrl}/${eventId}/bills/${billId}`, req).pipe(
       tap(() => {
         // tutaj będzie toast że pomyślnie zaktualizowano wydarzenie
@@ -108,6 +127,14 @@ export class EventsService extends BaseApiService {
     return this.http.delete<void>(`${this.apiUrl}/${eventId}/users/${userId}`).pipe(
       tap(() => {
         // tutaj będzie toast że pomyślnie usunięto użytkownika z wydarzenia
+      }),
+    );
+  }
+
+  deleteEvent(eventId: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${eventId}`).pipe(
+      tap(() => {
+        // tutaj będzie toast że pomyślnie usunięto wydarzenie
       }),
     );
   }

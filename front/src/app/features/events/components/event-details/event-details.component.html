@@ -26,9 +26,9 @@
       <app-event-details-settlements [event]="event()" [userCurrency]="userCurrency!" />
     </ng-template>
   </mat-tab>
-  <mat-tab label="Ustawienia">
+  <mat-tab label="Podsumowanie">
     <ng-template matTabContent>
-      <app-event-details-settings />
+      <app-event-details-settings [event]="event()" [userCurrency]="userCurrency!" [userId]="userId!" />
     </ng-template>
   </mat-tab>
 </mat-tab-group>

@@ -1,18 +1,12 @@
 <div class="info">
-  <div class="bold">
-    Członkowie - {{ event().users.length }}
-  </div>
-  @if (event().isFounder){
+  <div class="bold">Członkowie - {{ event().users.length }}</div>
+  @if (event().isFounder) {
     <button mat-icon-button (click)="addUser()"><mat-icon>add</mat-icon></button>
   }
 </div>
 <hr />
 
-<app-custom-list
-  [items]="event().users"
-  [itemTemplate]="transactionItemTemplate"
-  [isSelectable]="false"
-/>
+<app-custom-list [items]="event().users" [itemTemplate]="transactionItemTemplate" [isSelectable]="false" />
 
 <ng-template #transactionItemTemplate let-user>
   <div class="user_container">

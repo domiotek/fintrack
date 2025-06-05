@@ -1,5 +1,6 @@
 export interface UpdateEventRequest {
   name: string;
-  date: string;
-  amount: number;
+  startDate: string;
+  endDate: string;
+  currencyId: number;
 }
