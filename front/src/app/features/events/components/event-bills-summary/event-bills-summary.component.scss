@@ -1,0 +1,38 @@
+@use '../../../../styles/variables' as *;
+
+:host {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  padding: 12px;
+
+  .left_container,
+  .right_container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    .data {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 12px;
+      height: 140px;
+      width: 140px;
+      border-radius: 50%;
+      border: 2px solid $blue;
+      text-align: center;
+
+      .second-val {
+        font-size: 12px;
+        color: $dark-gray;
+      }
+    }
+
+    .label {
+      font-size: 1.2rem;
+    }
+  }
+}

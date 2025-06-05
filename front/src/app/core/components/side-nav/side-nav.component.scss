@@ -63,3 +63,11 @@
     text-overflow: unset;
   }
 }
+
+@media (width < 768px) {
+  :host {
+    .content {
+      padding: 16px;
+    }
+  }
+}

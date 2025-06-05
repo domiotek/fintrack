@@ -1,0 +1,34 @@
+@let userCurrency = userCurrency$ | async;
+@let userId = userId$ | async;
+
+@if (isMobile()) {
+  <button class="back-button" mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
+}
+
+<mat-tab-group>
+  <mat-tab label="Wiadomości">
+    <ng-template matTabContent>
+      <p>Wiadomości</p>
+    </ng-template>
+  </mat-tab>
+  <mat-tab label="Rachunki">
+    <ng-template matTabContent>
+      <app-event-details-bills [event]="event()" [userCurrency]="userCurrency!" [isMobile]="isMobile()" />
+    </ng-template>
+  </mat-tab>
+  <mat-tab label="Użytkownicy">
+    <ng-template matTabContent>
+      <app-event-details-users [event]="event()" [userId]="userId!" (emitUserDeletion)="userDeletion($event)" />
+    </ng-template>
+  </mat-tab>
+  <mat-tab label="Podsumowanie wydatków">
+    <ng-template matTabContent>
+      <app-event-details-settlements [event]="event()" [userCurrency]="userCurrency!" />
+    </ng-template>
+  </mat-tab>
+  <mat-tab label="Podsumowanie">
+    <ng-template matTabContent>
+      <app-event-details-settings [event]="event()" [userCurrency]="userCurrency!" [userId]="userId!" />
+    </ng-template>
+  </mat-tab>
+</mat-tab-group>

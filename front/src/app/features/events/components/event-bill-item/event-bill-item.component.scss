@@ -1,0 +1,82 @@
+@use '../../../../styles/variables' as *;
+
+:host {
+  display: flex;
+  width: 100%;
+  background-color: inherit;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+
+  .left_container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1px solid $light-blue-1;
+    }
+
+    .info {
+      display: flex;
+      flex-direction: column;
+
+      .date {
+        color: $light-gray-3;
+      }
+
+      .info_bottom {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        p {
+          font-size: 12px;
+        }
+
+        .color_label {
+          display: block;
+          height: 8px;
+          width: 8px;
+          border-radius: 50%;
+          background-color: $dark-blue-2;
+        }
+      }
+    }
+  }
+
+  .middle_container {
+    display: flex;
+    height: 40px;
+    align-items: center;
+
+    .to_paid_container {
+      display: flex;
+      flex-direction: column;
+      height: 40px;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  .right_container {
+    text-align: right;
+  }
+
+  .payment_amount {
+    color: $dark-gray;
+    font-size: 12px;
+  }
+
+  .overflow_ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

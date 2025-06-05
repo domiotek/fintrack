@@ -1,0 +1,50 @@
+<div class="left_container">
+  <div class="logo"><mat-icon>receipt</mat-icon></div>
+  <div class="info">
+    <div class="info_top">
+      <p
+        #name
+        class="bold overflow_ellipsis"
+        [style.maxWidth]="`${this.maxNameWidth()}px`"
+        [matTooltip]="bill().name"
+        [matTooltipDisabled]="!isOverflowed(name)"
+      >
+        {{ bill().name }}
+      </p>
+    </div>
+    <div class="info_bottom">
+      <p class="date">{{ bill().date.slice(0, 10) }}</p>
+      <div class="color_label"></div>
+      <p
+        #paider
+        class="overflow_ellipsis"
+        [style.maxWidth]="`${maxPaiderWidth()}px`"
+        [matTooltip]="'Zapłacone przez: ' + bill().paidBy.firstName + ' ' + bill().paidBy.lastName"
+        [matTooltipDisabled]="!isOverflowed(paider)"
+      >
+        {{ `${bill().paidBy.firstName} ${bill().paidBy.lastName}` }}
+      </p>
+    </div>
+  </div>
+</div>
+@if (!isMobile()) {
+  <div class="middle_container" #middleContainer>
+    <p>Do zapłaty: &nbsp;</p>
+    <div class="to_paid_container">
+      @if (billCurrency().id === userCurrency().id) {
+        <p class="main_amount bold">{{ bill().userCurrency.costPerUser }} {{ userCurrency().code }}</p>
+      } @else {
+        <p class="main_amount bold">~ {{ bill().userCurrency.costPerUser }} {{ userCurrency().code }}</p>
+        <p class="payment_amount">{{ bill().eventCurrency.costPerUser }} {{ billCurrency().code }}</p>
+      }
+    </div>
+  </div>
+}
+<div class="right_container" #rightContainer>
+  @if (billCurrency().id === userCurrency().id) {
+    <p class="main_amount bold">{{ bill().userCurrency.amount }} {{ userCurrency().code }}</p>
+  } @else {
+    <p class="main_amount bold">~ {{ bill().userCurrency.amount }} {{ userCurrency().code }}</p>
+    <p class="payment_amount">{{ bill().eventCurrency.amount }} {{ billCurrency().code }}</p>
+  }
+</div>
