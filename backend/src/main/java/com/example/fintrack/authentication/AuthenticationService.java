@@ -3,6 +3,8 @@ package com.example.fintrack.authentication;
 import com.example.fintrack.authentication.dto.LoginRequestDto;
 import com.example.fintrack.authentication.dto.RegisterRequestDto;
 import com.example.fintrack.authentication.dto.TokenDto;
+import com.example.fintrack.category.Category;
+import com.example.fintrack.category.CategoryRepository;
 import com.example.fintrack.currency.Currency;
 import com.example.fintrack.currency.CurrencyRepository;
 import com.example.fintrack.security.service.JwtService;
@@ -40,6 +42,7 @@ public class AuthenticationService {
     private final UserDetailsService userDetailsService;
     private final CurrencyRepository currencyRepository;
     private final HttpServletRequest httpServletRequest;
+    private final CategoryRepository categoryRepository;
 
     public void register(RegisterRequestDto registerRequestDto) {
         if (userRepository.existsByEmail(registerRequestDto.email())) {
@@ -58,6 +61,20 @@ public class AuthenticationService {
                 .build();
 
         userRepository.save(user);
+
+        Category category1 = new Category();
+        category1.setName("Default");
+        category1.setColor("#B1A8B3");
+        category1.setUser(user);
+        category1.setIsDefault(true);
+
+        Category category2 = new Category();
+        category2.setName("Event");
+        category2.setColor("#666A63");
+        category2.setUser(user);
+        category2.setIsDefault(true);
+
+        categoryRepository.saveAll(List.of(category1, category2));
     }
 
     @Transactional

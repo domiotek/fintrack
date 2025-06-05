@@ -14,6 +14,8 @@ public interface BillRepository extends JpaRepository<Bill, Long>, JpaSpecificat
 
     List<Bill> findBillsByEventId(long eventId);
 
+    List<Bill> findBillsByUserIdAndCategoryId(long userId, long categoryId);
+
     Optional<Bill> findBillByIdAndUserId(long billId, long userId);
 
     Optional<Bill> findBillByIdAndEventId(long billId, long eventId);

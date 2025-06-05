@@ -1,5 +1,7 @@
 package com.example.fintrack.category;
 
+import com.example.fintrack.bill.Bill;
+import com.example.fintrack.bill.BillRepository;
 import com.example.fintrack.category.dto.AddCategoryDto;
 import com.example.fintrack.category.dto.CategoryDto;
 import com.example.fintrack.category.dto.UpdateCategoryDto;
@@ -15,8 +17,10 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 import static com.example.fintrack.category.CategorySpecification.*;
+import static com.example.fintrack.exception.BusinessErrorCodes.CANNOT_DELETE_DEFAULT_CATEGORY;
 import static com.example.fintrack.exception.BusinessErrorCodes.CATEGORY_DOES_NOT_EXIST;
 
 
@@ -27,6 +31,7 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final CurrencyConverter currencyConverter;
     private final UserProvider userProvider;
+    private final BillRepository billRepository;
 
     public Page<CategoryDto> getCategories(
             String name, ZonedDateTime from, ZonedDateTime to, SortDirection sortOrder, int page, int size
@@ -74,6 +79,20 @@ public class CategoryService {
 
         Category category = categoryRepository.findCategoryByIdAndUserId(categoryId, user.getId())
                 .orElseThrow(CATEGORY_DOES_NOT_EXIST::getError);
+
+        if (category.getIsDefault()) {
+            throw CANNOT_DELETE_DEFAULT_CATEGORY.getError();
+        }
+
+        List<Category> categories = categoryRepository.findCategoryByUserIdAndIsDefault(user.getId(), true);
+
+        Category defaultCategory = categories.stream().findFirst().orElseThrow(CATEGORY_DOES_NOT_EXIST::getError);
+
+        List<Bill> bills = billRepository.findBillsByUserIdAndCategoryId(user.getId(), categoryId);
+
+        bills.forEach(bill -> bill.setCategory(defaultCategory));
+
+        billRepository.saveAll(bills);
 
         categoryRepository.delete(category);
     }

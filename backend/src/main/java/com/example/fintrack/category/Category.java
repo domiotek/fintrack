@@ -43,6 +43,9 @@ public class Category {
     @Column(nullable = false)
     private String color;
 
+    @Column(nullable = false)
+    private Boolean isDefault;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
