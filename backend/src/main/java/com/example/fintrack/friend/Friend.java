@@ -1,6 +1,6 @@
 package com.example.fintrack.friend;
 
-import com.example.fintrack.friendchatmessage.FriendChatMessage;
+import com.example.fintrack.chat.Chat;
 import com.example.fintrack.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -32,8 +32,8 @@ public class Friend {
     private User friend;
 
     @ManyToOne
-    @JoinColumn(name = "friend_chat_message_id")
-    private FriendChatMessage friendChatMessage;
+    @JoinColumn(name = "chat_id")
+    private Chat chat;
 
     @Column(nullable = false)
     private ZonedDateTime createdAt;

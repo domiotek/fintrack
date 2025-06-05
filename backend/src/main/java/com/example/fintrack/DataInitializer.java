@@ -4,13 +4,20 @@ import com.example.fintrack.bill.Bill;
 import com.example.fintrack.bill.BillRepository;
 import com.example.fintrack.category.Category;
 import com.example.fintrack.category.CategoryRepository;
+import com.example.fintrack.chat.Chat;
+import com.example.fintrack.chat.ChatRepository;
 import com.example.fintrack.friend.FriendStatus;
+import com.example.fintrack.lastreadmessage.LastReadMessage;
+import com.example.fintrack.lastreadmessage.LastReadMessageRepository;
 import com.example.fintrack.limit.Limit;
 import com.example.fintrack.limit.LimitRepository;
 import com.example.fintrack.currency.Currency;
 import com.example.fintrack.currency.CurrencyRepository;
 import com.example.fintrack.event.Event;
 import com.example.fintrack.event.EventRepository;
+import com.example.fintrack.message.Message;
+import com.example.fintrack.message.MessageRepository;
+import com.example.fintrack.message.MessageType;
 import com.example.fintrack.userevent.UserEvent;
 import com.example.fintrack.userevent.UserEventRepository;
 import com.example.fintrack.friend.Friend;
@@ -42,6 +49,9 @@ public class DataInitializer implements CommandLineRunner {
     private final UserEventRepository userEventRepository;
     private final BillRepository billRepository;
     private final FriendRepository friendRepository;
+    private final ChatRepository chatRepository;
+    private final MessageRepository messageRepository;
+    private final LastReadMessageRepository lastReadMessageRepository;
 
     @Override
     public void run(String... args) {
@@ -111,26 +121,37 @@ public class DataInitializer implements CommandLineRunner {
         user3.setCurrency(currency2);
         userRepository.saveAll(List.of(user1, user2, user3));
 
+        Chat chat1 = new Chat();
+        Chat chat2 = new Chat();
+        Chat chat3 = new Chat();
+        Chat chat4 = new Chat();
+        Chat chat5 = new Chat();
+        chatRepository.saveAll(List.of(chat1, chat2, chat3, chat4, chat5));
+
         Friend friend1 = new Friend();
         friend1.setUser(user1);
         friend1.setFriend(user2);
         friend1.setCreatedAt(ZonedDateTime.now());
         friend1.setFriendStatus(FriendStatus.ACCEPTED);
+        friend1.setChat(chat1);
         Friend friend2 = new Friend();
         friend2.setUser(user1);
         friend2.setFriend(user3);
         friend2.setCreatedAt(ZonedDateTime.now());
         friend2.setFriendStatus(FriendStatus.REQUESTED);
+        friend2.setChat(chat2);
         Friend friend3 = new Friend();
         friend3.setUser(user2);
         friend3.setFriend(user1);
         friend3.setCreatedAt(ZonedDateTime.now());
         friend3.setFriendStatus(FriendStatus.ACCEPTED);
+        friend3.setChat(chat1);
         Friend friend4 = new Friend();
         friend4.setUser(user3);
         friend4.setFriend(user1);
         friend4.setCreatedAt(ZonedDateTime.now());
         friend4.setFriendStatus(FriendStatus.PENDING);
+        friend4.setChat(chat2);
         friendRepository.saveAll(List.of(friend1, friend2, friend3, friend4));
 
         Category category1 = new Category();
@@ -185,14 +206,17 @@ public class DataInitializer implements CommandLineRunner {
         event1.setName("Germany trip");
         event1.setCurrency(currency1);
         event1.setStartDateTime(ZonedDateTime.now());
+        event1.setChat(chat3);
         Event event2 = new Event();
         event2.setName("Birthday gift");
         event2.setCurrency(currency1);
         event2.setStartDateTime(ZonedDateTime.now());
+        event2.setChat(chat4);
         Event event3 = new Event();
         event3.setName("Warsaw trip");
         event3.setCurrency(currency2);
         event3.setStartDateTime(ZonedDateTime.now());
+        event3.setChat(chat5);
         eventRepository.saveAll(List.of(event1, event2, event3));
 
         UserEvent userEvent1 = new UserEvent();
@@ -224,6 +248,32 @@ public class DataInitializer implements CommandLineRunner {
         userEvent7.setUser(user3);
         userEvent7.setEvent(event3);
         userEventRepository.saveAll(List.of(userEvent1, userEvent2, userEvent3, userEvent4, userEvent5, userEvent6, userEvent7));
+
+        Message message1 = new Message();
+        message1.setChat(chat1);
+        message1.setMessageType(MessageType.USER);
+        message1.setSendTime(ZonedDateTime.now());
+        message1.setContent("Hello");
+        message1.setSentBy(user1);
+        Message message2 = new Message();
+        message2.setChat(chat1);
+        message2.setMessageType(MessageType.USER);
+        message2.setSendTime(ZonedDateTime.now());
+        message2.setContent("Good morning");
+        message2.setSentBy(user2);
+        messageRepository.saveAll(List.of(message1, message2));
+
+        LastReadMessage lastReadMessage1 = new LastReadMessage();
+        lastReadMessage1.setMessage(message2);
+        lastReadMessage1.setReadTime(ZonedDateTime.now());
+        lastReadMessage1.setChat(chat1);
+        lastReadMessage1.setUser(user1);
+        LastReadMessage lastReadMessage2 = new LastReadMessage();
+        lastReadMessage2.setMessage(message2);
+        lastReadMessage2.setReadTime(ZonedDateTime.now());
+        lastReadMessage2.setChat(chat1);
+        lastReadMessage2.setUser(user2);
+        lastReadMessageRepository.saveAll(List.of(lastReadMessage1, lastReadMessage2));
 
         Bill bill1 = new Bill();
         bill1.setName("Restaurant");

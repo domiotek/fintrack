@@ -5,7 +5,7 @@ import com.example.fintrack.category.Category;
 import com.example.fintrack.currency.Currency;
 import com.example.fintrack.friend.Friend;
 import com.example.fintrack.userevent.UserEvent;
-import com.example.fintrack.message.LastReadMessage;
+import com.example.fintrack.lastreadmessage.LastReadMessage;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;

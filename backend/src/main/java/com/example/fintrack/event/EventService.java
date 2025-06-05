@@ -1,6 +1,8 @@
 package com.example.fintrack.event;
 
 import com.example.fintrack.bill.Bill;
+import com.example.fintrack.chat.Chat;
+import com.example.fintrack.chat.ChatRepository;
 import com.example.fintrack.currency.Currency;
 import com.example.fintrack.currency.CurrencyConverter;
 import com.example.fintrack.currency.CurrencyRepository;
@@ -39,6 +41,7 @@ public class EventService {
     private final CurrencyRepository currencyRepository;
     private final CurrencyConverter currencyConverter;
     private final UserRepository userRepository;
+    private final ChatRepository chatRepository;
 
     public Page<EventDto> getUserEvents(
             String name, EventStatus eventStatus,
@@ -78,11 +81,16 @@ public class EventService {
         Currency currency = currencyRepository.findById(addEventDto.currencyId())
                 .orElseThrow(CURRENCY_DOES_NOT_EXIST::getError);
 
+        Chat chat = new Chat();
+
+        chatRepository.save(chat);
+
         Event event = new Event();
         event.setName(addEventDto.name());
         event.setCurrency(currency);
         event.setStartDateTime(addEventDto.startDate());
         event.setEndDateTime(addEventDto.endDate());
+        event.setChat(chat);
 
         eventRepository.save(event);
 
