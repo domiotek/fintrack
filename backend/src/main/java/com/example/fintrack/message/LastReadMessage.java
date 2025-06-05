@@ -1,5 +1,7 @@
 package com.example.fintrack.message;
 
+import com.example.fintrack.event.Event;
+import com.example.fintrack.friendchatmessage.FriendChatMessage;
 import com.example.fintrack.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -29,6 +31,14 @@ public class LastReadMessage {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "event_id")
+    private Event event;
+
+    @ManyToOne
+    @JoinColumn(name = "friend_chat_message_id")
+    private FriendChatMessage friendChatMessage;
 
     @Column(nullable = false)
     private ZonedDateTime readTime;

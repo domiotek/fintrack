@@ -9,6 +9,8 @@ import com.example.fintrack.user.User;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
+
 import static com.example.fintrack.exception.BusinessErrorCodes.CATEGORY_DOES_NOT_EXIST;
 import static com.example.fintrack.exception.BusinessErrorCodes.LIMIT_DOES_NOT_EXIST;
 
@@ -26,6 +28,15 @@ public class LimitService {
 
         Category category = categoryRepository.findCategoryByIdAndUserId(categoryId, user.getId())
                 .orElseThrow(CATEGORY_DOES_NOT_EXIST::getError);
+
+        if(!category.getLimits().isEmpty()) {
+            Limit lastLimit = category.getLimits().stream()
+                    .max(Comparator.comparing(Limit::getId))
+                    .orElseThrow(LIMIT_DOES_NOT_EXIST::getError);
+
+            lastLimit.setEndDateTime(addLimitDto.startDateTime());
+            limitRepository.save(lastLimit);
+        }
 
         Limit limit = LimitMapper.addLimitDtoToLimit(addLimitDto, category, currencyConverter);
 
