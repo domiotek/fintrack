@@ -86,7 +86,11 @@ public class CategoryService {
 
         List<Category> categories = categoryRepository.findCategoryByUserIdAndIsDefault(user.getId(), true);
 
-        Category defaultCategory = categories.stream().findFirst().orElseThrow(CATEGORY_DOES_NOT_EXIST::getError);
+        if (categories.size() != 2) {
+            throw CATEGORY_DOES_NOT_EXIST.getError();
+        }
+
+        Category defaultCategory = categories.getFirst();
 
         List<Bill> bills = billRepository.findBillsByUserIdAndCategoryId(user.getId(), categoryId);
 
