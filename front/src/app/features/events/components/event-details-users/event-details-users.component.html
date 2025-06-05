@@ -1,1 +1,29 @@
-<p>event-details-users works!</p>
+<div class="info">
+  <div class="bold">
+    Członkowie - {{ event().users.length }}
+  </div>
+  @if (event().isFounder){
+    <button mat-icon-button (click)="addUser()"><mat-icon>add</mat-icon></button>
+  }
+</div>
+<hr />
+
+<app-custom-list
+  [items]="event().users"
+  [itemTemplate]="transactionItemTemplate"
+  [isSelectable]="false"
+/>
+
+<ng-template #transactionItemTemplate let-user>
+  <div class="user_container">
+    <div class="left_container">
+      <div class="avatar bold">
+        {{ `${user.firstName.slice(0, 1)}${user.lastName.slice(0, 1)}` }}
+      </div>
+      <p class="bold">{{ `${user.firstName} ${user.lastName} ${user.id === userId() ? '(Ty)' : ''}` }}</p>
+    </div>
+  </div>
+  @if (event().isFounder && user.id !== userId() && !usersWhoPaid().includes(user.id)) {
+    <button mat-icon-button (click)="deleteUser(user)"><mat-icon class="red">delete</mat-icon></button>
+  }
+</ng-template>

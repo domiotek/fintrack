@@ -5,7 +5,7 @@
   flex-direction: column;
   gap: 16px;
   width: 100%;
-  padding: 36px;
+  padding: 8px 36px 0 36px;
 
 
   .summary {
@@ -64,5 +64,11 @@
         text-transform: uppercase;
       }
     }
+  }
+}
+
+@media (width < 768px) {
+  :host {
+    padding: 8px 0 0 0;
   }
 }

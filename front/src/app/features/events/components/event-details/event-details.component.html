@@ -1,4 +1,5 @@
 @let userCurrency = userCurrency$ | async;
+@let userId = userId$ | async;
 
 @if (isMobile()) {
   <button class="back-button" mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
@@ -17,7 +18,7 @@
   </mat-tab>
   <mat-tab label="Użytkownicy">
     <ng-template matTabContent>
-      <app-event-details-users />
+      <app-event-details-users [event]="event()" [userId]="userId!" (emitUserDeletion)="userDeletion($event)" />
     </ng-template>
   </mat-tab>
   <mat-tab label="Podsumowanie wydatków">
