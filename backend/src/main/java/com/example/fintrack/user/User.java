@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import static jakarta.persistence.CascadeType.*;
+
 @Entity
 @Table(name = "users")
 @NoArgsConstructor
@@ -36,7 +38,7 @@ public class User implements UserDetails {
     @JoinColumn(name = "currency_id", nullable = false)
     private Currency currency;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = {MERGE, PERSIST, REMOVE}, orphanRemoval = true)
     @ToString.Exclude
     private Set<Category> categories;
 
@@ -48,7 +50,7 @@ public class User implements UserDetails {
     @ToString.Exclude
     private Set<UserEvent> events;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = {MERGE, PERSIST, REMOVE}, orphanRemoval = true)
     @ToString.Exclude
     private Set<Bill> bills;
 

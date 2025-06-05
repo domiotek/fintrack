@@ -12,6 +12,8 @@ import lombok.ToString;
 import java.util.Objects;
 import java.util.Set;
 
+import static jakarta.persistence.CascadeType.*;
+
 @Entity
 @Getter
 @Setter
@@ -27,7 +29,7 @@ public class Category {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "category")
+    @OneToMany(mappedBy = "category", cascade = {MERGE, PERSIST, REMOVE}, orphanRemoval = true)
     @ToString.Exclude
     private Set<Limit> limits;
 
@@ -41,16 +43,20 @@ public class Category {
     @Column(nullable = false)
     private String color;
 
+    @Column(nullable = false)
+    private Boolean isDefault;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Category category)) return false;
-        return Objects.equals(id, category.id) && Objects.equals(user, category.user)
-                && Objects.equals(name, category.name) && Objects.equals(color, category.color);
+        return Objects.equals(id, category.id) && Objects.equals(user, category.user) &&
+                Objects.equals(name, category.name) && Objects.equals(color, category.color) &&
+                Objects.equals(isDefault, category.isDefault);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, user, name, color);
+        return Objects.hash(id, user, name, color, isDefault);
     }
 }

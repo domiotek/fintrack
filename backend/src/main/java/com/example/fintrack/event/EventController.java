@@ -85,7 +85,7 @@ public class EventController {
 
     @PostMapping("/{event-id}/bills")
     public ResponseEntity<Void> addBillToEvent(
-            @RequestBody AddBillEventDto addBillEventDto,
+            @RequestBody @Valid AddBillEventDto addBillEventDto,
             @PathVariable("event-id") long eventId
     ) {
         billService.addBillToEvent(addBillEventDto, eventId);

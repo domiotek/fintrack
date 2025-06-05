@@ -37,7 +37,8 @@ public enum BusinessErrorCodes {
     MISSING_REQUEST_BODY(501, "Missing request body", HttpStatus.FAILED_DEPENDENCY),
     REQUEST_FAILED(502, "Request failed", HttpStatus.BAD_GATEWAY),
     CANNOT_INVITE_YOURSELF(601, "Cannot invite yourself", HttpStatus.CONFLICT),
-    ALREADY_FRIENDS(602, "Users are already friends", HttpStatus.CONFLICT),;
+    ALREADY_FRIENDS(602, "Users are already friends", HttpStatus.CONFLICT),
+    CANNOT_DELETE_DEFAULT_CATEGORY(603, "Cannot delete default category", HttpStatus.CONFLICT);
 
     private final int code;
     private final String description;
