@@ -1,7 +1,7 @@
-package com.example.fintrack.message;
+package com.example.fintrack.lastreadmessage;
 
-import com.example.fintrack.event.Event;
-import com.example.fintrack.friendchatmessage.FriendChatMessage;
+import com.example.fintrack.chat.Chat;
+import com.example.fintrack.message.Message;
 import com.example.fintrack.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -33,12 +33,8 @@ public class LastReadMessage {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "event_id")
-    private Event event;
-
-    @ManyToOne
-    @JoinColumn(name = "friend_chat_message_id")
-    private FriendChatMessage friendChatMessage;
+    @JoinColumn(name = "chat_id")
+    private Chat chat;
 
     @Column(nullable = false)
     private ZonedDateTime readTime;
@@ -46,13 +42,14 @@ public class LastReadMessage {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        LastReadMessage that = (LastReadMessage) o;
-        return Objects.equals(id, that.id) && Objects.equals(message, that.message) && Objects.equals(user, that.user) && Objects.equals(readTime, that.readTime);
+        if (!(o instanceof LastReadMessage that)) return false;
+        return Objects.equals(id, that.id) && Objects.equals(message, that.message) &&
+                Objects.equals(user, that.user) && Objects.equals(chat, that.chat) &&
+                Objects.equals(readTime, that.readTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, message, user, readTime);
+        return Objects.hash(id, message, user, chat, readTime);
     }
 }

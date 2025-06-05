@@ -1,8 +1,7 @@
 package com.example.fintrack.message;
 
-import com.example.fintrack.event.Event;
-import com.example.fintrack.friend.Friend;
-import com.example.fintrack.friendchatmessage.FriendChatMessage;
+import com.example.fintrack.chat.Chat;
+import com.example.fintrack.lastreadmessage.LastReadMessage;
 import com.example.fintrack.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -10,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.awt.*;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 import java.util.Set;
@@ -28,30 +26,22 @@ public class Message {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "event_id")
-    private Event event;
+    @JoinColumn(name = "chat_id")
+    private Chat chat;
 
     @ManyToOne
-    @JoinColumn(name = "friend_chat_message_id")
-    private FriendChatMessage friendChatMessage;
-
-   @ManyToOne
-   @JoinColumn(name = "user_id")
-   private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "friend_id")
-    private Friend friend;
+    @JoinColumn(name = "user_id")
+    private User sentBy;
 
     @OneToMany(mappedBy = "message")
     @ToString.Exclude
     private Set<LastReadMessage> lastReadMessages;
 
     @Column(nullable = false)
-    private String value;
+    private String content;
 
     @Column(nullable = false)
-    private TrayIcon.MessageType messageType;
+    private MessageType messageType;
 
     @Column(nullable = false)
     private ZonedDateTime sendTime;
@@ -59,13 +49,14 @@ public class Message {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Message message = (Message) o;
-        return Objects.equals(id, message.id) && Objects.equals(event, message.event) && Objects.equals(user, message.user) && Objects.equals(friend, message.friend);
+        if (!(o instanceof Message message)) return false;
+        return Objects.equals(id, message.id) && Objects.equals(chat, message.chat) &&
+                Objects.equals(sentBy, message.sentBy) && Objects.equals(content, message.content) &&
+                messageType == message.messageType && Objects.equals(sendTime, message.sendTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, event, user, friend);
+        return Objects.hash(id, chat, sentBy, content, messageType, sendTime);
     }
 }

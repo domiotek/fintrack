@@ -1,11 +1,11 @@
 package com.example.fintrack.friend;
 
+import com.example.fintrack.chat.Chat;
+import com.example.fintrack.chat.ChatRepository;
 import com.example.fintrack.friend.dto.AcceptFriendRequest;
 import com.example.fintrack.friend.dto.FriendDto;
 import com.example.fintrack.friend.dto.FriendRequestDto;
 import com.example.fintrack.friend.dto.SendFriendRequestDto;
-import com.example.fintrack.friendchatmessage.FriendChatMessage;
-import com.example.fintrack.friendchatmessage.FriendChatMessageRepository;
 import com.example.fintrack.security.service.UserProvider;
 import com.example.fintrack.user.User;
 import com.example.fintrack.user.UserRepository;
@@ -27,7 +27,7 @@ public class FriendService {
     private final FriendRepository friendRepository;
     private final UserProvider userProvider;
     private final UserRepository userRepository;
-    private final FriendChatMessageRepository friendChatMessageRepository;
+    private final ChatRepository chatRepository;
 
     public List<FriendRequestDto> getFriendRequests() {
         User user = userProvider.getLoggedUser();
@@ -72,23 +72,23 @@ public class FriendService {
             throw ALREADY_FRIENDS.getError();
         }
 
-        FriendChatMessage friendChatMessage = new FriendChatMessage();
+        Chat chat = new Chat();
 
-        friendChatMessageRepository.save(friendChatMessage);
+        chatRepository.save(chat);
 
         Friend friend1 = new Friend();
         friend1.setUser(user);
         friend1.setFriend(friend);
         friend1.setFriendStatus(FriendStatus.REQUESTED);
         friend1.setCreatedAt(ZonedDateTime.now());
-        friend1.setFriendChatMessage(friendChatMessage);
+        friend1.setChat(chat);
 
         Friend friend2 = new Friend();
         friend2.setUser(friend);
         friend2.setFriend(user);
         friend2.setFriendStatus(FriendStatus.PENDING);
         friend2.setCreatedAt(ZonedDateTime.now());
-        friend2.setFriendChatMessage(friendChatMessage);
+        friend2.setChat(chat);
 
         friendRepository.saveAll(List.of(friend1, friend2));
     }
