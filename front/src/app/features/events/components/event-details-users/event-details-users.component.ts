@@ -1,6 +1,5 @@
 import { Component, DestroyRef, inject, input, OnInit, output, signal } from '@angular/core';
 import { EventsService } from '../../../../core/services/events/events.service';
-import { LoadingService } from '../../../../core/services/loading/loading.service';
 import { EventDetails } from '../../../../core/models/events/event';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
@@ -22,8 +21,6 @@ import { tap } from 'rxjs';
 export class EventDetailsUsersComponent implements OnInit {
   private readonly eventsService = inject(EventsService);
 
-  private readonly loadingService = inject(LoadingService);
-
   private readonly dialog = inject(MatDialog);
 
   private readonly destroyRef = inject(DestroyRef);
@@ -40,7 +37,9 @@ export class EventDetailsUsersComponent implements OnInit {
     this.handleGetUsersWhoPaid();
   }
 
-  protected addUser(): void {}
+  protected addUser(): void {
+    console.log('Add user.'); // placeholder czekając na friendsów
+  }
 
   protected deleteUser(user: User): void {
     const data: ConfirmationDialogData = {

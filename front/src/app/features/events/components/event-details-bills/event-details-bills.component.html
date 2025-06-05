@@ -1,6 +1,6 @@
 @if (isLoading()) {
   <app-spinner />
-} @else {
+} @else if (event().eventSummary && userCurrency()) {
   <div class="summary-container">
     <app-event-bills-summary
       [summary]="event().eventSummary!"

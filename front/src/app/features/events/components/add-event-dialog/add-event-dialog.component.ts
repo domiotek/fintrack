@@ -17,7 +17,7 @@ import { Currency } from '../../../../core/models/currency/currency.model';
 import { ApiErrorCode } from '../../../../core/models/error-codes.enum';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CreateEventRequest } from '../../../../core/models/events/create-event-request';
-import { Event, EventDetails } from '../../../../core/models/events/event';
+import { EventDetails } from '../../../../core/models/events/event';
 import { UpdateEventRequest } from '../../../../core/models/events/update-event-request';
 
 @Component({

@@ -1,13 +1,4 @@
-import {
-  AfterContentInit,
-  AfterViewInit,
-  Component,
-  ElementRef,
-  inject,
-  input,
-  signal,
-  viewChild,
-} from '@angular/core';
+import { AfterViewInit, Component, ElementRef, inject, input, signal, viewChild } from '@angular/core';
 import { Currency } from '../../../../core/models/currency/currency.model';
 import { MatIconModule } from '@angular/material/icon';
 import { EventBill } from '../../../../core/models/events/event-bill';
@@ -40,8 +31,8 @@ export class EventBillItemComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     const width = this.elementRef.nativeElement.offsetWidth;
-    const middleContainerWidth = this.middleContainer()?.nativeElement.offsetWidth || 0;
-    const rightContainerWidth = this.rightContainer()?.nativeElement.offsetWidth || 0;
+    const middleContainerWidth = this.middleContainer()?.nativeElement.offsetWidth ?? 0;
+    const rightContainerWidth = this.rightContainer()?.nativeElement.offsetWidth ?? 0;
     const sumMiddleRightContainerWidth = middleContainerWidth + rightContainerWidth;
     this.maxPaiderWidth.set(width - 84 - 54 - sumMiddleRightContainerWidth);
     this.maxNameWidth.set(width - 84 - sumMiddleRightContainerWidth);

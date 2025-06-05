@@ -127,7 +127,7 @@ export class EventsComponent implements OnInit {
   onSearch(searchValue: string): void {
     this.filters.set({
       ...this.filters(),
-      name: searchValue || null,
+      name: searchValue ?? null,
     });
     this.getEvents();
     this.selectedEvent.set(null);
@@ -142,7 +142,7 @@ export class EventsComponent implements OnInit {
       to: `${timeRange.to.toISO()}`,
     });
 
-    this.onSearch(this.filters().name || '');
+    this.onSearch(this.filters().name ?? '');
   }, 300);
 
   onEventSelect(event: Event | null): void {

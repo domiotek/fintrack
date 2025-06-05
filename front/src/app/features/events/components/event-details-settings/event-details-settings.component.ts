@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, input, OnDestroy, OnInit, output, ViewContainerRef } from '@angular/core';
+import { Component, DestroyRef, inject, input, OnDestroy, OnInit, ViewContainerRef } from '@angular/core';
 import { EventsService } from '../../../../core/services/events/events.service';
 import { EventDetails } from '../../../../core/models/events/event';
 import { Currency } from '../../../../core/models/currency/currency.model';
