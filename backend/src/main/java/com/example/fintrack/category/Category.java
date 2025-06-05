@@ -50,12 +50,13 @@ public class Category {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Category category)) return false;
-        return Objects.equals(id, category.id) && Objects.equals(user, category.user)
-                && Objects.equals(name, category.name) && Objects.equals(color, category.color);
+        return Objects.equals(id, category.id) && Objects.equals(user, category.user) &&
+                Objects.equals(name, category.name) && Objects.equals(color, category.color) &&
+                Objects.equals(isDefault, category.isDefault);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, user, name, color);
+        return Objects.hash(id, user, name, color, isDefault);
     }
 }
