@@ -1,5 +1,5 @@
 import { Component, DestroyRef, inject, input, OnInit, signal } from '@angular/core';
-import { Chat } from '../../../../core/models/chat/chat.model';
+import { PrivateChat } from '../../../../core/models/chat/chat.model';
 import { AvatarComponent } from '../../../../shared/components/avatar/avatar.component';
 import { MatIconModule } from '@angular/material/icon';
 import { AppStateStore } from '../../../../core/store/app-state.store';
@@ -14,7 +14,7 @@ import { DateTime } from 'luxon';
   styleUrl: './chat-item.component.scss',
 })
 export class ChatItemComponent implements OnInit {
-  readonly item = input.required<Chat>();
+  readonly item = input.required<PrivateChat>();
   readonly currentUserId = signal<number>(0);
 
   get isAuthorOfLastMessage(): boolean {
@@ -22,11 +22,15 @@ export class ChatItemComponent implements OnInit {
   }
 
   get isUnread(): boolean {
-    return !this.isAuthorOfLastMessage && this.item().lastMessage.id !== this.item().lastReadMessageId;
+    return (
+      !this.isAuthorOfLastMessage &&
+      this.item().lastMessage != null &&
+      this.item().lastMessage?.id !== this.item().lastReadMessageId
+    );
   }
 
   get sentDiff(): string {
-    return DateTime.fromISO(this.item().lastMessage.sentAt).toRelative() || '';
+    return DateTime.fromISO(this.item().lastMessage?.sentAt ?? '').toRelative() || '';
   }
 
   readonly appStateStore = inject(AppStateStore);

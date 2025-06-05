@@ -1,221 +1,202 @@
-import { Injectable, signal } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { delay } from 'rxjs/operators';
-import { FullyFetchedChat, PrivateChat } from '../../models/chat/chat.model';
+import { DestroyRef, inject, Injectable, OnDestroy, signal } from '@angular/core';
+import { BehaviorSubject, Observable, of, Subject, takeUntil } from 'rxjs';
+import { PrivateChat } from '../../models/chat/chat.model';
 import { ChatMessage } from '../../models/chat/message.model';
-import { mockedChats, mockChatMessages } from './mock-chat-data';
 import { BasePagingResponse } from '../../models/api/paging.model';
-import { Participant } from '../../models/chat/participant.model';
+import { IMessage } from '@stomp/stompjs';
+import { environment } from '../../../environments/environments';
+import SockJS from 'sockjs-client/dist/sockjs';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { AppStateStore } from '../../store/app-state.store';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { DEFAULT_CHAT_PAGE_SIZE } from '../../../shared/controls/chat/constants/chat.const';
+import { RxStomp } from '@stomp/rx-stomp';
+import { UserTypingEvent } from '../../models/chat/user-typing-event.model';
+import { UserReadMessageEvent } from '../../models/chat/user-read-message-event.model';
+import { mockedChats } from './mock-chat-data';
 
 @Injectable({
   providedIn: 'root',
 })
-export class ChatService {
-  private readonly participants = new BehaviorSubject<Participant[]>([]);
-  private readonly connectedChatId = signal<string | null>(null);
+export class ChatService implements OnDestroy {
+  private readonly currentUserId = signal<number | null>(null);
+
+  private readonly connectedChatId = new BehaviorSubject<string | null>(null);
+  private readonly privateChatsUpdates = new Subject<PrivateChat>();
   private readonly typingUsers = new BehaviorSubject<number[]>([]);
   private readonly messages = new BehaviorSubject<ChatMessage[]>([]);
   private readonly lastReadMessagesMap = new BehaviorSubject<Record<number, string>>({});
+  private readonly lastUserActivityMap = new BehaviorSubject<Record<number, string>>({});
 
-  private typingGenerator?: ReturnType<typeof setInterval>;
-
+  readonly privateChatsUpdates$ = this.privateChatsUpdates.asObservable();
   readonly typingUsers$ = this.typingUsers.asObservable();
-  readonly lastReadMessagesMap$ = this.lastReadMessagesMap.asObservable();
   readonly messages$ = this.messages.asObservable();
-  readonly participants$ = this.participants.asObservable();
+  readonly lastReadMessagesMap$ = this.lastReadMessagesMap.asObservable();
+  readonly lastUserActivityMap$ = this.lastUserActivityMap.asObservable();
 
-  private readonly mockUsers: Participant[] = [
-    {
-      id: 1,
-      firstName: 'Konrad',
-      lastName: 'Serwa',
-      email: 'konrad.serwa@example.com',
-      lastSeenAt: new Date().toISOString(),
-    },
-    {
-      id: 2,
-      firstName: 'Artur',
-      lastName: 'Pajor',
-      email: 'artur.pajor@example.com',
-      lastSeenAt: new Date().toISOString(),
-    },
-    {
-      id: 0,
-      firstName: 'Damian',
-      lastName: 'Omiotek',
-      email: 'damian.omiotek@example.com',
-      lastSeenAt: new Date().toISOString(),
-    },
-  ];
+  private readonly stompClient: RxStomp;
+  private readonly http = inject(HttpClient);
+  private readonly appStateStore = inject(AppStateStore);
+  private readonly destroyRef = inject(DestroyRef);
 
-  getPrivateChatsList(): Observable<PrivateChat[]> {
-    return of([...mockedChats]);
+  constructor() {
+    this.stompClient = new RxStomp();
+    this.stompClient.configure({
+      webSocketFactory: () => new SockJS(`${environment.apiUrl}/ws/chats`),
+      reconnectDelay: 5000,
+    });
+
+    this.stompClient.activate();
+
+    this.appStateStore.appState$.pipe(takeUntilDestroyed()).subscribe((state) => {
+      this.currentUserId.set(state.userId);
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.stompClient.deactivate();
+  }
+
+  getPrivateChatsList(offset: number, searchQuery: string): Observable<BasePagingResponse<PrivateChat>> {
+    return of({ content: [...mockedChats], page: { totalElements: 0, totalPages: 0, size: 0, number: 0 } });
+
+    const params = new HttpParams();
+
+    params.set('offset', offset.toString());
+    if (searchQuery) {
+      params.set('search', searchQuery);
+    }
+
+    return this.http.get<BasePagingResponse<PrivateChat>>(`${environment.apiUrl}/chats/private`, { params });
   }
 
   getUserIdsWithPrivateChat(): Observable<number[]> {
-    return of([2]);
+    return of([]); // Mocked data for demonstration
+    return this.http.get<number[]>(`${environment.apiUrl}/chats/private/user-ids`);
   }
 
-  connectToChat(chatId: string): Observable<FullyFetchedChat> {
-    this.connectedChatId.set(chatId);
-    this.startTypingGenerator();
+  getPrivateChatIdByUserId(userId: number): Observable<string> {
+    return of('mocked-chat-id'); // Mocked data for demonstration
+    return this.http.get<string>(`${environment.apiUrl}/chats/private/${userId}`);
+  }
 
-    const otherUsers = this.mockUsers.filter((user) => user.id !== 0);
+  connectToChat(chatId: string) {
+    this.connectedChatId.next(chatId);
 
-    // populate last read messages map
-    const lastReadMessages: Record<number, string> = {};
-    const lastMessage = mockChatMessages[mockChatMessages.length - 1];
-    const secondLastMessage = mockChatMessages[mockChatMessages.length - 2];
+    this.stompClient
+      .watch(`/${chatId}/message`)
+      .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this.connectedChatId.asObservable()))
+      .subscribe((message: IMessage) => {
+        const chatMessage: ChatMessage = JSON.parse(message.body);
+        this.messages.next([...this.messages.value, chatMessage]);
+      });
 
-    // First user reads up to last message, others up to second last
-    lastReadMessages[otherUsers[0].id] = lastMessage.id;
-    otherUsers.slice(1).forEach((user) => {
-      lastReadMessages[user.id] = secondLastMessage.id;
+    this.stompClient
+      .watch(`/${chatId}/user-started-typing`)
+      .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this.connectedChatId.asObservable()))
+      .subscribe((message: IMessage) => {
+        const event: UserTypingEvent = JSON.parse(message.body);
+
+        if (typeof event.userId !== 'number') return;
+
+        if (event.userId === this.currentUserId()) return;
+
+        this.typingUsers.next([...this.typingUsers.value, event.userId]);
+      });
+
+    this.stompClient
+      .watch(`/${chatId}/user-stopped-typing`)
+      .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this.connectedChatId.asObservable()))
+      .subscribe((message: IMessage) => {
+        const event: UserTypingEvent = JSON.parse(message.body);
+
+        if (typeof event.userId !== 'number') return;
+
+        this.typingUsers.next([...this.typingUsers.value.filter((id) => id !== event.userId)]);
+      });
+
+    this.stompClient
+      .watch(`/${chatId}/user-read-message`)
+      .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this.connectedChatId.asObservable()))
+      .subscribe((message: IMessage) => {
+        const event: UserReadMessageEvent = JSON.parse(message.body);
+
+        if (typeof event.userId !== 'number') return;
+
+        if (typeof event.messageId !== 'string') return;
+
+        if (event.userId === this.currentUserId()) return;
+
+        this.lastReadMessagesMap.next({
+          ...this.lastReadMessagesMap.value,
+          [event.userId]: event.messageId,
+        });
+      });
+
+    this.stompClient
+      .watch(`/private-chat-updates`)
+      .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this.connectedChatId.asObservable()))
+      .subscribe((message: IMessage) => {
+        const chat: PrivateChat = JSON.parse(message.body);
+
+        this.privateChatsUpdates.next(chat);
+      });
+  }
+
+  sendMessage(message: string) {
+    return this.stompClient.publish({
+      destination: `${this.connectedChatId.value}/post-message`,
+      body: message,
     });
-    this.lastReadMessagesMap.next(lastReadMessages);
-
-    // populate messages with read indicators
-    const messagesWithReadIndicators: Record<string, number[]> = {};
-    messagesWithReadIndicators[lastMessage.id] = [otherUsers[0].id];
-    messagesWithReadIndicators[secondLastMessage.id] = otherUsers.map((user) => user.id);
-
-    // Setup intervals to continuously update read status for each user
-    otherUsers.forEach((user, index) => {
-      const delay = 1000 + index * 4000; // Different delay for each user: 1s, 5s, 9s
-      setInterval(() => {
-        const currentMessages = this.messages.value;
-        if (currentMessages.length === 0) return;
-
-        const lastMessage = currentMessages[currentMessages.length - 1];
-        const updatedLastReadMessages = { ...this.lastReadMessagesMap.value };
-
-        updatedLastReadMessages[user.id] = lastMessage.id;
-
-        this.lastReadMessagesMap.next(updatedLastReadMessages);
-      }, delay);
-    });
-
-    // simulate other users sending messages
-    setInterval(() => {
-      const randomUser = this.mockUsers[Math.floor(Math.random() * (this.mockUsers.length - 1)) + 1]; // Exclude user with id 0
-      const newMessage: ChatMessage = {
-        id: (this.messages.value[this.messages.value.length - 1].id + 1).toString(),
-        content: `Message from ${randomUser.firstName} ${randomUser.lastName}`,
-        sentAt: new Date().toISOString(),
-        authorId: randomUser.id,
-        authorName: randomUser.firstName,
-        authorSurname: randomUser.lastName,
-        authorType: 'user',
-      };
-
-      this.messages.next([...this.messages.value, newMessage]);
-    }, 5000);
-
-    this.participants.next([...this.mockUsers]);
-
-    return of({
-      participants: [...this.mockUsers],
-      lastReadMessageByUserId: {},
-      id: chatId,
-      name: 'Mock Chat',
-      lastMessage: mockChatMessages[0],
-    });
   }
 
-  sendMessage(message: string): Observable<void> {
-    const newMessage: ChatMessage = {
-      id: (this.messages.value[this.messages.value.length - 1].id + 1).toString(),
-      content: message,
-      sentAt: new Date().toISOString(),
-      authorId: 0,
-      authorName: this.mockUsers[0].firstName,
-      authorSurname: this.mockUsers[0].lastName,
-      authorType: 'user',
-    };
+  getNextChatMessages(lastFetchedMessageId: string | null): Observable<BasePagingResponse<ChatMessage>> {
+    const params = new HttpParams();
 
-    this.messages.next([...this.messages.value, newMessage]);
-
-    return of(undefined);
-  }
-
-  private startTypingGenerator(): void {
-    this.stopTypingGenerator();
-
-    const generateTypingEvent = () => {
-      const shouldHaveTypingUsers = Math.random() > 0.3; // 30% chance of having typing users
-
-      if (shouldHaveTypingUsers) {
-        const numTypingUsers = Math.floor(Math.random() * 2) + 1; // 1-2 users
-        const shuffledUsers = [...this.mockUsers].sort(() => Math.random() - 0.5);
-        const typingUsers = shuffledUsers.slice(0, numTypingUsers);
-        this.typingUsers.next(typingUsers.map((user) => user.id));
-
-        // Stop typing after 2-5 seconds
-        setTimeout(
-          () => {
-            this.typingUsers.next([]);
-          },
-          Math.random() * 3000 + 2000,
-        );
-      } else {
-        this.typingUsers.next([]);
-      }
-    };
-
-    // Generate typing events every 3-8 seconds
-    const scheduleNext = () => {
-      const delay = Math.random() * 5000 + 3000;
-      this.typingGenerator = setTimeout(() => {
-        generateTypingEvent();
-        scheduleNext();
-      }, delay);
-    };
-
-    scheduleNext();
-  }
-
-  private stopTypingGenerator(): void {
-    if (this.typingGenerator) {
-      clearTimeout(this.typingGenerator);
-      this.typingGenerator = undefined;
+    if (lastFetchedMessageId) {
+      params.set('fromMessage', lastFetchedMessageId);
     }
-    this.typingUsers.next([]);
-  }
 
-  getNextChatMessages(offset: number): Observable<BasePagingResponse<ChatMessage>> {
-    const pageSize = 30;
-    const reversedMessages = [...mockChatMessages].reverse();
-    const startIndex = offset;
-    const endIndex = startIndex + pageSize;
-    const page = reversedMessages.slice(startIndex, endIndex);
+    params.set('amount', DEFAULT_CHAT_PAGE_SIZE.toString());
 
-    this.messages.next([...page.reverse(), ...this.messages.value]);
-
-    return of({
-      content: page.reverse(),
-      page: {
-        size: pageSize,
-        number: Math.floor(startIndex / pageSize),
-        totalElements: mockChatMessages.length,
-        totalPages: Math.ceil(mockChatMessages.length / pageSize),
+    return this.http.get<BasePagingResponse<ChatMessage>>(
+      `${environment.apiUrl}/chats/${this.connectedChatId.value}/messages`,
+      {
+        params,
       },
-    }).pipe(delay(1000));
+    );
   }
 
   signalStartedTyping(): void {
-    this.typingUsers.next([...this.typingUsers.value, this.mockUsers.filter((user) => user.id == 0)[0].id]); // Simulate current user typing
+    if (!this.ensureConnected()) return;
+
+    this.stompClient.publish({
+      destination: `${this.connectedChatId.value}/started-typing`,
+    });
   }
 
   signalStoppedTyping(): void {
-    this.typingUsers.next(this.typingUsers.value.filter((userId) => userId !== 0));
+    if (!this.ensureConnected()) return;
+
+    this.stompClient.publish({
+      destination: `${this.connectedChatId.value}/stopped-typing`,
+    });
   }
 
   updateLastReadMessage(messageId: string): void {
-    const currentUserId = this.mockUsers.filter((user) => user.id === 0)[0].id; // Assuming the first user is the current user
+    if (!this.ensureConnected()) return;
+
     const lastReadMessages = this.lastReadMessagesMap.value;
-    if (lastReadMessages[currentUserId] !== messageId) {
-      lastReadMessages[currentUserId] = messageId;
-      this.lastReadMessagesMap.next(lastReadMessages);
+
+    if (lastReadMessages[this.currentUserId()!] !== messageId) {
+      this.stompClient.publish({
+        destination: `${this.connectedChatId.value}/update-last-read-message`,
+        body: JSON.stringify({ messageId }),
+      });
     }
+  }
+
+  private ensureConnected(): boolean {
+    return this.connectedChatId.value !== null && this.currentUserId() !== null && this.stompClient.connected();
   }
 }

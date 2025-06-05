@@ -1,4 +1,4 @@
-@let isInitializing = loading() && offset() === 0;
+@let isInitializing = loading() && !scrollSnapMessageId();
 
 @if (isInitializing) {
   <div class="preloader">
@@ -10,8 +10,8 @@
     appearance="compact"
     [buttons]="true"
     (reachedTop)="onScrolledTop()"
-    (droppedBottom)="onLeftBottom()"
-    (reachedBottom)="onScrolledBottom()"
+    (droppedBottom)="this.scrollToBottomVisible.set(true)"
+    (reachedBottom)="this.scrollToBottomVisible.set(false)"
     (afterInit)="scrollToBottom(true)"
     (afterUpdate)="onScrollerContentUpdate()"
     [droppedBottomOffset]="droppedBottomOffset"
@@ -59,7 +59,7 @@
   <mat-icon>keyboard_double_arrow_down</mat-icon>
 </button>
 
-<div class="load-more-indicator" [ngClass]="{ visible: loading() && offset() > 0 }">
+<div class="load-more-indicator" [ngClass]="{ visible: loading() && scrollSnapMessageId() }">
   <mat-spinner diameter="20" mode="indeterminate" /> Ładowanie wiadomości...
 </div>
 

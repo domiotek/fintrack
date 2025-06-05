@@ -11,7 +11,7 @@ import {
   signal,
 } from '@angular/core';
 import { NoSelectedComponent } from '../../../../shared/components/no-selected/no-selected.component';
-import { Chat } from '../../../../core/models/chat/chat.model';
+import { PrivateChat } from '../../../../core/models/chat/chat.model';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -19,10 +19,10 @@ import { AvatarComponent } from '../../../../shared/components/avatar/avatar.com
 import { ChatComponent } from '../../../../shared/controls/chat/chat.component';
 import { MatButtonModule } from '@angular/material/button';
 import { ChatService } from '../../../../core/services/chat/chat.service';
-import { Participant } from '../../../../core/models/chat/participant.model';
 import { AppStateStore } from '../../../../core/store/app-state.store';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DateTime } from 'luxon';
+import { User } from '../../../../core/models/user/user.model';
 
 @Component({
   selector: 'app-chat-container',
@@ -40,12 +40,13 @@ import { DateTime } from 'luxon';
 })
 export class ChatContainerComponent implements OnInit, OnDestroy {
   readonly visible = input<boolean>(false);
-  readonly chat = input<Chat | null>(null);
+  readonly chat = input<PrivateChat | null>(null);
   readonly isMobile = input<boolean>(false);
+  readonly otherParticiapnt = input.required<User>();
   readonly goBackEmit = output<void>();
 
-  readonly otherParticiapnt = signal<Participant | null>(null);
   readonly currentUserId = signal<number | null>(null);
+  readonly lastActiveDateTime = signal<DateTime | null>(null);
   readonly activityText = signal<string>('');
   readonly showChat = signal<boolean>(true);
 
@@ -73,8 +74,13 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
       this.currentUserId.set(state.userId || null);
     });
 
-    this.chatService.participants$.subscribe((participants) => {
-      this.otherParticiapnt.set(participants.find((participant) => participant.id !== this.currentUserId()) || null);
+    this.chatService.lastUserActivityMap$.subscribe((activityMap) => {
+      const isoDate = activityMap[this.otherParticiapnt()?.id!];
+      const dateTime = DateTime.fromISO(isoDate);
+
+      if (dateTime.isValid) {
+        this.lastActiveDateTime.set(dateTime);
+      }
       this.generateActivityText();
     });
 
@@ -95,13 +101,13 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
   private generateActivityText() {
     if (!this.otherParticiapnt()) return;
 
-    const dateTime = DateTime.fromISO(this.otherParticiapnt()?.lastSeenAt!);
+    if (!this.lastActiveDateTime()?.isValid) {
+      return this.activityText.set('');
+    }
 
-    if (!dateTime.isValid) return;
+    const diffInMinutes = Math.abs(this.lastActiveDateTime()!.diffNow('minutes').minutes);
 
-    const diffInMinutes = Math.abs(dateTime.diffNow('minutes').minutes);
-
-    const newdiff = diffInMinutes < 4 ? 'teraz' : dateTime.toRelative({ style: 'long' }) || '';
+    const newdiff = diffInMinutes < 4 ? 'teraz' : this.lastActiveDateTime()!.toRelative({ style: 'long' }) || '';
 
     this.activityText.set(newdiff);
   }

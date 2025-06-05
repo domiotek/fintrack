@@ -6,15 +6,19 @@
           <mat-icon>arrow_back</mat-icon>
         </button>
       }
-      <app-avatar [name]="chat()!.name" [showOnline]="isActive()" />
+      <app-avatar [name]="chat()!.otherParticipant.firstName" [showOnline]="isActive()" />
       <div>
-        <h3>{{ chat()!.name }}</h3>
-        <span class="activity-text">Aktywny(-a) {{ activityText() }}</span>
+        <h3>{{ chat()!.otherParticipant.firstName }}</h3>
+        <span class="activity-text">
+          @if (activityText(); as text) {
+            Aktywny(-a) {{ text }}
+          }
+        </span>
       </div>
     </mat-card-header>
     <mat-card-content>
       @if (chat()?.id && showChat()) {
-        <app-chat [chatId]="chat()!.id" [readonly]="false" />
+        <app-chat [chatId]="chat()!.id" [readonly]="!chat()!.isFriend" [chatParticipants]="[otherParticiapnt()]" />
       }
     </mat-card-content>
   } @else if (!isMobile()) {

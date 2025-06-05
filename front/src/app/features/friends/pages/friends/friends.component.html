@@ -20,13 +20,25 @@
       </div>
 
       <div class="chats-list">
-        <app-custom-list
-          [items]="chats()"
-          [itemTemplate]="categoryItemTemplate"
-          [isSelectable]="true"
-          [(selectedItem)]="selectedChat"
-          (selectEmit)="onChatSelect($event)"
-        />
+        @if (isLoading() && offset() === 0) {
+          <div></div>
+        } @else {
+          <ng-scrollbar [buttons]="true" (reachedBottom)="onScrolledBottom()">
+            <app-custom-list
+              [items]="chats()"
+              [itemTemplate]="categoryItemTemplate"
+              [isSelectable]="true"
+              [(selectedItem)]="selectedChat"
+              (selectEmit)="onChatSelect($event)"
+            />
+          </ng-scrollbar>
+          <mat-spinner
+            class="loading-more-spinner"
+            [diameter]="20"
+            mode="indeterminate"
+            *ngIf="isLoading()"
+          ></mat-spinner>
+        }
       </div>
     </div>
   }
@@ -34,6 +46,7 @@
     [visible]="!isMobile() || selectedChat() !== null"
     [chat]="selectedChat()"
     [isMobile]="isMobile()"
+    [otherParticiapnt]="selectedChat()?.otherParticipant!"
     (goBackEmit)="unselectChat()"
   />
 </div>

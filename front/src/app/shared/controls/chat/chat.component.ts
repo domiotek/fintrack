@@ -1,14 +1,11 @@
 import {
-  AfterViewChecked,
   AfterViewInit,
   Component,
   computed,
   DestroyRef,
-  effect,
   ElementRef,
   inject,
   input,
-  OnInit,
   QueryList,
   Renderer2,
   signal,
@@ -31,7 +28,6 @@ import { ChatService } from '../../../core/services/chat/chat.service';
 import {
   DEFAULT_CHAT_BOTTOM_OFFSET,
   DEFAULT_CHAT_MAX_BLOCK_TIME_DIFFERENCE,
-  DEFAULT_CHAT_PAGE_SIZE,
   DEFAULT_CHAT_SCROLL_BOTTOM_DURATION,
 } from './constants/chat.const';
 import { AppStateStore } from '../../../core/store/app-state.store';
@@ -40,7 +36,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AvatarComponent } from '../../components/avatar/avatar.component';
 import { callDebounced } from '../../../utils/debouncer';
-import { Participant } from '../../../core/models/chat/participant.model';
+import { User } from '../../../core/models/user/user.model';
 
 @Component({
   selector: 'app-chat',
@@ -68,14 +64,14 @@ export class ChatComponent implements AfterViewInit {
 
   readonly chatId = input.required<string>();
   readonly readonly = input<boolean>(false);
+  readonly chatParticipants = input.required<User[]>();
 
   readonly scrollToBottomVisible = signal<boolean>(false);
   readonly typingUsers = signal<string[]>([]);
   readonly messages = signal<ChatMessage[]>([]);
-  readonly chatParticipants = signal<Participant[]>([]);
   readonly lastReadMessagesMap = signal<Record<number, string>>({});
+  readonly lastUserActivityTime = signal<Record<number, DateTime>>({});
   readonly messagesWithReadIndicators = signal<Record<string, number[]>>({});
-  readonly offset = signal<number>(0);
   readonly currentUserId = signal<number | null>(null);
   readonly scrollSnapMessageId = signal<string | null>(null);
   readonly loading = signal<boolean>(true);
@@ -92,8 +88,8 @@ export class ChatComponent implements AfterViewInit {
   readonly activeChatParticipants = computed(() => {
     return this.otherChatParticipants()
       .filter((user) => {
-        const dateTime = DateTime.fromISO(user.lastSeenAt);
-        return dateTime.isValid && dateTime.plus({ minutes: 5 }) > DateTime.now();
+        const dateTime = this.lastUserActivityTime()[user.id];
+        return dateTime?.isValid && dateTime.plus({ minutes: 5 }) > DateTime.now();
       })
       .map((user) => user.id);
   });
@@ -164,58 +160,40 @@ export class ChatComponent implements AfterViewInit {
       this.currentUserId.set(state.userId);
     });
 
-    this.chatService.connectToChat(this.chatId()).subscribe((chat) => {
-      this.chatParticipants.set(chat.participants);
+    this.chatService.connectToChat(this.chatId());
+    this.fetchAndMergeMessages();
 
-      this.fetchAndMergeMessages();
+    this.chatService.typingUsers$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((typingUsers) => {
+      const newTypingUsers = this.chatParticipants()
+        .filter((user) => typingUsers.includes(user.id) && user.id !== this.currentUserId())
+        .map((user) => user.firstName);
 
-      this.chatService.participants$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((participants) => {
-        this.chatParticipants.set(participants);
-      });
+      this.typingUsers.set(newTypingUsers);
+    });
 
-      this.chatService.typingUsers$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((typingUsers) => {
-        const newTypingUsers = this.chatParticipants()
-          .filter((user) => typingUsers.includes(user.id) && user.id !== this.currentUserId())
-          .map((user) => user.firstName);
+    this.chatService.messages$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((messages) => {
+      this.messages.set(messages);
 
-        this.typingUsers.set(newTypingUsers);
-      });
+      setTimeout(() => {
+        this.updateReadIndicatorPositions();
+        if (!this.loading() && !this.scrollToBottomVisible()) {
+          this.scrollToBottom(false);
+        }
+      }, 0);
+    });
 
-      this.chatService.messages$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((messages) => {
-        this.messages.set(messages);
-
-        setTimeout(() => {
-          this.updateReadIndicatorPositions();
-          if (!this.loading() && !this.scrollToBottomVisible()) {
-            this.scrollToBottom(false);
-          }
-        }, 0);
-      });
-
-      this.chatService.lastReadMessagesMap$
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe((lastReadMessagesMap) => {
-          this.lastReadMessagesMap.set(lastReadMessagesMap);
-          this.updateReadIndicatorPositions();
-        });
+    this.chatService.lastReadMessagesMap$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((lastReadMessagesMap) => {
+      this.lastReadMessagesMap.set(lastReadMessagesMap);
+      this.updateReadIndicatorPositions();
     });
   }
 
   onSendMessage(message: string): void {
-    this.chatService.sendMessage(message).subscribe();
-  }
-
-  onLeftBottom() {
-    this.scrollToBottomVisible.set(true);
-  }
-
-  onScrolledBottom() {
-    this.scrollToBottomVisible.set(false);
+    this.chatService.sendMessage(message);
   }
 
   onScrolledTop() {
     if (this.loading() || !this.hasMorePages()) return;
-    this.offset.update((prev) => prev + DEFAULT_CHAT_PAGE_SIZE);
     this.fetchAndMergeMessages();
   }
 
@@ -256,8 +234,8 @@ export class ChatComponent implements AfterViewInit {
     this.loading.set(true);
     this.scrollSnapMessageId.set(this.messages()[0]?.id || null);
 
-    this.chatService.getNextChatMessages(this.offset()).subscribe((messagesResponse) => {
-      this.hasMorePages.set(messagesResponse.page.totalPages > this.offset() / DEFAULT_CHAT_PAGE_SIZE + 1);
+    this.chatService.getNextChatMessages(this.scrollSnapMessageId()).subscribe((messagesResponse) => {
+      this.hasMorePages.set(messagesResponse.page.totalPages > messagesResponse.page.number);
       this.loading.set(false);
     });
   }

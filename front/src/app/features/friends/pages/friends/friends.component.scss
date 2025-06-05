@@ -34,6 +34,16 @@
       display: flex;
       gap: 0.5em;
     }
+
+    .chats-list {
+      position: relative;
+      .loading-more-spinner {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 0;
+      }
+    }
   }
 
   app-search-input {
@@ -58,6 +68,10 @@
 @media (width > 768px) {
   .chats-list-container {
     max-width: 30vw;
+  }
+
+  .chats-list {
+    overflow: hidden;
   }
 
   .content {

@@ -15,17 +15,6 @@
   gap: 1em;
 }
 
-ng-scrollbar {
-  --scrollbar-thickness: 9;
-  --scrollbar-border-radius: 12px;
-  --scrollbar-button-color: transparent;
-  --scrollbar-button-fill: #{$light-blue-1};
-  --scrollbar-thumb-color: #{rgba($light-blue-1, 0.3)};
-  --scrollbar-thumb-hover-color: #{rgba($light-blue-1, 0.6)};
-  --scrollbar-offset: 4;
-  flex: 1;
-}
-
 .scroll-bottom-button {
   position: absolute;
   bottom: 4em;

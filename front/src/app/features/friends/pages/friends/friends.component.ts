@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, inject, signal, ViewContainerRef } from '@angular/core';
 import { SearchInputComponent } from '../../../../shared/controls/search-input/search-input.component';
 import { CustomListComponent } from '../../../../shared/components/custom-list/custom-list.component';
-import { NoSelectedComponent } from '../../../../shared/components/no-selected/no-selected.component';
 import { MatIconModule } from '@angular/material/icon';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { tap } from 'rxjs';
@@ -10,7 +9,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { ChatService } from '../../../../core/services/chat/chat.service';
-import { Chat } from '../../../../core/models/chat/chat.model';
+import { PrivateChat } from '../../../../core/models/chat/chat.model';
 import { ChatItemComponent } from '../../components/chat-item/chat-item.component';
 import { MatDialog } from '@angular/material/dialog';
 import { AddFriendDialogComponent } from '../../components/add-friend-dialog/add-friend-dialog.component';
@@ -19,6 +18,11 @@ import { CreateNewChatDialogComponent } from '../../components/create-new-chat-d
 import { RemoveFriendDialogComponent } from '../../components/remove-friend-dialog/remove-friend-dialog.component';
 import { MatCardModule } from '@angular/material/card';
 import { ChatContainerComponent } from '../../components/chat-container/chat-container.component';
+import { NgScrollbarModule } from 'ngx-scrollbar';
+import { NgScrollReached } from 'ngx-scrollbar/reached-event';
+import { callDebounced } from '../../../../utils/debouncer';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { User } from '../../../../core/models/user/user.model';
 
 @Component({
   selector: 'app-friends',
@@ -32,15 +36,22 @@ import { ChatContainerComponent } from '../../components/chat-container/chat-con
     MatButtonModule,
     ChatItemComponent,
     ChatContainerComponent,
+    NgScrollbarModule,
+    NgScrollReached,
+    MatProgressSpinnerModule,
   ],
   templateUrl: './friends.component.html',
   styleUrl: './friends.component.scss',
 })
 export class FriendsComponent {
   readonly isMobile = signal<boolean>(false);
-  readonly selectedChat = signal<Chat | null>(null);
+  readonly selectedChat = signal<PrivateChat | null>(null);
   readonly searchValue = signal<string>('');
-  readonly chats = signal<Chat[]>([]);
+  readonly chats = signal<PrivateChat[]>([]);
+  readonly isLoading = signal<boolean>(true);
+  readonly offset = signal<number>(0);
+  readonly hasMorePages = signal<boolean>(true);
+  readonly newlyAddedChat = signal<PrivateChat | null>(null);
 
   private readonly destroyRef = inject(DestroyRef);
   private readonly observer = inject(BreakpointObserver);
@@ -59,19 +70,50 @@ export class FriendsComponent {
       )
       .subscribe();
 
-    this.chatsService.getPrivateChatsList().subscribe((chats) => {
-      this.chats.set(chats);
+    this.loadMoreChats();
+
+    this.chatsService.privateChatsUpdates$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((chat) => {
+      const currentChats = this.chats();
+      const existingChatIndex = currentChats.findIndex((c) => c.id === chat.id);
+
+      if (existingChatIndex !== -1) {
+        currentChats[existingChatIndex] = chat;
+      } else {
+        currentChats.unshift(chat);
+      }
+
+      this.chats.set(currentChats);
     });
   }
 
-  onSearch(val: string): void {}
+  onSearch(val: string): void {
+    this.searchValue.set(val);
+    this.chats.set([]);
+    this.offset.set(0);
+
+    if (this.selectedChat()?.id === this.newlyAddedChat()?.id) {
+      this.cleanUpNewlyAddedChat();
+      this.selectedChat.set(null);
+    }
+
+    this.loadMoreChats();
+  }
 
   unselectChat() {
     this.selectedChat.set(null);
   }
 
-  onChatSelect(chat: Chat): void {
+  onChatSelect(chat: PrivateChat): void {
+    if (this.newlyAddedChat() && this.newlyAddedChat()?.id !== chat.id) {
+      this.cleanUpNewlyAddedChat();
+    }
+
     this.selectedChat.set(chat);
+  }
+
+  onScrolledBottom(): void {
+    if (this.isLoading() || !this.hasMorePages()) return;
+    this.loadMoreChats();
   }
 
   openAddFriendDialog(): void {
@@ -94,11 +136,23 @@ export class FriendsComponent {
       viewContainerRef: this.viewContainerRef,
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        console.log('Dialog result:', result);
-        // Handle the returned data
-      }
+    dialogRef.afterClosed().subscribe((result?: User) => {
+      if (!result) return;
+
+      this.chatsService.getPrivateChatIdByUserId(result.id).subscribe((chatId) => {
+        this.cleanUpNewlyAddedChat();
+        const newChat: PrivateChat = {
+          id: chatId,
+          otherParticipant: result,
+          lastMessage: null,
+          lastReadMessageId: null,
+          isFriend: true,
+        };
+
+        this.chats.set([newChat, ...this.chats()]);
+        this.selectedChat.set(newChat);
+        this.newlyAddedChat.set(newChat);
+      });
     });
   }
 
@@ -107,5 +161,19 @@ export class FriendsComponent {
       data: {},
       viewContainerRef: this.viewContainerRef,
     });
+  }
+
+  private loadMoreChats = callDebounced(() => {
+    this.isLoading.set(true);
+    this.chatsService.getPrivateChatsList(this.offset(), this.searchValue()).subscribe((chats) => {
+      const currentChats = this.chats();
+      this.chats.set([...currentChats, ...chats.content]);
+      this.isLoading.set(false);
+      this.hasMorePages.set(chats.page.number < chats.page.totalPages);
+    });
+  }, 300);
+
+  private cleanUpNewlyAddedChat(): void {
+    this.chats.set([...this.chats().filter((c) => c.id !== this.newlyAddedChat()?.id)]);
   }
 }
