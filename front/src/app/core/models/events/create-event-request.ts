@@ -3,5 +3,5 @@ export interface CreateEventRequest {
   currencyId: number;
   startDate: string;
   endDate: string;
-  users: number[];
+  usersIds: number[];
 }

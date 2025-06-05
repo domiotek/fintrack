@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnInit, signal, ViewContainerRef } from '@angular/core';
 import { EventsService } from '../../../../core/services/events/events.service';
 import { EventFilters } from '../../../../core/models/events/event-filters';
 import { Pagination } from '../../../../core/models/pagination/pagination';
@@ -26,6 +26,8 @@ import { EventDetailsComponent } from '../../components/event-details/event-deta
 import { NoSelectedComponent } from '../../../../shared/components/no-selected/no-selected.component';
 import { Event } from '../../../../core/models/events/event';
 import { SpinnerComponent } from '../../../../core/components/spinner/spinner.component';
+import { MatDialog } from '@angular/material/dialog';
+import { AddEventDialogComponent } from '../../components/add-event-dialog/add-event-dialog.component';
 
 @Component({
   selector: 'app-events',
@@ -52,6 +54,10 @@ export class EventsComponent implements OnInit {
   private readonly categoryState = inject(EventStateStore);
 
   private readonly observer = inject(BreakpointObserver);
+
+  private readonly dialog = inject(MatDialog);
+
+  viewContainerRef = inject(ViewContainerRef);
 
   private readonly destroyRef = inject(DestroyRef);
 
@@ -143,6 +149,29 @@ export class EventsComponent implements OnInit {
   onSortChange(state: SortState): void {
     this.sortState.set({ ...state });
     this.getEvents();
+  }
+
+  addEvent(): void {
+    const dialogRef = this.dialog.open(AddEventDialogComponent, {
+      width: '600px',
+      viewContainerRef: this.viewContainerRef,
+    });
+
+    dialogRef
+      .afterClosed()
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        tap((res) => {
+          if (res) {
+            this.pagination.set({
+              page: 0,
+              size: 10,
+            });
+            this.getEvents();
+          }
+        }),
+      )
+      .subscribe();
   }
 
   private getEvents(): void {

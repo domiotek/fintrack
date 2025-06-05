@@ -4,7 +4,7 @@
     [initialTimeRange]="projection_range()"
     (timeRangeChange)="onProjectionDateChange($event)"
   />
-  <button type="button" mat-flat-button><mat-icon>add</mat-icon> Dodaj wydarzenie</button>
+  <button type="button" mat-flat-button (click)="addEvent()"><mat-icon>add</mat-icon> Dodaj wydarzenie</button>
 </div>
 
 <div class="content">
