@@ -14,6 +14,7 @@ import { RxStomp } from '@stomp/rx-stomp';
 import { UserTypingEvent } from '../../models/chat/user-typing-event.model';
 import { UserReadMessageEvent } from '../../models/chat/user-read-message-event.model';
 import { mockedChats } from './mock-chat-data';
+import { UserAvailabilityEvent } from '../../models/chat/user-availability-event.model';
 
 @Injectable({
   providedIn: 'root',
@@ -134,6 +135,22 @@ export class ChatService implements OnDestroy {
       });
 
     this.stompClient
+      .watch(`/${chatId}/user-last-activity`)
+      .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this.connectedChatId.asObservable()))
+      .subscribe((message: IMessage) => {
+        const event: UserAvailabilityEvent = JSON.parse(message.body);
+
+        if (typeof event.userId !== 'number') return;
+
+        if (event.userId === this.currentUserId()) return;
+
+        this.lastUserActivityMap.next({
+          ...this.lastUserActivityMap.value,
+          [event.userId]: event.lastSeenAt,
+        });
+      });
+
+    this.stompClient
       .watch(`/private-chat-updates`)
       .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this.connectedChatId.asObservable()))
       .subscribe((message: IMessage) => {
@@ -180,6 +197,14 @@ export class ChatService implements OnDestroy {
 
     this.stompClient.publish({
       destination: `${this.connectedChatId.value}/stopped-typing`,
+    });
+  }
+
+  updateLastActivity(): void {
+    if (!this.ensureConnected()) return;
+
+    this.stompClient.publish({
+      destination: `${this.connectedChatId.value}/report-last-activity`,
     });
   }
 

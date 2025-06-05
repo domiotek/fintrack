@@ -6,6 +6,7 @@ import {
   ElementRef,
   inject,
   input,
+  OnDestroy,
   QueryList,
   Renderer2,
   signal,
@@ -29,6 +30,7 @@ import {
   DEFAULT_CHAT_BOTTOM_OFFSET,
   DEFAULT_CHAT_MAX_BLOCK_TIME_DIFFERENCE,
   DEFAULT_CHAT_SCROLL_BOTTOM_DURATION,
+  DEFAULT_USER_ACTIVITY_UPDATE_INTERVAL,
 } from './constants/chat.const';
 import { AppStateStore } from '../../../core/store/app-state.store';
 import { DateTime } from 'luxon';
@@ -58,7 +60,7 @@ import { User } from '../../../core/models/user/user.model';
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.scss',
 })
-export class ChatComponent implements AfterViewInit {
+export class ChatComponent implements AfterViewInit, OnDestroy {
   @ViewChild('scrollbarRef') scrollbarRef!: NgScrollbar;
   @ViewChildren('readIndicatorRef') readIndicatorRefs!: QueryList<ElementRef<HTMLDivElement>>;
 
@@ -70,7 +72,7 @@ export class ChatComponent implements AfterViewInit {
   readonly typingUsers = signal<string[]>([]);
   readonly messages = signal<ChatMessage[]>([]);
   readonly lastReadMessagesMap = signal<Record<number, string>>({});
-  readonly lastUserActivityTime = signal<Record<number, DateTime>>({});
+  readonly lastUserActivityTime = signal<Record<number, string>>({});
   readonly messagesWithReadIndicators = signal<Record<string, number[]>>({});
   readonly currentUserId = signal<number | null>(null);
   readonly scrollSnapMessageId = signal<string | null>(null);
@@ -88,7 +90,7 @@ export class ChatComponent implements AfterViewInit {
   readonly activeChatParticipants = computed(() => {
     return this.otherChatParticipants()
       .filter((user) => {
-        const dateTime = this.lastUserActivityTime()[user.id];
+        const dateTime = DateTime.fromISO(this.lastUserActivityTime()[user.id]);
         return dateTime?.isValid && dateTime.plus({ minutes: 5 }) > DateTime.now();
       })
       .map((user) => user.id);
@@ -150,6 +152,8 @@ export class ChatComponent implements AfterViewInit {
 
   readonly droppedBottomOffset = DEFAULT_CHAT_BOTTOM_OFFSET;
 
+  private readonly activityUpdateTimer = signal<ReturnType<typeof setInterval> | null>(null);
+
   private readonly chatService = inject(ChatService);
   private readonly appStateStore = inject(AppStateStore);
   private readonly destroyRef = inject(DestroyRef);
@@ -162,6 +166,9 @@ export class ChatComponent implements AfterViewInit {
 
     this.chatService.connectToChat(this.chatId());
     this.fetchAndMergeMessages();
+
+    document.addEventListener('visibilitychange', this.visibilityChangeEventDispatcher.bind(this));
+    this.setupActivityUpdateTimer();
 
     this.chatService.typingUsers$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((typingUsers) => {
       const newTypingUsers = this.chatParticipants()
@@ -186,6 +193,16 @@ export class ChatComponent implements AfterViewInit {
       this.lastReadMessagesMap.set(lastReadMessagesMap);
       this.updateReadIndicatorPositions();
     });
+
+    this.chatService.lastUserActivityMap$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((lastUserActivityMap) => {
+      this.lastUserActivityTime.set(lastUserActivityMap);
+      this.updateReadIndicatorPositions();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.teardownActivityUpdateTimer();
+    document.removeEventListener('visibilitychange', this.visibilityChangeEventDispatcher.bind(this));
   }
 
   onSendMessage(message: string): void {
@@ -278,5 +295,38 @@ export class ChatComponent implements AfterViewInit {
         this.messagesWithReadIndicators.set(Object.fromEntries(messagesWithReadIndicatorsMap));
       }
     }
+  }
+
+  private setupActivityUpdateTimer(): void {
+    if (this.activityUpdateTimer()) {
+      clearInterval(this.activityUpdateTimer()!);
+    }
+
+    this.activityUpdateTimer.set(
+      setInterval(() => {
+        this.chatService.updateLastActivity();
+      }, DEFAULT_USER_ACTIVITY_UPDATE_INTERVAL),
+    );
+  }
+
+  private teardownActivityUpdateTimer(): void {
+    if (this.activityUpdateTimer()) {
+      clearInterval(this.activityUpdateTimer()!);
+      this.activityUpdateTimer.set(null);
+    }
+  }
+
+  private onWindowFocused(): void {
+    this.setupActivityUpdateTimer();
+    this.chatService.updateLastActivity();
+  }
+
+  private onWindowBlurred(): void {
+    this.teardownActivityUpdateTimer();
+  }
+
+  private visibilityChangeEventDispatcher() {
+    if (!document.hidden && document.hasFocus()) this.onWindowFocused();
+    else this.onWindowBlurred();
   }
 }
