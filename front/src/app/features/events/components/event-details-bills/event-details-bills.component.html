@@ -1,0 +1,33 @@
+@if (isLoading()) {
+  <app-spinner />
+} @else if (event().eventSummary && userCurrency()) {
+  <div class="summary-container">
+    <app-event-bills-summary
+      [summary]="event().eventSummary!"
+      [eventCurrency]="event().currency"
+      [userCurrency]="userCurrency()"
+    />
+  </div>
+  <div class="list-container">
+    <div class="button-container">
+      <p>Lista rachunków</p>
+      <button type="button" mat-mini-fab (click)="onAddBillDialog()"><mat-icon>add</mat-icon></button>
+    </div>
+    <hr />
+    <app-custom-list
+      [items]="event().eventBills ?? []"
+      [itemTemplate]="billsItemTemplate"
+      [isSelectable]="false"
+      (selectEmit)="onBillClick($event)"
+    />
+  </div>
+}
+
+<ng-template #billsItemTemplate let-item>
+  <app-event-bill-item
+    [bill]="item"
+    [userCurrency]="userCurrency()"
+    [billCurrency]="event().currency"
+    [isMobile]="isMobile()"
+  />
+</ng-template>

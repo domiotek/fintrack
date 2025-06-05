@@ -1,0 +1,45 @@
+<mat-card appearance="outlined">
+  <mat-card-content>
+    <div class="info_container">
+      <div class="info_container-single">
+        <p class="bold">Nazwa:</p>
+        <p>{{ event().name }}</p>
+      </div>
+      <div class="info_container-single">
+        <p class="bold">Data rozpoczęcia:</p>
+        <p>{{ event().startDate.slice(0, 10) }}</p>
+      </div>
+      <div class="info_container-single">
+        <p class="bold">Data zakończenia:</p>
+        <p>{{ event().endDate.slice(0, 10) }}</p>
+      </div>
+      <div class="info_container-single">
+        <p class="bold">Status:</p>
+        @switch (event().status) {
+          @case ('UPCOMING') {
+            <div class="color_label" [style.backgroundColor]="'#f9c74f'"></div>
+            <p class="status">Nachodzące</p>
+          }
+          @case ('ONGOING') {
+            <div class="color_label" [style.backgroundColor]="'#008000'"></div>
+            <p class="status">W trakcie</p>
+          }
+          @case ('FINISHED') {
+            <div class="color_label" [style.backgroundColor]="'#ff2c2c'"></div>
+            <p class="statu">Zakończone</p>
+          }
+        }
+      </div>
+      <div class="info_container-single">
+        <p class="bold">Waluta wydarzenia:</p>
+        <p>{{ `${event().currency.name} (${event().currency.code})` }}</p>
+      </div>
+    </div>
+    @if (event().isFounder) {
+      <div class="actions_container">
+        <button mat-button (click)="editEvent()">Edytuj</button>
+        <button mat-button (click)="deleteEvent()"><span class="red">Usuń</span></button>
+      </div>
+    }
+  </mat-card-content>
+</mat-card>

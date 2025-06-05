@@ -1,0 +1,32 @@
+<div class="left_container">
+  <div class="data">
+    <p class="bold main-val">
+      {{
+        `${eventCurrency().id !== userCurrency().id ? '~' : ''}
+        ${summary().userCurrency.costPerUser} ${userCurrency().code}`
+      }}
+    </p>
+    @if (eventCurrency().id !== userCurrency().id) {
+      <p class="second-val">{{ summary().eventCurrency.costPerUser }} {{ eventCurrency().code }}</p>
+    }
+  </div>
+  <div class="label bold">
+    <p>Łącznie do zapłaty</p>
+  </div>
+</div>
+<div class="right_container">
+  <div class="data">
+    <p class="bold main-val">
+      {{
+        `${eventCurrency().id !== userCurrency().id ? '~' : ''}
+        ${summary().userCurrency.amount} ${userCurrency().code}`
+      }}
+    </p>
+    @if (eventCurrency().id !== userCurrency().id) {
+      <p class="second-val">{{ summary().eventCurrency.amount }} {{ eventCurrency().code }}</p>
+    }
+  </div>
+  <div class="label bold">
+    <p>Suma rachunków</p>
+  </div>
+</div>

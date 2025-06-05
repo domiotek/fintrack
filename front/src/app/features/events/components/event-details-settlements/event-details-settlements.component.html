@@ -1,0 +1,53 @@
+@let userCode = userCurrency().code;
+@let eventCode = event().currency.code;
+
+@if (isLoading()) {
+  <app-spinner />
+} @else {
+  <div class="summary">
+    <div class="data" [ngClass]="bilance().user >= 0 ? 'green' : 'red'">
+      <p class="bold main-val">
+        {{
+          `${userCurrency().id !== event().currency.id ? '~' : ''}
+          ${bilance().user} ${userCurrency().code}`
+        }}
+      </p>
+      @if (userCurrency().id !== event().currency.id) {
+        <p class="second-val">{{ bilance().event }} {{ eventCode }}</p>
+      }
+    </div>
+    <div class="label bold">
+      <p>Łącznie do zapłaty</p>
+    </div>
+  </div>
+  <app-custom-list
+    [items]="event().eventSettlements ?? []"
+    [itemTemplate]="transactionItemTemplate"
+    [isSelectable]="false"
+  />
+}
+
+<ng-template #transactionItemTemplate let-settlement>
+  <div class="settlement">
+    <div class="left_container">
+      <div class="avatar bold">
+        {{ `${settlement.user.firstName.slice(0, 1)}${settlement.user.lastName.slice(0, 1)}` }}
+      </div>
+      <p class="bold">{{ `${settlement.user.firstName} ${settlement.user.lastName}` }}</p>
+    </div>
+    <div class="right_container">
+      @if (userCurrency().id === event().currency.id) {
+        <p class="bold" [ngClass]="settlement.settlement.userCurrency >= 0 ? 'green' : 'red'">
+          {{
+            `${settlement.settlement.userCurrency >= 0 ? '+' : ''}${settlement.settlement.userCurrency} ${userCode}`
+          }}
+        </p>
+      } @else {
+        <p class="bold" [ngClass]="settlement.settlement.userCurrency >= 0 ? 'green' : 'red'">
+          {{ `~ ${settlement.settlement.userCurrency} ${userCode}` }}
+          <span class="second-value">{{ `(${settlement.settlement.eventCurrency} ${eventCode})` }}</span>
+        </p>
+      }
+    </div>
+  </div>
+</ng-template>

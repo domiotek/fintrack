@@ -1,0 +1,73 @@
+@use '../../../../styles/variables' as *;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  padding: 8px 36px 0 36px;
+
+  .summary {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+
+    .data {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 12px;
+      height: 140px;
+      width: 140px;
+      border-radius: 50%;
+      border: 2px solid $blue;
+      text-align: center;
+
+      &.green {
+        border-color: $green;
+      }
+
+      &.red {
+        border-color: $red;
+      }
+
+      .second-val {
+        font-size: 12px;
+        color: $dark-gray;
+      }
+    }
+  }
+
+  .settlement {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+
+    .left_container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+
+      .avatar {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 40px;
+        height: 40px;
+        border: 1px solid $dark-blue-2;
+        border-radius: 50%;
+        text-transform: uppercase;
+      }
+    }
+  }
+}
+
+@media (width < 768px) {
+  :host {
+    padding: 8px 0 0 0;
+  }
+}

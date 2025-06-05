@@ -1,0 +1,57 @@
+<h2 mat-dialog-title>Rachunek</h2>
+
+<mat-dialog-content>
+  <div class="dialog-content">
+    <div class="info-container">
+      <p class="bold">Nazwa:</p>
+      <p>{{ data.eventBill.name }}</p>
+    </div>
+    <div class="info-container">
+      <p class="bold">Data:</p>
+      <p>{{ data.eventBill.date | date: 'yyyy/MM/dd - HH:mm' }}</p>
+    </div>
+    <div class="info-container">
+      <p class="bold">Właściciel:</p>
+      <p>{{ `${data.eventBill.paidBy.firstName} ${data.eventBill.paidBy.lastName}` }}</p>
+    </div>
+    <div class="info-container">
+      <p class="bold">Kwota do zapłaty:</p>
+      @if (data.eventCurrency.id === data.userCurrency.id) {
+        <p>{{ `${data.eventBill.userCurrency.costPerUser} ${data.userCurrency.code}` }}</p>
+      } @else {
+        <p>
+          {{ `~ ${data.eventBill.userCurrency.costPerUser} ${data.userCurrency.code}` }}
+          <span class="optional-value">
+            {{ `(${data.eventBill.eventCurrency.costPerUser} ${data.eventCurrency.code})` }}
+          </span>
+        </p>
+      }
+    </div>
+    <div class="info-container">
+      <p class="bold">Całkowita wartość rachunku:</p>
+      @if (data.eventCurrency.id === data.userCurrency.id) {
+        <p>{{ `${data.eventBill.userCurrency.amount} ${data.userCurrency.code}` }}</p>
+      } @else {
+        <p>
+          {{ `~ ${data.eventBill.userCurrency.amount} ${data.userCurrency.code}` }}
+          <span class="optional-value">
+            {{ `(${data.eventBill.eventCurrency.amount} ${data.eventCurrency.code})` }}
+          </span>
+        </p>
+      }
+    </div>
+    <mat-dialog-actions>
+      <button mat-flat-button type="button" mat-dialog-close>Wróć</button>
+      @if (data.eventBill.paidBy.id === data.userId) {
+        <div>
+          <button mat-icon-button type="button" (click)="editBill()">
+            <mat-icon class="light-blue-1">edit</mat-icon>
+          </button>
+          <button mat-icon-button type="button" (click)="deleteBill()">
+            <mat-icon class="red">delete</mat-icon>
+          </button>
+        </div>
+      }
+    </mat-dialog-actions>
+  </div>
+</mat-dialog-content>

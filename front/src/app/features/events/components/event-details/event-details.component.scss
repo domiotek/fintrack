@@ -1,0 +1,26 @@
+:host {
+  display: flex;
+  padding: 0;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: visible;
+  position: relative;
+  max-width: calc(100vw - 32px);
+  width: 100%;
+
+  mat-tab-group {
+    height: 100%;
+  }
+}
+
+.mat-mdc-tab-body-wrapper {
+  height: 100%;
+}
+
+@media (max-width: 768px) {
+  :host {
+    padding: 0;
+    height: 100%;
+    overflow: visible;
+  }
+}
