@@ -12,7 +12,7 @@ public class ChatConfiguration implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/websockets");
+        registry.addEndpoint("/ws");
     }
 
     @Override
