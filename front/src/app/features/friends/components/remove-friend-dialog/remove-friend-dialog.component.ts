@@ -1,7 +1,6 @@
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { User } from '../../../../core/models/user/user.model';
 import { FriendService } from '../../../../core/services/friend/friend.service';
-import { take } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -10,12 +9,11 @@ import { CustomListComponent } from '../../../../shared/components/custom-list/c
 import { UserItemComponent } from '../../../../shared/components/user-item/user-item.component';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
-import { CreateNewChatDialogComponent } from '../create-new-chat-dialog/create-new-chat-dialog.component';
-import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { callDebounced } from '../../../../utils/debouncer';
 import { FormProgressBarComponent } from '../../../../shared/components/form-progress-bar/form-progress-bar.component';
+import { ConfirmationDialogComponent } from '../../../../shared/components/confirmation-dialog/confirmation-dialog.component';
+import { ConfirmationDialogData } from '../../../../core/models/dialog/confirmation-dialog-data';
 
 @Component({
   selector: 'app-remove-friend-dialog',
@@ -68,7 +66,14 @@ export class RemoveFriendDialogComponent {
   onRemoveFriendAttempt(user: User) {
     if (this.processing()) return;
 
-    const dialogRef = this.matDialog.open(ConfirmDialogComponent);
+    const dialogData: ConfirmationDialogData = {
+      title: 'Czy na pewno chcesz kontynuować?',
+      message: 'Ta operacja jest nieodwracalna. Kontynuować?',
+    };
+
+    const dialogRef = this.matDialog.open(ConfirmationDialogComponent, {
+      data: dialogData,
+    });
 
     dialogRef.afterClosed().subscribe((accepted) => {
       if (!accepted) return;

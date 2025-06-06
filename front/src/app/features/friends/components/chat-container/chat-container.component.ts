@@ -42,7 +42,7 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
   readonly visible = input<boolean>(false);
   readonly chat = input<PrivateChat | null>(null);
   readonly isMobile = input<boolean>(false);
-  readonly otherParticiapnt = input.required<User>();
+  readonly otherParticipant = input.required<User>();
   readonly goBackEmit = output<void>();
 
   readonly currentUserId = signal<number | null>(null);
@@ -75,7 +75,7 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
     });
 
     this.chatService.lastUserActivityMap$.subscribe((activityMap) => {
-      const isoDate = activityMap[this.otherParticiapnt()?.id!];
+      const isoDate = activityMap[this.otherParticipant()?.id!];
       const dateTime = DateTime.fromISO(isoDate);
 
       if (dateTime.isValid) {
@@ -99,7 +99,7 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
   }
 
   private generateActivityText() {
-    if (!this.otherParticiapnt()) return;
+    if (!this.otherParticipant()) return;
 
     if (!this.lastActiveDateTime()?.isValid) {
       return this.activityText.set('');

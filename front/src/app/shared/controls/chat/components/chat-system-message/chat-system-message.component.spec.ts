@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ChatSystemMessageComponent } from './chat-system-message.component';
+import { provideExperimentalZonelessChangeDetection } from '@angular/core';
 
 describe('ChatSystemMessageComponent', () => {
   let component: ChatSystemMessageComponent;
@@ -8,9 +9,9 @@ describe('ChatSystemMessageComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ChatSystemMessageComponent]
-    })
-    .compileComponents();
+      imports: [ChatSystemMessageComponent],
+      providers: [provideExperimentalZonelessChangeDetection()],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ChatSystemMessageComponent);
     component = fixture.componentInstance;

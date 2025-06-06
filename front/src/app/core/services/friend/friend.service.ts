@@ -1,10 +1,9 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { BehaviorSubject, Observable, of, tap } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { BaseApiService } from '../base-api.service';
 import { FriendRequest } from '../../models/friend/friend-request.model';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { User } from '../../models/user/user.model';
-import { DateTime } from 'luxon';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environments';
 

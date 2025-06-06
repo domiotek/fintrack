@@ -46,7 +46,7 @@
     [visible]="!isMobile() || selectedChat() !== null"
     [chat]="selectedChat()"
     [isMobile]="isMobile()"
-    [otherParticiapnt]="selectedChat()?.otherParticipant!"
+    [otherParticipant]="selectedChat()?.otherParticipant!"
     (goBackEmit)="unselectChat()"
   />
 </div>

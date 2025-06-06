@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { TypingIndicatorComponent } from './typing-indicator.component';
+import { provideExperimentalZonelessChangeDetection } from '@angular/core';
 
 describe('TypingIndicatorComponent', () => {
   let component: TypingIndicatorComponent;
@@ -8,11 +9,12 @@ describe('TypingIndicatorComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TypingIndicatorComponent]
-    })
-    .compileComponents();
+      imports: [TypingIndicatorComponent],
+      providers: [provideExperimentalZonelessChangeDetection()],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(TypingIndicatorComponent);
+    fixture.componentRef.setInput('typingUsers', []);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
