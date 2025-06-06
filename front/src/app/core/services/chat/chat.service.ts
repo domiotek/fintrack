@@ -51,6 +51,15 @@ export class ChatService implements OnDestroy {
     this.appStateStore.appState$.pipe(takeUntilDestroyed()).subscribe((state) => {
       this.currentUserId.set(state.userId);
     });
+
+    this.stompClient
+      .watch(`/${this.currentUserId()}/private-chat-updates`)
+      .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this.connectedChatId.asObservable()))
+      .subscribe((message: IMessage) => {
+        const chat: PrivateChat = JSON.parse(message.body);
+
+        this.privateChatsUpdates.next(chat);
+      });
   }
 
   ngOnDestroy(): void {
@@ -143,15 +152,6 @@ export class ChatService implements OnDestroy {
           ...this.lastUserActivityMap.value,
           [event.userId]: event.lastSeenAt,
         });
-      });
-
-    this.stompClient
-      .watch(`/private-chat-updates`)
-      .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this.connectedChatId.asObservable()))
-      .subscribe((message: IMessage) => {
-        const chat: PrivateChat = JSON.parse(message.body);
-
-        this.privateChatsUpdates.next(chat);
       });
   }
 
