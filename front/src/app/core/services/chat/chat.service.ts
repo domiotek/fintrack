@@ -1,5 +1,5 @@
 import { DestroyRef, inject, Injectable, OnDestroy, signal } from '@angular/core';
-import { BehaviorSubject, Observable, of, Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, takeUntil } from 'rxjs';
 import { PrivateChat } from '../../models/chat/chat.model';
 import { ChatMessage } from '../../models/chat/message.model';
 import { BasePagingResponse } from '../../models/api/paging.model';
