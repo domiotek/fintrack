@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal, OnInit } from '@angular/core';
 import { User } from '../../../../core/models/user/user.model';
 import { FriendService } from '../../../../core/services/friend/friend.service';
 import { CommonModule } from '@angular/common';
@@ -31,7 +31,7 @@ import { callDebounced } from '../../../../utils/debouncer';
   templateUrl: './remove-friend-dialog.component.html',
   styleUrl: './remove-friend-dialog.component.scss',
 })
-export class RemoveFriendDialogComponent {
+export class RemoveFriendDialogComponent implements OnInit {
   readonly friends = signal<User[]>([]);
   readonly selectedUser = signal<User | null>(null);
   readonly searchValue = signal<string>('');

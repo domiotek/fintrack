@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, inject, signal, ViewContainerRef } from '@angular/core';
+import { Component, DestroyRef, inject, signal, ViewContainerRef, OnInit } from '@angular/core';
 import { SearchInputComponent } from '../../../../shared/controls/search-input/search-input.component';
 import { CustomListComponent } from '../../../../shared/components/custom-list/custom-list.component';
 import { MatIconModule } from '@angular/material/icon';
@@ -43,7 +43,7 @@ import { User } from '../../../../core/models/user/user.model';
   templateUrl: './friends.component.html',
   styleUrl: './friends.component.scss',
 })
-export class FriendsComponent {
+export class FriendsComponent implements OnInit {
   readonly isMobile = signal<boolean>(false);
   readonly selectedChat = signal<PrivateChat | null>(null);
   readonly searchValue = signal<string>('');

@@ -4,8 +4,6 @@ import { Component } from '@angular/core';
   selector: 'app-chat-system-message',
   imports: [],
   templateUrl: './chat-system-message.component.html',
-  styleUrl: './chat-system-message.component.scss'
+  styleUrl: './chat-system-message.component.scss',
 })
-export class ChatSystemMessageComponent {
-
-}
+export class ChatSystemMessageComponent {}
