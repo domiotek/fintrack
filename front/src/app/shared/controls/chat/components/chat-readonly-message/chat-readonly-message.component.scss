@@ -1,0 +1,16 @@
+@use '../../../../../styles/variables' as *;
+
+:host {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1em;
+  gap: 0.5em;
+
+  background: $light-gray-2;
+
+  mat-icon {
+    color: $light-blue-1;
+  }
+}

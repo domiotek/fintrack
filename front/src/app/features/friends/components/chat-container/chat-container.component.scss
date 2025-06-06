@@ -1,0 +1,50 @@
+@use '../../../../styles/variables' as *;
+
+:host {
+  display: contents;
+}
+
+mat-card {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+  margin-bottom: 3px;
+
+  .chat-header {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+    padding: 1em;
+
+    button {
+      color: $light-blue-1;
+    }
+
+    .activity-text {
+      font-size: 0.75em;
+    }
+  }
+
+  mat-card-content {
+    flex: 1;
+    padding: 0;
+    overflow: hidden;
+  }
+}
+
+@media (width < 768px) {
+  mat-card {
+    background: transparent;
+    box-shadow: none;
+
+    mat-card-header {
+      padding-left: 0;
+      padding-right: 0;
+
+      ::ng-deep .mat-mdc-card-header-text {
+        display: none;
+      }
+    }
+  }
+}

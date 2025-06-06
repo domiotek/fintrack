@@ -1,0 +1,12 @@
+<app-avatar [name]="item().firstName"></app-avatar>
+<div class="middle-container">
+  <div class="name">{{ item().firstName }} {{ item().lastName }}</div>
+  @if (showEmail()) {
+    <div class="secondary-text">
+      {{ item().email }}
+    </div>
+  }
+</div>
+<div class="end-container">
+  <ng-content></ng-content>
+</div>

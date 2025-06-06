@@ -2,9 +2,13 @@ package com.example.fintrack.user;
 
 import com.example.fintrack.bill.Bill;
 import com.example.fintrack.bill.BillRepository;
+import com.example.fintrack.currency.Currency;
+import com.example.fintrack.currency.CurrencyRepository;
 import com.example.fintrack.event.Event;
 import com.example.fintrack.event.EventRepository;
 import com.example.fintrack.security.service.UserProvider;
+import com.example.fintrack.user.dto.PasswordDto;
+import com.example.fintrack.user.dto.UpdateProfileDto;
 import com.example.fintrack.user.dto.UserProfileDto;
 import com.example.fintrack.userevent.UserEvent;
 import com.example.fintrack.userevent.UserEventRepository;
@@ -12,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,11 +33,40 @@ public class UserService implements UserDetailsService {
     private final EventRepository eventRepository;
     private final UserProvider userProvider;
     private final BillRepository billRepository;
+    private final CurrencyRepository currencyRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserProfileDto profile() {
+    public UserProfileDto getProfileInfo() {
         User user = userProvider.getLoggedUser();
 
         return UserMapper.userToUserProfileDto(user);
+    }
+
+    public void updateProfileInfo(UpdateProfileDto updateProfileDto) {
+        User user = userProvider.getLoggedUser();
+
+        if (updateProfileDto.firstName() != null) {
+            user.setFirstName(updateProfileDto.firstName());
+        }
+        if (updateProfileDto.lastName() != null) {
+            user.setLastName(updateProfileDto.lastName());
+        }
+        if (updateProfileDto.currencyId() != null) {
+            Currency currency = currencyRepository.findById(updateProfileDto.currencyId())
+                    .orElseThrow(CURRENCY_DOES_NOT_EXIST::getError);
+
+            user.setCurrency(currency);
+        }
+
+        userRepository.save(user);
+    }
+
+    public void updatePassword(PasswordDto passwordDto) {
+        User user = userProvider.getLoggedUser();
+
+        user.setPassword(passwordEncoder.encode(passwordDto.password()));
+
+        userRepository.save(user);
     }
 
     public void addUserToEvent(long eventId, long userId) {

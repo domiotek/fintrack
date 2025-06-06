@@ -62,10 +62,13 @@ export class DashboardComponent implements OnInit {
   addBillButtonDisabled = computed(() => {
     return !this.timeRange().from.equals(DateTime.now().startOf('month'));
   });
-
-  onProjectionDateChange = debounceHandler((timeRange: TimeRange) => {
-    this.dashboardState.setTimeRange(timeRange);
-  }, 300);
+  onProjectionDateChange = debounceHandler(
+    (timeRange: TimeRange) => {
+      this.dashboardState.setTimeRange(timeRange);
+    },
+    300,
+    this.destroyRef,
+  );
 
   openAddBillDialog() {
     this.dialog.open(AddBillDialogComponent, {

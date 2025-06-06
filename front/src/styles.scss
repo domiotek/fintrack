@@ -52,3 +52,14 @@ body {
 .mat-mdc-form-field-subscript-dynamic-size {
   min-height: 22px;
 }
+
+ng-scrollbar {
+  --scrollbar-thickness: 9;
+  --scrollbar-border-radius: 12px;
+  --scrollbar-button-color: transparent;
+  --scrollbar-button-fill: #{vars.$light-blue-1};
+  --scrollbar-thumb-color: #{rgba(vars.$light-blue-1, 0.3)};
+  --scrollbar-thumb-hover-color: #{rgba(vars.$light-blue-1, 0.6)};
+  --scrollbar-offset: 4;
+  flex: 1;
+}

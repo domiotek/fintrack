@@ -1,0 +1,54 @@
+@use '../../../../../styles/variables' as *;
+
+:host {
+  .message {
+    padding: 0.75em;
+    font-size: 0.9em;
+    width: fit-content;
+  }
+
+  .read-indicators-spacer {
+    height: 0px;
+  }
+
+  &:not(:last-child) .read-indicators-spacer.active {
+    height: 24px;
+  }
+}
+
+:host:has(.my) {
+  .message {
+    background: $light-blue-1;
+    color: white;
+    margin-left: auto;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+  }
+
+  &:first-child .message {
+    border-top-right-radius: 20px;
+  }
+
+  &:last-child .message,
+  &:has(.read-indicators-spacer.active) .message {
+    border-bottom-right-radius: 20px;
+  }
+}
+
+:host:has(.their) {
+  .message {
+    background: $light-gray-2;
+    color: black;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+  }
+
+  &:first-child .message {
+    border-top-left-radius: 20px;
+  }
+
+  &:last-child .message,
+  &:has(.read-indicators-spacer.active) .message {
+    border-bottom-left-radius: 20px;
+  }
+}

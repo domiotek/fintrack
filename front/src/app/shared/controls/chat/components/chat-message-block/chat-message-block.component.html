@@ -1,0 +1,24 @@
+<div class="wrapper" [ngClass]="[type()]">
+  <app-avatar [name]="name()" [matTooltip]="name() + ' ' + surname()" [showOnline]="isAuthorActive()" />
+  <div class="content">
+    <div class="author-label">{{ name() }}</div>
+    <div class="message-list">
+      @for (message of messages(); track $index) {
+        <app-chat-message
+          [type]="type()"
+          [matTooltip]="getSentAtString(message)"
+          matTooltipPosition="before"
+          [attr.data-message-id]="message.id"
+          [hasReadIndicator]="getReadIndicatorStatus(message)"
+        >
+          {{ message.content }}
+        </app-chat-message>
+      }
+    </div>
+  </div>
+</div>
+<div class="read-indicators-spacer" [ngClass]="{ active: getReadIndicatorStatus(lastMessage) }"></div>
+
+@if (type() === 'my' && !getReadIndicatorStatus(lastMessage)) {
+  <div class="sent-at-message">Wysłano {{ getSentAtString(lastMessage) }}</div>
+}

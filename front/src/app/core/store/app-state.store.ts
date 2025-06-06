@@ -28,7 +28,7 @@ export class AppStateStore extends ComponentStore<AppState> {
 
   readonly appState$ = this.select((state) => state);
 
-  readonly userId = this.select((state) => state?.id);
+  readonly userId = this.select((state) => state?.userId);
 
   readonly userName$ = this.select((state) => state?.firstName);
 

@@ -1,0 +1,27 @@
+@use '../../../styles/variables' as *;
+@use 'sass:color';
+
+:host {
+  font-size: 16px;
+  height: 2em;
+  aspect-ratio: 1 / 1;
+  padding: 0.25em 0.25em;
+  border-radius: 50%;
+  background-color: $light-blue-1;
+  color: $light-gray-2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+
+  .activity-dot {
+    position: absolute;
+    bottom: -0.1em;
+    right: -0.1em;
+    border-radius: 50%;
+    width: 0.75em;
+    height: 0.75em;
+    background: color.mix($green, white, 60%);
+    border: solid 0.1em black;
+  }
+}

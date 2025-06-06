@@ -1,0 +1,21 @@
+mat-dialog-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2em;
+  p {
+    font-size: 0.95em;
+  }
+
+  app-custom-list {
+    min-height: 150px;
+  }
+}
+
+.loading-indicator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  min-height: 150px;
+}
