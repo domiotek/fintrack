@@ -1,11 +1,14 @@
 package com.example.fintrack.chat;
 
+import com.example.fintrack.chat.dto.ChatStateDto;
 import com.example.fintrack.chat.dto.PrivateChatDto;
 import com.example.fintrack.friend.Friend;
 import com.example.fintrack.friend.FriendRepository;
 import com.example.fintrack.friend.FriendStatus;
 import com.example.fintrack.lastreadmessage.LastReadMessage;
+import com.example.fintrack.lastreadmessage.LastReadMessageMapper;
 import com.example.fintrack.lastreadmessage.LastReadMessageRepository;
+import com.example.fintrack.lastreadmessage.dto.LastReadMessageDto;
 import com.example.fintrack.message.Message;
 import com.example.fintrack.message.MessageMapper;
 import com.example.fintrack.message.MessageRepository;
@@ -86,12 +89,23 @@ public class ChatService {
                 .toList();
     }
 
-    public Page<MessageDto> getChatMessages(long messageId, long chatId, int page, int size) {
+    public ChatStateDto getChatMessages(long messageId, long chatId, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
 
         Page<Message> messages = messageRepository.getMessagesByIdLessThanEqualAndChatId(messageId, chatId, pageRequest);
 
-        return messages.map(MessageMapper::messageToMessageDto);
+        Page<MessageDto> massagesDtos = messages.map(MessageMapper::messageToMessageDto);
+
+        List<LastReadMessage> lastReadMessages = lastReadMessageRepository.findLastReadMessagesByChatId(chatId);
+
+        List<LastReadMessageDto> userLastReadMessages = lastReadMessages.stream()
+                .map(LastReadMessageMapper::lastReadMessageToLastReadMessageDto)
+                .toList();
+
+        return ChatStateDto.builder()
+                .messages(massagesDtos)
+                .lastReadMessages(userLastReadMessages)
+                .build();
     }
 
     public List<Long> getFriendsIdsWithPrivateChats() {

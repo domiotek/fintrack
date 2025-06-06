@@ -1,10 +1,9 @@
 package com.example.fintrack.chat;
 
+import com.example.fintrack.chat.dto.ChatStateDto;
 import com.example.fintrack.chat.dto.PrivateChatDto;
 import com.example.fintrack.message.dto.SendMessageDto;
-import com.example.fintrack.message.dto.MessageDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -35,8 +34,8 @@ public class ChatController {
         return ResponseEntity.ok().body(chatService.getFriendsIdsWithPrivateChats());
     }
 
-    @GetMapping("/{chat-id}/messages")
-    public ResponseEntity<Page<MessageDto>> getChatMessages(
+    @GetMapping("/{chat-id}/state")
+    public ResponseEntity<ChatStateDto> getChatMessages(
             @PathVariable("chat-id") long chatId,
             @RequestParam long messageId,
             @RequestParam(defaultValue = "0") int page,
