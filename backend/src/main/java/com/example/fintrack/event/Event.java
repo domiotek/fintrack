@@ -1,6 +1,7 @@
 package com.example.fintrack.event;
 
 import com.example.fintrack.bill.Bill;
+import com.example.fintrack.chat.Chat;
 import com.example.fintrack.currency.Currency;
 import com.example.fintrack.event.enums.EventStatus;
 import com.example.fintrack.userevent.UserEvent;
@@ -31,13 +32,17 @@ public class Event {
     @JoinColumn(name = "currency_id", nullable = false)
     private Currency currency;
 
-    @OneToMany(mappedBy = "event", cascade = {PERSIST, MERGE, REMOVE})
+    @OneToMany(mappedBy = "event", cascade = {MERGE, PERSIST, REMOVE}, orphanRemoval = true)
     @ToString.Exclude
     private Set<UserEvent> users;
 
-    @OneToMany(mappedBy = "event", cascade = {PERSIST, MERGE, REMOVE})
+    @OneToMany(mappedBy = "event", cascade = {MERGE, PERSIST, REMOVE}, orphanRemoval = true)
     @ToString.Exclude
     private Set<Bill> bills;
+
+    @OneToOne
+    @JoinColumn(name = "chat_id", nullable = false)
+    private Chat chat;
 
     @Column(nullable = false)
     private String name;

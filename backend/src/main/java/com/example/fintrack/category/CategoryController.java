@@ -42,13 +42,23 @@ public class CategoryController {
     }
 
     @PostMapping("/{category-id}/limits")
-    public void addLimitToCategory(@PathVariable("category-id") long categoryId, AddLimitDto addLimitDto) {
+    public ResponseEntity<Void> addLimitToCategory(
+            @PathVariable("category-id") long categoryId,
+            AddLimitDto addLimitDto
+    ) {
         limitService.addLimit(categoryId, addLimitDto);
+
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{category-id}/limits/{limit-id}")
-    public void addLimitToCategory(@PathVariable("category-id") long categoryId, @PathVariable("limit-id") long limitId) {
+    public ResponseEntity<Void> addLimitToCategory(
+            @PathVariable("category-id") long categoryId,
+            @PathVariable("limit-id") long limitId
+    ) {
         limitService.deleteLimit(categoryId, limitId);
+
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{category-id}")

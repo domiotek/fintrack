@@ -3,7 +3,6 @@ package com.example.fintrack.bill;
 import com.example.fintrack.bill.dto.*;
 import com.example.fintrack.category.Category;
 import com.example.fintrack.category.CategoryRepository;
-import com.example.fintrack.category.CategorySpecification;
 import com.example.fintrack.currency.Currency;
 import com.example.fintrack.currency.CurrencyConverter;
 import com.example.fintrack.currency.CurrencyRepository;
@@ -11,7 +10,6 @@ import com.example.fintrack.event.Event;
 import com.example.fintrack.event.EventRepository;
 import com.example.fintrack.security.service.UserProvider;
 import com.example.fintrack.user.User;
-import com.example.fintrack.user.UserRepository;
 import com.example.fintrack.util.enums.SortDirection;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -25,7 +23,6 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 import static com.example.fintrack.bill.BillSpecification.*;
-import static com.example.fintrack.bill.BillSpecification.hasCategoryId;
 import static com.example.fintrack.exception.BusinessErrorCodes.*;
 
 @Service
@@ -36,7 +33,6 @@ public class BillService {
     private final EventRepository eventRepository;
     private final CategoryRepository categoryRepository;
     private final CurrencyRepository currencyRepository;
-    private final UserRepository userRepository;
     private final CurrencyConverter currencyConverter;
     private final UserProvider userProvider;
 
@@ -51,10 +47,15 @@ public class BillService {
     }
 
     public void addBillToEvent(AddBillEventDto addBillEventDto, long eventId) {
-        User user = userRepository.findById(addBillEventDto.paidById()).orElseThrow(USER_DOES_NOT_EXIST::getError);
+        User user = userProvider.getLoggedUser();
 
-        Category category = categoryRepository.findById(addBillEventDto.categoryId())
-                .orElseThrow(CATEGORY_DOES_NOT_EXIST::getError);
+        List<Category> categories = categoryRepository.findCategoryByUserIdAndIsDefault(user.getId(), true);
+
+        if (categories.size() != 2) {
+            throw CATEGORY_DOES_NOT_EXIST.getError();
+        }
+
+        Category defaultCategory = categories.getLast();
 
         Event event = eventRepository.findById(eventId).orElseThrow(EVENT_DOES_NOT_EXIST::getError);
 
@@ -70,14 +71,17 @@ public class BillService {
         bill.setAmount(amountInUSD);
         bill.setEvent(event);
         bill.setCurrency(currency);
-        bill.setCategory(category);
+        bill.setCategory(defaultCategory);
         bill.setPaidBy(user);
 
         billRepository.save(bill);
     }
 
     public void updateUserBill(long billId, UpdateBillDto updateBillDto) {
-        Bill bill = findUserBill(billId);
+        User user = userProvider.getLoggedUser();
+
+        Bill bill = billRepository.findBillByIdAndUserId(billId, user.getId())
+                .orElseThrow(BILL_DOES_NOT_EXIST::getError);
 
         if (updateBillDto.name() != null) {
             bill.setName(updateBillDto.name());
@@ -101,7 +105,7 @@ public class BillService {
     public void updateBillInEvent(long eventId, long billId, UpdateBillEventDto updateBillEventDto) {
         Event event = eventRepository.findById(eventId).orElseThrow(EVENT_DOES_NOT_EXIST::getError);
 
-        Bill bill = event.getBills().stream().filter(b -> b.getId() == billId).findFirst()
+        Bill bill = billRepository.findBillByIdAndEventId(billId, eventId)
                 .orElseThrow(BILL_DOES_NOT_EXIST::getError);
 
         if (updateBillEventDto.name() != null) {
@@ -121,9 +125,7 @@ public class BillService {
     }
 
     public void deleteBillFromEvent(long eventId, long billId) {
-        Event event = eventRepository.findById(eventId).orElseThrow(EVENT_DOES_NOT_EXIST::getError);
-
-        Bill bill = event.getBills().stream().filter(b -> b.getId() == billId).findFirst()
+        Bill bill = billRepository.findBillByIdAndEventId(billId, eventId)
                 .orElseThrow(BILL_DOES_NOT_EXIST::getError);
 
         billRepository.delete(bill);
@@ -154,13 +156,7 @@ public class BillService {
     public void addUserBill(AddBillDto addBillDto) {
         User user = userProvider.getLoggedUser();
 
-        Specification<Category> categorySpecification = CategorySpecification.hasUserId(user.getId());
-
-        List<Category> categories = categoryRepository.findAll(categorySpecification);
-
-        Category category = categories.stream()
-                .filter(c -> c.getId().equals(addBillDto.categoryId()))
-                .findFirst()
+        Category category = categoryRepository.findCategoryByIdAndUserId(addBillDto.categoryId(), user.getId())
                 .orElseThrow(CATEGORY_DOES_NOT_EXIST::getError);
 
         Currency currency = currencyRepository.findById(addBillDto.currencyId())
@@ -172,21 +168,11 @@ public class BillService {
     }
 
     public void deleteUserBill(long billId) {
-        Bill bill = findUserBill(billId);
-
-        billRepository.delete(bill);
-    }
-
-    private Bill findUserBill(long billId) {
         User user = userProvider.getLoggedUser();
 
-        Specification<Bill> billSpecification = hasUserId(user.getId());
-
-        List<Bill> bills = billRepository.findAll(billSpecification);
-
-        return bills.stream()
-                .filter(b -> b.getId() == billId)
-                .findFirst()
+        Bill bill = billRepository.findBillByIdAndUserId(billId, user.getId())
                 .orElseThrow(BILL_DOES_NOT_EXIST::getError);
+
+        billRepository.delete(bill);
     }
 }
