@@ -157,7 +157,7 @@ export class ChatService implements OnDestroy {
 
   sendMessage(message: string) {
     return this.stompClient.publish({
-      destination: `${this.connectedChatId.value}/post-message`,
+      destination: `/${this.connectedChatId.value}/post-message`,
       body: message,
     });
   }
@@ -183,7 +183,7 @@ export class ChatService implements OnDestroy {
     if (!this.ensureConnected()) return;
 
     this.stompClient.publish({
-      destination: `${this.connectedChatId.value}/started-typing`,
+      destination: `/${this.connectedChatId.value}/started-typing`,
     });
   }
 
@@ -191,7 +191,7 @@ export class ChatService implements OnDestroy {
     if (!this.ensureConnected()) return;
 
     this.stompClient.publish({
-      destination: `${this.connectedChatId.value}/stopped-typing`,
+      destination: `/${this.connectedChatId.value}/stopped-typing`,
     });
   }
 
@@ -199,7 +199,7 @@ export class ChatService implements OnDestroy {
     if (!this.ensureConnected()) return;
 
     this.stompClient.publish({
-      destination: `${this.connectedChatId.value}/report-last-activity`,
+      destination: `/${this.connectedChatId.value}/report-last-activity`,
     });
   }
 
@@ -210,7 +210,7 @@ export class ChatService implements OnDestroy {
 
     if (lastReadMessages[this.currentUserId()!] !== messageId) {
       this.stompClient.publish({
-        destination: `${this.connectedChatId.value}/update-last-read-message`,
+        destination: `/${this.connectedChatId.value}/update-last-read-message`,
         body: JSON.stringify({ messageId }),
       });
     }
