@@ -163,13 +163,13 @@ export class ChatService implements OnDestroy {
   }
 
   getNextChatMessages(lastFetchedMessageId: string | null): Observable<BasePagingResponse<ChatMessage>> {
-    const params = new HttpParams();
+    let params = new HttpParams();
 
     if (lastFetchedMessageId) {
-      params.set('fromMessage', lastFetchedMessageId);
+      params = params.set('fromMessage', lastFetchedMessageId);
     }
 
-    params.set('amount', DEFAULT_CHAT_PAGE_SIZE.toString());
+    params = params.set('amount', DEFAULT_CHAT_PAGE_SIZE.toString());
 
     return this.http.get<BasePagingResponse<ChatMessage>>(
       `${environment.apiUrl}/chats/${this.connectedChatId.value}/messages`,
