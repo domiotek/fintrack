@@ -6,6 +6,7 @@ import lombok.Builder;
 public record UserProfileDto(
         Long id,
         String firstName,
+        String lastName,
         String email,
         UserProfileCurrencyDto currency
 ) {

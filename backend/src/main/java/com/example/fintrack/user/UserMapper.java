@@ -14,6 +14,7 @@ public class UserMapper {
         return UserProfileDto.builder()
                 .id(user.getId())
                 .firstName(user.getFirstName())
+                .lastName(user.getLastName())
                 .email(user.getEmail())
                 .currency(userProfileCurrencyDto)
                 .build();
