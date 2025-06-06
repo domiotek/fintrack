@@ -113,7 +113,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
       }
 
       const lastMessageInCurrentBlock = currentBlock?.messages[currentBlock.messages.length - 1];
-      const lastMessageSentAt = DateTime.fromISO(lastMessageInCurrentBlock?.sentAt || '');
+      const lastMessageSentAt = DateTime.fromISO(lastMessageInCurrentBlock?.sentAt ?? '');
       const currentMessageSentAt = DateTime.fromISO(message.sentAt);
 
       const isMessageTooLateForBlock =

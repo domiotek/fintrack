@@ -20,7 +20,7 @@ export class FriendRequestItemComponent {
   readonly submitting = signal<boolean>(false);
 
   get sentDiff(): string {
-    return DateTime.fromISO(this.item().createdAt).toRelative() || '';
+    return DateTime.fromISO(this.item().createdAt).toRelative() ?? '';
   }
 
   private readonly friendServive = inject(FriendService);

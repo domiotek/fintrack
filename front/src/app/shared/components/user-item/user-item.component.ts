@@ -1,4 +1,4 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { AvatarComponent } from '../avatar/avatar.component';
 import { User } from '../../../core/models/user/user.model';
 

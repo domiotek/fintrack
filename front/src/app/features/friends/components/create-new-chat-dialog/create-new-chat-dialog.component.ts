@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { User } from '../../../../core/models/user/user.model';
 import { FriendService } from '../../../../core/services/friend/friend.service';
 import { ChatService } from '../../../../core/services/chat/chat.service';
-import { combineLatest, take } from 'rxjs';
+import { combineLatest } from 'rxjs';
 import { SearchInputComponent } from '../../../../shared/controls/search-input/search-input.component';
 import { FormsModule } from '@angular/forms';
 import { callDebounced } from '../../../../utils/debouncer';
@@ -36,10 +36,10 @@ export class CreateNewChatDialogComponent implements OnInit {
   readonly searchValue = signal<string>('');
   readonly loading = signal<boolean>(true);
 
-  private friendSevice = inject(FriendService);
-  private chatService = inject(ChatService);
-  private dialogRef = inject(MatDialogRef<CreateNewChatDialogComponent, User>);
-  private destroyRef = inject(DestroyRef);
+  private readonly friendSevice = inject(FriendService);
+  private readonly chatService = inject(ChatService);
+  private readonly dialogRef = inject(MatDialogRef<CreateNewChatDialogComponent, User>);
+  private readonly destroyRef = inject(DestroyRef);
 
   ngOnInit() {
     combineLatest([this.friendSevice.friends$, this.chatService.getUserIdsWithPrivateChat()]).subscribe(

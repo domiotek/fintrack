@@ -91,7 +91,7 @@ export class ChatMessageBlockComponent implements OnInit, OnDestroy {
     this.observer.observe(this.elementRef.nativeElement);
   }
 
-  private onWindowStateChange = (): void => {
+  private readonly onWindowStateChange = (): void => {
     this.isWindowActive.set(!document.hidden && document.hasFocus());
   };
 }

@@ -162,7 +162,7 @@ export class FriendsComponent implements OnInit {
       viewContainerRef: this.viewContainerRef,
     });
   }
-  private loadMoreChats = callDebounced(
+  private readonly loadMoreChats = callDebounced(
     () => {
       this.isLoading.set(true);
       this.chatsService.getPrivateChatsList(this.offset(), this.searchValue()).subscribe((chats) => {

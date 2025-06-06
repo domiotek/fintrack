@@ -13,7 +13,6 @@ import { DEFAULT_CHAT_PAGE_SIZE } from '../../../shared/controls/chat/constants/
 import { RxStomp } from '@stomp/rx-stomp';
 import { UserTypingEvent } from '../../models/chat/user-typing-event.model';
 import { UserReadMessageEvent } from '../../models/chat/user-read-message-event.model';
-import { mockedChats } from './mock-chat-data';
 import { UserAvailabilityEvent } from '../../models/chat/user-availability-event.model';
 
 @Injectable({
@@ -59,8 +58,6 @@ export class ChatService implements OnDestroy {
   }
 
   getPrivateChatsList(offset: number, searchQuery: string): Observable<BasePagingResponse<PrivateChat>> {
-    return of({ content: [...mockedChats], page: { totalElements: 0, totalPages: 0, size: 0, number: 0 } });
-
     const params = new HttpParams();
 
     params.set('offset', offset.toString());
@@ -72,12 +69,10 @@ export class ChatService implements OnDestroy {
   }
 
   getUserIdsWithPrivateChat(): Observable<number[]> {
-    return of([]); // Mocked data for demonstration
     return this.http.get<number[]>(`${environment.apiUrl}/chats/private/user-ids`);
   }
 
   getPrivateChatIdByUserId(userId: number): Observable<string> {
-    return of('mocked-chat-id'); // Mocked data for demonstration
     return this.http.get<string>(`${environment.apiUrl}/chats/private/${userId}`);
   }
 

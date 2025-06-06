@@ -63,7 +63,7 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
 
   constructor() {
     effect(() => {
-      void this.chat();
+      this.chat();
       this.showChat.set(false);
       setTimeout(() => this.showChat.set(true), 0);
     });
@@ -71,11 +71,11 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.appStateStore.appState$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((state) => {
-      this.currentUserId.set(state.userId || null);
+      this.currentUserId.set(state.userId ?? null);
     });
 
     this.chatService.lastUserActivityMap$.subscribe((activityMap) => {
-      const isoDate = activityMap[this.otherParticipant()?.id!];
+      const isoDate = activityMap[this.otherParticipant()?.id];
       const dateTime = DateTime.fromISO(isoDate);
 
       if (dateTime.isValid) {
@@ -107,7 +107,7 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
 
     const diffInMinutes = Math.abs(this.lastActiveDateTime()!.diffNow('minutes').minutes);
 
-    const newdiff = diffInMinutes < 4 ? 'teraz' : this.lastActiveDateTime()!.toRelative({ style: 'long' }) || '';
+    const newdiff = diffInMinutes < 4 ? 'teraz' : (this.lastActiveDateTime()!.toRelative({ style: 'long' }) ?? '');
 
     this.activityText.set(newdiff);
   }

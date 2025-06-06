@@ -30,7 +30,7 @@ export class ChatItemComponent implements OnInit {
   }
 
   get sentDiff(): string {
-    return DateTime.fromISO(this.item().lastMessage?.sentAt ?? '').toRelative() || '';
+    return DateTime.fromISO(this.item().lastMessage?.sentAt ?? '').toRelative() ?? '';
   }
 
   readonly appStateStore = inject(AppStateStore);
