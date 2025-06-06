@@ -3,6 +3,7 @@ package com.example.fintrack.security;
 import com.example.fintrack.exception.BusinessErrorCodes;
 import com.example.fintrack.exception.ExpiredTokenException;
 import com.example.fintrack.security.service.JwtService;
+import com.example.fintrack.user.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -16,7 +17,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -33,7 +33,7 @@ import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-    private final UserDetailsService userDetailsService;
+    private final UserService userService;
 
     @Override
     protected void doFilterInternal(
@@ -71,7 +71,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             String userEmail = jwtService.extractEmail(accessToken, ACCESS);
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails user = userDetailsService.loadUserByUsername(userEmail);
+                UserDetails user = userService.loadUserByUsername(userEmail);
 
                 if (jwtService.isTokenValid(accessToken, user)) {
                     UsernamePasswordAuthenticationToken authToken =
