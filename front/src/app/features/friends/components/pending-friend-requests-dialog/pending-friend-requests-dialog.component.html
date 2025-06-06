@@ -1,0 +1,23 @@
+<h2 mat-dialog-title>Oczekujące zaproszenia do grona znajomych</h2>
+<app-form-progress-bar [active]="loading()" />
+
+<mat-dialog-content>
+  <p>
+    Poniżej znajdują się zaproszenia do grona znajomych, które oczekują na Twoją akceptację. Możesz zaakceptować lub
+    odrzucić każde z nich.
+  </p>
+
+  <button class="refresh-button" type="button" mat-flat-button (click)="loadData()" [disabled]="loading()">
+    <mat-icon>refresh</mat-icon>
+    Odśwież
+  </button>
+
+  <app-custom-list [items]="friendRequests()" [itemTemplate]="requestItemTemplate" [isSelectable]="false" />
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-flat-button type="button" mat-dialog-close>Zamknij</button>
+</mat-dialog-actions>
+
+<ng-template #requestItemTemplate let-item>
+  <app-friend-request-item [item]="item" [disabled]="loading()" />
+</ng-template>

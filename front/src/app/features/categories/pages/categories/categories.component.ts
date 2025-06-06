@@ -119,11 +119,14 @@ export class CategoriesComponent implements OnInit {
       this.timeRange.set(routingState['timeRange'] as TimeRange);
     }
   }
-
-  onProjectionDateChange = debounceHandler((timeRange: TimeRange) => {
-    this.categoryState.setTimeRange(timeRange);
-    this.timeRange.set(timeRange);
-  }, 300);
+  onProjectionDateChange = debounceHandler(
+    (timeRange: TimeRange) => {
+      this.categoryState.setTimeRange(timeRange);
+      this.timeRange.set(timeRange);
+    },
+    300,
+    this.destroyRef,
+  );
 
   onSearch(val: string): void {}
 

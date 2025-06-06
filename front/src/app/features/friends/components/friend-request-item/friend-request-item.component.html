@@ -1,0 +1,15 @@
+<app-avatar [name]="item().firstName"></app-avatar>
+<div class="middle-container">
+  <div>{{ item().firstName }} {{ item().lastName }}</div>
+  <div class="secondary-text">
+    <span class="collapsable">{{ item().email }}</span> <span class="separator"></span> {{ sentDiff }}
+  </div>
+</div>
+<div class="end-container">
+  <button type="button" mat-icon-button class="accept" (click)="onAccept()" [disabled]="submitting() || disabled()">
+    <mat-icon>check</mat-icon>
+  </button>
+  <button type="button" mat-icon-button class="decline" (click)="onReject()" [disabled]="submitting() || disabled()">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>

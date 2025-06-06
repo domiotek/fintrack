@@ -1,0 +1,76 @@
+@use '../../../styles/variables' as *;
+@use 'sass:color';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.chat-content {
+  flex: 1;
+  padding: 1em;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+
+.scroll-bottom-button {
+  position: absolute;
+  bottom: 4em;
+  opacity: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  transition:
+    opacity 0.3s ease-in-out,
+    bottom 0.3s ease-in-out;
+
+  &.visible {
+    opacity: 1;
+    bottom: 7em;
+  }
+}
+
+.load-more-indicator {
+  display: flex;
+  align-items: center;
+  background: color.mix($light-blue-1, white, 30%);
+  padding: 0.75em 2.25em;
+  border-radius: 0.75em;
+  gap: 1em;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%);
+  opacity: 0;
+  top: -0.5em;
+  transition:
+    opacity 0.3s ease-in-out,
+    top 0.3s ease-in-out;
+
+  &.visible {
+    opacity: 1;
+    top: 5em;
+  }
+}
+
+.preloader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.read-indicator {
+  position: absolute;
+  top: -50%;
+  right: 0;
+  margin-right: 2em;
+  font-size: 0.5em;
+  transition:
+    top 0.3s ease-in-out,
+    right 0.3s ease-in-out;
+
+  app-avatar {
+    font-size: inherit;
+  }
+}

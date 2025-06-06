@@ -1,0 +1,31 @@
+<h2 mat-dialog-title>Utwórz nowy czat</h2>
+<app-form-progress-bar [active]="loading()" />
+
+<mat-dialog-content>
+  <p>
+    Wybierz znajomego z którym chcesz rozpocząć nową rozmowę. Jeśli nie widzisz znajomego na liście, upewnij się, że
+    jest on dodany do Twojej listy znajomych.
+  </p>
+
+  <app-search-input placeholder="Wyszukaj" (emitSearch)="onSearch($event)" [(ngModel)]="searchValue" />
+  @if (!loading()) {
+    <app-custom-list
+      [items]="friends()"
+      [itemTemplate]="requestItemTemplate"
+      [isSelectable]="true"
+      (selectEmit)="onUserSelected($event)"
+    />
+  } @else {
+    <div class="loading-indicator">Jeszcze chwila...</div>
+  }
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button type="button" color="primary" mat-dialog-close>Anuluj</button>
+  <button mat-flat-button type="button" [disabled]="!selectedUser()" (click)="onSubmit()">Utwórz</button>
+</mat-dialog-actions>
+
+<ng-template #requestItemTemplate let-item>
+  <app-user-item [item]="item" [showEmail]="true">
+    <mat-icon>chevron_right</mat-icon>
+  </app-user-item>
+</ng-template>

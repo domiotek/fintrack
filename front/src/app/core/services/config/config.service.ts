@@ -28,7 +28,7 @@ export class ConfigService {
     return this.http.get<ConfigResponse>(`${this.apiUrl}/users/config`).pipe(
       tap((config) => {
         this.appStateStore.setAppState({
-          id: config.id,
+          userId: config.id,
           email: config.email,
           firstName: config.firstName,
           currency: config.currency,

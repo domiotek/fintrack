@@ -1,0 +1,27 @@
+<mat-card [ngClass]="{ visible: visible() }">
+  @if (chat()) {
+    <mat-card-header class="chat-header">
+      @if (isMobile()) {
+        <button type="button" mat-icon-button (click)="onGoBack()">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+      }
+      <app-avatar [name]="chat()!.otherParticipant.firstName" [showOnline]="isActive()" />
+      <div>
+        <h3>{{ chat()!.otherParticipant.firstName }}</h3>
+        <span class="activity-text">
+          @if (activityText(); as text) {
+            Aktywny(-a) {{ text }}
+          }
+        </span>
+      </div>
+    </mat-card-header>
+    <mat-card-content>
+      @if (chat()?.id && showChat()) {
+        <app-chat [chatId]="chat()!.id" [readonly]="!chat()!.isFriend" [chatParticipants]="[otherParticipant()]" />
+      }
+    </mat-card-content>
+  } @else if (!isMobile()) {
+    <app-no-selected placeholder="Nie wybrano czatu" />
+  }
+</mat-card>

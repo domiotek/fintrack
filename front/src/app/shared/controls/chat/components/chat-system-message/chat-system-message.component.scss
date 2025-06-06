@@ -1,0 +1,7 @@
+@use '../../../../../styles/variables' as *;
+
+p {
+  text-align: center;
+  font-size: 0.85em;
+  color: $gray-blue;
+}
