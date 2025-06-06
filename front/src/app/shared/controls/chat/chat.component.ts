@@ -218,19 +218,22 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     this.scrollbarRef?.scrollToElement("*[data-message-id='" + this.scrollSnapMessageId() + "']", { duration: 0 });
     this.scrollSnapMessageId.set(null);
   }
+  onMessageRead = callDebounced(
+    (messageId: string) => {
+      const message = this.messages().find((msg) => msg.id === messageId);
+      const lastReadMessage = this.messages().find((msg) => msg.id === this.myLastReadMessageId());
 
-  onMessageRead = callDebounced((messageId: string) => {
-    const message = this.messages().find((msg) => msg.id === messageId);
-    const lastReadMessage = this.messages().find((msg) => msg.id === this.myLastReadMessageId());
+      if (!message) return;
 
-    if (!message) return;
+      if (lastReadMessage && DateTime.fromISO(message.sentAt) < DateTime.fromISO(lastReadMessage.sentAt)) {
+        return;
+      }
 
-    if (lastReadMessage && DateTime.fromISO(message.sentAt) < DateTime.fromISO(lastReadMessage.sentAt)) {
-      return;
-    }
-
-    this.chatService.updateLastReadMessage(messageId);
-  }, 300);
+      this.chatService.updateLastReadMessage(messageId);
+    },
+    300,
+    this.destroyRef,
+  );
 
   scrollToBottom(instant: boolean = false): void {
     this.scrollbarRef?.scrollTo({ bottom: 0, duration: instant ? 0 : DEFAULT_CHAT_SCROLL_BOTTOM_DURATION });

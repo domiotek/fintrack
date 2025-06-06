@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { User } from '../../../../core/models/user/user.model';
 import { FriendService } from '../../../../core/services/friend/friend.service';
 import { CommonModule } from '@angular/common';
@@ -10,10 +10,10 @@ import { UserItemComponent } from '../../../../shared/components/user-item/user-
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { callDebounced } from '../../../../utils/debouncer';
 import { FormProgressBarComponent } from '../../../../shared/components/form-progress-bar/form-progress-bar.component';
 import { ConfirmationDialogComponent } from '../../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 import { ConfirmationDialogData } from '../../../../core/models/dialog/confirmation-dialog-data';
+import { callDebounced } from '../../../../utils/debouncer';
 
 @Component({
   selector: 'app-remove-friend-dialog',
@@ -41,18 +41,23 @@ export class RemoveFriendDialogComponent {
   private readonly friendSevice = inject(FriendService);
   private readonly matDialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
+  private readonly destroyRef = inject(DestroyRef);
 
   ngOnInit() {
     this.searchFriends();
   }
 
-  searchFriends = callDebounced(() => {
-    this.loading.set(true);
-    this.friendSevice.getFriendsList(this.searchValue()).subscribe((friends) => {
-      this.friends.set(friends);
-      this.loading.set(false);
-    });
-  }, 300);
+  searchFriends = callDebounced(
+    () => {
+      this.loading.set(true);
+      this.friendSevice.getFriendsList(this.searchValue()).subscribe((friends) => {
+        this.friends.set(friends);
+        this.loading.set(false);
+      });
+    },
+    300,
+    this.destroyRef,
+  );
 
   onUserSelected(user: User) {
     this.selectedUser.set(user);

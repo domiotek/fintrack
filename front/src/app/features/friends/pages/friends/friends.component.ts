@@ -162,16 +162,19 @@ export class FriendsComponent {
       viewContainerRef: this.viewContainerRef,
     });
   }
-
-  private loadMoreChats = callDebounced(() => {
-    this.isLoading.set(true);
-    this.chatsService.getPrivateChatsList(this.offset(), this.searchValue()).subscribe((chats) => {
-      const currentChats = this.chats();
-      this.chats.set([...currentChats, ...chats.content]);
-      this.isLoading.set(false);
-      this.hasMorePages.set(chats.page.number < chats.page.totalPages);
-    });
-  }, 300);
+  private loadMoreChats = callDebounced(
+    () => {
+      this.isLoading.set(true);
+      this.chatsService.getPrivateChatsList(this.offset(), this.searchValue()).subscribe((chats) => {
+        const currentChats = this.chats();
+        this.chats.set([...currentChats, ...chats.content]);
+        this.isLoading.set(false);
+        this.hasMorePages.set(chats.page.number < chats.page.totalPages);
+      });
+    },
+    300,
+    this.destroyRef,
+  );
 
   private cleanUpNewlyAddedChat(): void {
     this.chats.set([...this.chats().filter((c) => c.id !== this.newlyAddedChat()?.id)]);

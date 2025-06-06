@@ -132,18 +132,21 @@ export class EventsComponent implements OnInit {
     this.getEvents();
     this.selectedEvent.set(null);
   }
+  onProjectionDateChange = debounceHandler(
+    (timeRange: TimeRange) => {
+      this.categoryState.setTimeRange(timeRange);
+      this.timeRange.set(timeRange);
+      this.filters.set({
+        ...this.filters(),
+        from: `${timeRange.from.toISO()}`,
+        to: `${timeRange.to.toISO()}`,
+      });
 
-  onProjectionDateChange = debounceHandler((timeRange: TimeRange) => {
-    this.categoryState.setTimeRange(timeRange);
-    this.timeRange.set(timeRange);
-    this.filters.set({
-      ...this.filters(),
-      from: `${timeRange.from.toISO()}`,
-      to: `${timeRange.to.toISO()}`,
-    });
-
-    this.onSearch(this.filters().name ?? '');
-  }, 300);
+      this.onSearch(this.filters().name ?? '');
+    },
+    300,
+    this.destroyRef,
+  );
 
   onEventSelect(event: Event | null): void {
     if (!event) {

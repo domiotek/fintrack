@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { CustomListComponent } from '../../../../shared/components/custom-list/custom-list.component';
@@ -39,24 +39,26 @@ export class CreateNewChatDialogComponent implements OnInit {
   private friendSevice = inject(FriendService);
   private chatService = inject(ChatService);
   private dialogRef = inject(MatDialogRef<CreateNewChatDialogComponent, User>);
+  private destroyRef = inject(DestroyRef);
 
   ngOnInit() {
     combineLatest([this.friendSevice.friends$, this.chatService.getUserIdsWithPrivateChat()]).subscribe(
       ([friends, userIdsWithChats]) => {
-        console.log('Friends:', friends);
-        console.log('User IDs with chats:', userIdsWithChats);
         this.friends.set(friends.filter((friend) => !userIdsWithChats.includes(friend.id)));
       },
     );
     this.searchFriends();
   }
-
-  searchFriends = callDebounced(() => {
-    this.loading.set(true);
-    this.friendSevice.getFriendsList(this.searchValue()).subscribe(() => {
-      this.loading.set(false);
-    });
-  }, 300);
+  searchFriends = callDebounced(
+    () => {
+      this.loading.set(true);
+      this.friendSevice.getFriendsList(this.searchValue()).subscribe(() => {
+        this.loading.set(false);
+      });
+    },
+    300,
+    this.destroyRef,
+  );
 
   onUserSelected(user: User) {
     this.selectedUser.set(user);

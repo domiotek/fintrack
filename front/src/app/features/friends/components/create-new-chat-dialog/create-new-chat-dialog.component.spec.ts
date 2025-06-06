@@ -19,7 +19,7 @@ describe('CreateNewChatDialogComponent', () => {
         provideExperimentalZonelessChangeDetection(),
         FriendService,
         AppStateStore,
-        { provide: MatDialogRef, useValue: {} }, // Mock MatDialogRef
+        { provide: MatDialogRef, useValue: {} },
         provideHttpClient(),
         provideHttpClientTesting(),
       ],
