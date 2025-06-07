@@ -2,6 +2,7 @@ package com.example.fintrack.chat;
 
 import com.example.fintrack.chat.dto.ChatStateDto;
 import com.example.fintrack.chat.dto.PrivateChatDto;
+import com.example.fintrack.message.dto.MessageTypingDto;
 import com.example.fintrack.message.dto.SendMessageDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,26 @@ public class ChatController {
     @MessageMapping("/chats/{chat-id}/post-message")
     public void sendMessage(@DestinationVariable("chat-id") long chatId, @Payload SendMessageDto sendMessageDto) {
         chatService.sendMessage(chatId, sendMessageDto);
+    }
+
+    @MessageMapping("/chats/{chat-id}/started-typing")
+    public void startTyping(@DestinationVariable("chat-id") long chatId) {
+        chatService.startTyping(chatId);
+    }
+
+    @MessageMapping("chats/{chat-id}/stopped-typing")
+    public void stopTyping(@DestinationVariable("chat-id") long chatId) {
+        chatService.stopTyping(chatId);
+    }
+
+    @MessageMapping("/chats/{chat-id}/report-last-activity")
+    public void reportLastActivity(@DestinationVariable("chat-id") long chatId) {
+        chatService.reportLastActivity(chatId);
+    }
+
+    @MessageMapping("/chats/{chat-id}/update-last-read-message")
+    public void updateLastReadMessage(@DestinationVariable("chat-id") long chatId, @Payload SendMessageDto sendMessageDto) {
+        chatService.updateLastReadMessage(chatId, sendMessageDto);
     }
 
     @GetMapping("/private")

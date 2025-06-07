@@ -14,9 +14,11 @@ import com.example.fintrack.message.MessageMapper;
 import com.example.fintrack.message.MessageRepository;
 import com.example.fintrack.message.MessageType;
 import com.example.fintrack.message.dto.MessageDto;
+import com.example.fintrack.message.dto.MessageTypingDto;
 import com.example.fintrack.message.dto.SendMessageDto;
 import com.example.fintrack.security.service.UserProvider;
 import com.example.fintrack.user.User;
+import com.example.fintrack.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,6 +28,7 @@ import org.springframework.stereotype.Service;
 import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 import static com.example.fintrack.exception.BusinessErrorCodes.*;
 
@@ -39,6 +42,7 @@ public class ChatService {
     private final MessageRepository messageRepository;
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final ChatRepository chatRepository;
+    private final UserRepository userRepository;
 
     public void sendMessage(long chatId, SendMessageDto sendMessageDto) {
         User user = userProvider.getLoggedUser();
@@ -56,14 +60,23 @@ public class ChatService {
 
         Message savedMessage = messageRepository.save(message);
 
-        simpMessagingTemplate.convertAndSend("/topic/chats/" + chatId + "/messages", MessageMapper.messageToMessageDto(savedMessage));
-
         LastReadMessage lastReadMessage = lastReadMessageRepository
                 .findLastReadMessageByUserIdAndChatId(user.getId(), chatId)
                 .orElseThrow(LAST_READ_MESSAGE_DOES_NOT_EXIST::getError);
 
         lastReadMessage.setMessage(savedMessage);
         lastReadMessage.setReadTime(now);
+
+        var friends = friendRepository.findFriendsByChatId(chatId);
+
+        if(friends.size() > 2) {
+            simpMessagingTemplate.convertAndSend("/topic/chats/" + chatId + "/message", MessageMapper.messageToMessageDto(savedMessage));
+        } else {
+            var friend = friends.stream()
+                            .filter(s -> !Objects.equals(s.getUser().getId(), user.getId()))
+                            .findFirst().orElseThrow(FRIEND_DOES_NOT_EXIST::getError);
+            simpMessagingTemplate.convertAndSend("/topic/chats/" + chatId + "/private-chat-updates", MessageMapper.messageToPrivateMessageDto(savedMessage, lastReadMessage, friend));
+        }
 
         lastReadMessageRepository.save(lastReadMessage);
     }
@@ -87,6 +100,56 @@ public class ChatService {
                     return ChatMapper.friendToPrivateChatDto(friend, message, lastReadMessage);
                 })
                 .toList();
+    }
+
+    public void startTyping(long chatId) {
+        var user = userProvider.getLoggedUser();
+
+        var startTypingDto = MessageTypingDto.builder()
+                        .userId(user.getId())
+                                .build();
+
+        simpMessagingTemplate.convertAndSend("/topic/chats/" + chatId + "/user-started-typing", startTypingDto);
+    }
+
+    public void stopTyping(long chatId) {
+        var user = userProvider.getLoggedUser();
+
+        var stopTypingDto = MessageTypingDto.builder()
+                        .userId(user.getId())
+                                .build();
+
+        simpMessagingTemplate.convertAndSend("/topic/chats" + chatId + "/user-stopped-typing", stopTypingDto);
+    }
+
+    public void reportLastActivity(long chatId) {
+        User user = userProvider.getLoggedUser();
+
+        user.setLastSeenAt(ZonedDateTime.now());
+        userRepository.save(user);
+
+        simpMessagingTemplate.convertAndSend("/topic/chats" + chatId + "/user-last-activity", MessageMapper.messageToLastActivityDto(user));
+    }
+
+    public void updateLastReadMessage(long chatId, SendMessageDto sendMessageDto) {
+        var user = userProvider.getLoggedUser();
+
+        var lastReadMessage = lastReadMessageRepository.findLastReadMessageByUserIdAndChatId(user.getId(), chatId)
+                .orElseThrow(LAST_READ_MESSAGE_DOES_NOT_EXIST::getError);
+
+        var message = lastReadMessage.getMessage();
+        message.setContent(sendMessageDto.message());
+
+        var now = ZonedDateTime.now();
+
+        lastReadMessage.setReadTime(now);
+        lastReadMessage.setMessage(message);
+
+        var readMessageDto = MessageMapper.messageToReadMessageDto(user.getId(), lastReadMessage);
+
+        simpMessagingTemplate.convertAndSend("/topic/chats/" + chatId + "/user-read-message", readMessageDto);
+
+        lastReadMessageRepository.save(lastReadMessage);
     }
 
     public ChatStateDto getChatMessages(long messageId, long chatId, int page, int size) {
@@ -128,4 +191,5 @@ public class ChatService {
 
         return friend.getChat().getId();
     }
+
 }
