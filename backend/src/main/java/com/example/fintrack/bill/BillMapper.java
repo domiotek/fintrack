@@ -57,7 +57,8 @@ public class BillMapper {
 
     public static BillDto billToBillDto(Bill bill, CurrencyConverter currencyConverter, User user) {
         BigDecimal amountInUSD = currencyConverter.convertFromGivenCurrencyToUSD(bill.getCurrency(), bill.getAmount());
-        BigDecimal userAmountInUsersCurrency = currencyConverter.convertFromUSDToGivenCurrency(user.getCurrency(), bill.getDate().toLocalDate(), amountInUSD);
+        BigDecimal userAmountInUsersCurrency = currencyConverter
+                .convertFromUSDToGivenCurrency(user.getCurrency(), bill.getDate().toLocalDate(), amountInUSD);
 
         BillCategoryDto categoryDto = BillCategoryDto.builder()
                 .id(bill.getCategory().getId())
