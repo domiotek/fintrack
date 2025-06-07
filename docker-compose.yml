@@ -24,7 +24,6 @@ services:
       - app_cache_data:/data
     networks:
       - fintrack_network
-
   fintrack_api:
     build:
       context: backend
@@ -38,6 +37,7 @@ services:
       SPRING_DB_USERNAME: postgres
       SPRING_DB_PASSWORD: postgres
       SPRING_CACHE_DB_HOST: "fintrack_cache_database"
+      SPRING_ALLOWED_ORIGINS: "${CORS_ALLOWED_ORIGINS:-http://localhost:4200,http://localhost}"
     depends_on:
       - fintrack_database
       - fintrack_cache_database
@@ -48,9 +48,9 @@ services:
     build:
       context: front
       dockerfile: Dockerfile
+      args:
+        API_URL: "${API_URL:-http://localhost:8080}"
     container_name: fintrack_app
-    environment:
-      API_URL: http://fintrack_api:8080
     ports:
       - "80:80"
     networks:
