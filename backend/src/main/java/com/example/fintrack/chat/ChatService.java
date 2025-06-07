@@ -167,6 +167,56 @@ public class ChatService {
         lastReadMessageRepository.save(lastReadMessage);
     }
 
+    public void startTyping(long chatId) {
+        var user = userProvider.getLoggedUser();
+
+        var startTypingDto = MessageTypingDto.builder()
+                        .userId(user.getId())
+                                .build();
+
+        simpMessagingTemplate.convertAndSend("/topic/chats/" + chatId + "/user-started-typing", startTypingDto);
+    }
+
+    public void stopTyping(long chatId) {
+        var user = userProvider.getLoggedUser();
+
+        var stopTypingDto = MessageTypingDto.builder()
+                        .userId(user.getId())
+                                .build();
+
+        simpMessagingTemplate.convertAndSend("/topic/chats" + chatId + "/user-stopped-typing", stopTypingDto);
+    }
+
+    public void reportLastActivity(long chatId) {
+        User user = userProvider.getLoggedUser();
+
+        user.setLastSeenAt(ZonedDateTime.now());
+        userRepository.save(user);
+
+        simpMessagingTemplate.convertAndSend("/topic/chats" + chatId + "/user-last-activity", MessageMapper.messageToLastActivityDto(user));
+    }
+
+    public void updateLastReadMessage(long chatId, SendMessageDto sendMessageDto) {
+        var user = userProvider.getLoggedUser();
+
+        var lastReadMessage = lastReadMessageRepository.findLastReadMessageByUserIdAndChatId(user.getId(), chatId)
+                .orElseThrow(LAST_READ_MESSAGE_DOES_NOT_EXIST::getError);
+
+        var message = lastReadMessage.getMessage();
+        message.setContent(sendMessageDto.message());
+
+        var now = ZonedDateTime.now();
+
+        lastReadMessage.setReadTime(now);
+        lastReadMessage.setMessage(message);
+
+        var readMessageDto = MessageMapper.messageToReadMessageDto(user.getId(), lastReadMessage);
+
+        simpMessagingTemplate.convertAndSend("/topic/chats/" + chatId + "/user-read-message", readMessageDto);
+
+        lastReadMessageRepository.save(lastReadMessage);
+    }
+
     public ChatStateDto getChatMessages(long messageId, long chatId, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
 
