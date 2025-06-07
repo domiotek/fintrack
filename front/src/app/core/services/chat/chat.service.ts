@@ -68,12 +68,12 @@ export class ChatService implements OnDestroy {
   }
 
   getPrivateChatsList(page: number, searchQuery: string): Observable<BasePagingResponse<PrivateChat>> {
-    const params = new HttpParams();
+    let params = new HttpParams();
 
-    params.set('page', page.toString());
-    params.set('size', DEFAULT_CHAT_PAGE_SIZE.toString());
+    params = params.set('page', page.toString());
+    params = params.set('size', DEFAULT_CHAT_PAGE_SIZE.toString());
     if (searchQuery) {
-      params.set('search', searchQuery);
+      params = params.set('search', searchQuery);
     }
 
     return this.http.get<BasePagingResponse<PrivateChat>>(`${environment.apiUrl}/chats/private`, { params });
@@ -90,7 +90,7 @@ export class ChatService implements OnDestroy {
   connectToChat(chatId: string) {
     this.connectedChatId.next(chatId);
 
-    const params = new HttpParams().set('amount', DEFAULT_CHAT_PAGE_SIZE);
+    const params = new HttpParams().set('amount', DEFAULT_CHAT_PAGE_SIZE.toString());
 
     this.http.get<ChatState>(`${environment.apiUrl}/chats/${chatId}/state`, { params }).subscribe((state) => {
       this.messages.next(state.messages.content);
