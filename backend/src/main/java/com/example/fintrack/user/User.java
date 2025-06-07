@@ -12,6 +12,7 @@ import lombok.experimental.Accessors;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -77,6 +78,9 @@ public class User implements UserDetails {
 
     @Column(nullable = false)
     private String password;
+
+    @Column
+    private ZonedDateTime lastSeenAt;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
