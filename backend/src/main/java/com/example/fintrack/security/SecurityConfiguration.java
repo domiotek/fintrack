@@ -24,9 +24,8 @@ public class SecurityConfiguration {
 
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
-    
-    @Value("${SPRING_ALLOWED_ORIGINS}")
-    private String allowedOrigins;   
+      @Value("${SPRING_ALLOWED_ORIGINS:http://localhost:4200,http://localhost}")
+    private String allowedOrigins;
 
     private AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider(userService);
