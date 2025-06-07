@@ -8,6 +8,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -20,16 +21,18 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ExceptionResponse.class)
     public ResponseEntity<BusinessErrorCodes> handleException(ExceptionResponse exceptionResponse) {
-        return ResponseEntity
-                .status(exceptionResponse.getBusinessErrorCode().getHttpStatus())
+        return ResponseEntity.status(exceptionResponse.getBusinessErrorCode().getHttpStatus())
                 .body(exceptionResponse.getBusinessErrorCode());
     }
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<BusinessErrorCodes> handleException() {
-        return ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .body(BusinessErrorCodes.BAD_CREDENTIALS);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(BusinessErrorCodes.BAD_CREDENTIALS);
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<String> handleException(MissingServletRequestParameterException missingServletRequestParameterException) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(missingServletRequestParameterException.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -45,17 +48,13 @@ public class GlobalExceptionHandler {
             }
         }
 
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(errors);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Exception> handleException(Exception exception) {
         logger.error(exception.getMessage(), exception);
 
-        return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(exception);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(exception);
     }
 }

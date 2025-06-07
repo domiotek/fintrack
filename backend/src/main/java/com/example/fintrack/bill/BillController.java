@@ -11,7 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/bills")
@@ -54,5 +56,14 @@ public class BillController {
         billService.deleteUserBill(id);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/statistics")
+    public ResponseEntity<Map<ZonedDateTime, BigDecimal>> getStatistics(
+            @RequestParam ZonedDateTime from,
+            @RequestParam ZonedDateTime to,
+            @RequestParam(required = false) Long categoryId
+    ) {
+        return ResponseEntity.ok().body(billService.getStatistics(from, to, categoryId));
     }
 }
