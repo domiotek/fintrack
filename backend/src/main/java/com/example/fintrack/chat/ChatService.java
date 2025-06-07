@@ -21,6 +21,7 @@ import com.example.fintrack.user.User;
 import com.example.fintrack.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -81,13 +82,18 @@ public class ChatService {
         lastReadMessageRepository.save(lastReadMessage);
     }
 
-    public List<PrivateChatDto> getPrivateChats() {
+    public Page<PrivateChatDto> getPrivateChats(int page, int size, String search) {
         User user = userProvider.getLoggedUser();
 
         List<Friend> friends = friendRepository.findFriendsByUserIdAndFriendStatus(user.getId(), FriendStatus.ACCEPTED);
 
-        return friends.stream()
+        var chatDtos = friends.stream()
                 .filter(friend -> !friend.getChat().getMessages().isEmpty())
+                .filter(friend -> {
+                    User friendUser = friend.getUser();
+                    String fullName = (friendUser.getFirstName() + " " + friendUser.getLastName()).trim().toLowerCase();
+                    return search == null || search.isEmpty() || fullName.contains(search);
+                })
                 .map(friend -> {
                     LastReadMessage lastReadMessage = lastReadMessageRepository
                             .findLastReadMessageByUserIdAndChatId(user.getId(), friend.getChat().getId())
@@ -100,6 +106,15 @@ public class ChatService {
                     return ChatMapper.friendToPrivateChatDto(friend, message, lastReadMessage);
                 })
                 .toList();
+
+
+
+        int start = (int) Math.min((long) page * size, chatDtos.size());
+        int end = Math.min(start + size, chatDtos.size());
+
+        List<PrivateChatDto> pagedChats = chatDtos.subList(start, end);
+
+        return new PageImpl<>(pagedChats, PageRequest.of(page, size), chatDtos.size());
     }
 
     public void startTyping(long chatId) {
@@ -174,7 +189,7 @@ public class ChatService {
     public List<Long> getFriendsIdsWithPrivateChats() {
         User user = userProvider.getLoggedUser();
 
-        List<Friend> friends = friendRepository.findFriendsByUserIdAndFriendStatus(user.getId(), FriendStatus.ACCEPTED);
+        List<Friend> friends = friendRepository.findFriendsByUserAndFriendStatus(user.getId(), FriendStatus.ACCEPTED);
 
         return friends.stream()
                 .filter(friend -> !friend.getChat().getMessages().isEmpty())

@@ -5,6 +5,7 @@ import com.example.fintrack.chat.dto.PrivateChatDto;
 import com.example.fintrack.message.dto.MessageTypingDto;
 import com.example.fintrack.message.dto.SendMessageDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -46,11 +47,13 @@ public class ChatController {
     }
 
     @GetMapping("/private")
-    public ResponseEntity<List<PrivateChatDto>> getPrivateChats() {
-        return ResponseEntity.ok().body(chatService.getPrivateChats());
+    public ResponseEntity<Page<PrivateChatDto>> getPrivateChats(@RequestParam(defaultValue = "0") int page,
+                                                                @RequestParam(defaultValue ="10") int size,
+                                                                @RequestParam(required = false) String search) {
+        return ResponseEntity.ok().body(chatService.getPrivateChats(page, size, search));
     }
 
-    @GetMapping("/private/friends-ids")
+    @GetMapping("/private/user-ids")
     public ResponseEntity<List<Long>> getFriendsIdsWithPrivateChats() {
         return ResponseEntity.ok().body(chatService.getFriendsIdsWithPrivateChats());
     }
@@ -65,8 +68,8 @@ public class ChatController {
         return ResponseEntity.ok().body(chatService.getChatMessages(messageId, chatId, page, size));
     }
 
-    @GetMapping("/private/{friend-id}")
-    public ResponseEntity<Long> getPrivateChatId(@PathVariable("friend-id") long friendId) {
+    @GetMapping("/private/{user-id}")
+    public ResponseEntity<Long> getPrivateChatId(@PathVariable("user-id") long friendId) {
         return ResponseEntity.ok().body(chatService.getFriendChatId(friendId));
     }
 }
