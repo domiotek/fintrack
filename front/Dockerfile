@@ -11,6 +11,8 @@ COPY . .
 ARG API_URL
 ENV API_URL=$API_URL
 
+RUN sed -i "s|PRODUCTION_API_URL|$API_URL|g" src/app/environments/environment.prod.ts
+
 RUN npm run build --omit=dev
 
 FROM nginx:alpine
