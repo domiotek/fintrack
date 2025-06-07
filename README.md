@@ -16,6 +16,8 @@
 
 Project created for _Zaawansowane Technologie Programowania_ class on Cracow University of Technology.
 
+Application showcase instance is available at http://fintrack.omiotech.pl.
+
 ### Technology stack
 
 - Java 21
