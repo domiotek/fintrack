@@ -94,7 +94,7 @@ To make changes in this project you will need to set-up your environment.
    ```bash
    java -jar target/fintrack-0.0.1-SNAPSHOT.jar
    ```
-5. In front subdirectory, install depenencies and launch dev server:
+5. In front subdirectory, install dependencies and launch dev server:
    ```bash
    npm install
    ```
