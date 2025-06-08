@@ -20,7 +20,8 @@ public class SecurityFilterChainConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .cors(Customizer.withDefaults())
-                .csrf(AbstractHttpConfigurer::disable)                .authorizeHttpRequests(authorizeRequest -> authorizeRequest
+                .csrf(AbstractHttpConfigurer::disable)                
+				.authorizeHttpRequests(authorizeRequest -> authorizeRequest
                         .requestMatchers(
                                 "/auth/**",
                                 "/v2/api-docs/**",
@@ -28,8 +29,7 @@ public class SecurityFilterChainConfiguration {
                                 "/swagger-resources/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
-                                "/currencies/**",
-                                "/api/health/**"
+                                "/currencies/**"
                         )
                         .permitAll()
                         .anyRequest()
