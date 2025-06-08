@@ -10,7 +10,7 @@ import com.example.fintrack.event.Event;
 import com.example.fintrack.event.EventRepository;
 import com.example.fintrack.security.service.UserProvider;
 import com.example.fintrack.user.User;
-import com.example.fintrack.util.enums.SortDirection;
+import com.example.fintrack.utils.enums.SortDirection;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

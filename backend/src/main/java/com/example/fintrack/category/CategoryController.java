@@ -5,7 +5,7 @@ import com.example.fintrack.limit.dto.AddLimitDto;
 import com.example.fintrack.category.dto.CategoryDto;
 import com.example.fintrack.category.dto.UpdateCategoryDto;
 import com.example.fintrack.limit.LimitService;
-import com.example.fintrack.util.enums.SortDirection;
+import com.example.fintrack.utils.enums.SortDirection;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;

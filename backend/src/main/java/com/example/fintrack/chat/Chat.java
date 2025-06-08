@@ -36,6 +36,9 @@ public class Chat {
     @ToString.Exclude
     private Set<LastReadMessage> lastReadMessages;
 
+    @Column(nullable = false)
+    private Boolean isStarted;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

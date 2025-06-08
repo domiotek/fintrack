@@ -3,7 +3,7 @@ package com.example.fintrack.bill;
 import com.example.fintrack.bill.dto.AddBillDto;
 import com.example.fintrack.bill.dto.BillDto;
 import com.example.fintrack.bill.dto.UpdateBillDto;
-import com.example.fintrack.util.enums.SortDirection;
+import com.example.fintrack.utils.enums.SortDirection;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
