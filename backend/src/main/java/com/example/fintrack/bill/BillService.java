@@ -19,12 +19,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.example.fintrack.bill.BillSpecification.*;
 import static com.example.fintrack.exception.BusinessErrorCodes.*;
@@ -175,46 +171,5 @@ public class BillService {
                 .orElseThrow(BILL_DOES_NOT_EXIST::getError);
 
         billRepository.delete(bill);
-    }
-
-    public Map<ZonedDateTime, BigDecimal> getStatistics(ZonedDateTime from, ZonedDateTime to, Long categoryId) {
-        User user = userProvider.getLoggedUser();
-
-        Specification<Bill> billSpecification = hasUserId(user.getId()).or(hasPaidById(user.getId()))
-                .and(hasBillsBetweenDates(from, to));
-        if(categoryId != null) {
-            billSpecification = billSpecification.and(hasCategoryId(categoryId));
-        }
-
-        List<Bill> bills = billRepository.findAll(billSpecification);
-
-        Map<ZonedDateTime, BigDecimal> spendingPerDay = new HashMap<>();
-
-        ZoneId zoneId = from.getZone();
-
-        for (LocalDate localDate = from.toLocalDate(); !localDate.isAfter(to.toLocalDate()); localDate = localDate.plusDays(1)) {
-            spendingPerDay.put(localDate.atStartOfDay(zoneId), BigDecimal.ZERO);
-        }
-
-        bills.forEach(bill -> spendingPerDay.put(
-                bill.getDate().toLocalDate().atStartOfDay(zoneId),
-                spendingPerDay.get(bill.getDate().toLocalDate().atStartOfDay(zoneId)).add(bill.getAmount()))
-        );
-
-        Map<ZonedDateTime, BigDecimal> statistics = new HashMap<>();
-
-        for (LocalDate localDate = from.toLocalDate(); !localDate.isAfter(to.toLocalDate()); localDate = localDate.plusDays(1)) {
-            if (from.toLocalDate().atStartOfDay(zoneId).equals(localDate.atStartOfDay(zoneId))) {
-                statistics.put(localDate.atStartOfDay(zoneId), spendingPerDay.get(localDate.atStartOfDay(zoneId)));
-            } else {
-                statistics.put(
-                        localDate.atStartOfDay(zoneId),
-                        spendingPerDay.get(localDate.atStartOfDay(zoneId))
-                                .add(statistics.get(localDate.minusDays(1).atStartOfDay(zoneId)))
-                );
-            }
-        }
-
-        return statistics;
     }
 }
