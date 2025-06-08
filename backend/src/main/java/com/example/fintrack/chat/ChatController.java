@@ -2,9 +2,10 @@ package com.example.fintrack.chat;
 
 import com.example.fintrack.chat.dto.ChatStateDto;
 import com.example.fintrack.chat.dto.PrivateChatDto;
-import com.example.fintrack.message.dto.MessageTypingDto;
+import com.example.fintrack.message.dto.MessageDto;
 import com.example.fintrack.message.dto.SendMessageDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -46,8 +47,12 @@ public class ChatController {
     }
 
     @GetMapping("/private")
-    public ResponseEntity<List<PrivateChatDto>> getPrivateChats() {
-        return ResponseEntity.ok().body(chatService.getPrivateChats());
+    public ResponseEntity<Page<PrivateChatDto>> getPrivateChats(
+            @RequestParam(required = false) String search,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return ResponseEntity.ok().body(chatService.getPrivateChats(search, page, size));
     }
 
     @GetMapping("/private/friends-ids")
@@ -55,14 +60,24 @@ public class ChatController {
         return ResponseEntity.ok().body(chatService.getFriendsIdsWithPrivateChats());
     }
 
-    @GetMapping("/{chat-id}/state")
-    public ResponseEntity<ChatStateDto> getChatMessages(
+    @GetMapping("/{chat-id}/messages")
+    public ResponseEntity<Page<MessageDto>> getChatMessages(
             @PathVariable("chat-id") long chatId,
             @RequestParam long messageId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         return ResponseEntity.ok().body(chatService.getChatMessages(messageId, chatId, page, size));
+    }
+
+    @GetMapping("/{chat-id}/state")
+    public ResponseEntity<ChatStateDto> getChatState(
+            @PathVariable("chat-id") long chatId,
+            @RequestParam long messageId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return ResponseEntity.ok().body(chatService.getChatState(messageId, chatId, page, size));
     }
 
     @GetMapping("/private/{friend-id}")

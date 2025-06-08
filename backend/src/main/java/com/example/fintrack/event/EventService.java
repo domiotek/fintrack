@@ -14,7 +14,7 @@ import com.example.fintrack.user.User;
 import com.example.fintrack.user.UserRepository;
 import com.example.fintrack.userevent.UserEvent;
 import com.example.fintrack.userevent.UserEventRepository;
-import com.example.fintrack.utils.SortDirection;
+import com.example.fintrack.utils.enums.SortDirection;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -82,6 +82,7 @@ public class EventService {
                 .orElseThrow(CURRENCY_DOES_NOT_EXIST::getError);
 
         Chat chat = new Chat();
+        chat.setIsStarted(true);
 
         chatRepository.save(chat);
 

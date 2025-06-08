@@ -1,4 +1,4 @@
-package com.example.fintrack.util.enums;
+package com.example.fintrack.utils.enums;
 
 import org.springframework.data.domain.Sort;
 
