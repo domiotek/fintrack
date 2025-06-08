@@ -42,6 +42,7 @@ services:
       SPRING_PROFILES_ACTIVE: "production"
       APPLICATION_DATABASE_CHECK_SCHEMA: "true"
       SPRING_DOMAIN: "${APP_DOMAIN}"
+      SPRING_SECURE_COOKIES: "${USE_SECURE_COOKIES}"
     depends_on:
       fintrack_database:
         condition: service_healthy

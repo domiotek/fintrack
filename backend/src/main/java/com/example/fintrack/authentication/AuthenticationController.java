@@ -24,6 +24,9 @@ public class AuthenticationController {
     @Value("${SPRING_DOMAIN}")
     private String domain;
 
+	@Value("${SPRING_SECURE_COOKIES}")
+    private String secureCookies;
+
     @PostMapping("/register")
     public ResponseEntity<Void> register(@RequestBody @Valid RegisterRequestDto registerRequestDto) {
         authenticationService.register(registerRequestDto);
@@ -37,7 +40,7 @@ public class AuthenticationController {
 
         ResponseCookie accessTokenCookie = ResponseCookie.from("access_token", tokens.accessToken())
                 .httpOnly(true)
-                .secure(true)
+                .secure(secureCookies)
                 .path("/")
                 .maxAge(24 * 60 * 60) // 24h
                 .domain(domain)
@@ -45,7 +48,7 @@ public class AuthenticationController {
 
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh_token", tokens.refreshToken())
                 .httpOnly(true)
-                .secure(true)
+                .secure(secureCookies)
                 .path("/")
                 .maxAge(30 * 24 * 60 * 60) // 30d
                 .domain(domain)
@@ -63,7 +66,7 @@ public class AuthenticationController {
 
         ResponseCookie accessTokenCookie = ResponseCookie.from("access_token", tokens.accessToken())
                 .httpOnly(true)
-                .secure(true)
+                .secure(secureCookies)
                 .path("/")
                 .maxAge(24 * 60 * 60) // 24h
                 .domain(domain)
@@ -78,7 +81,7 @@ public class AuthenticationController {
     public ResponseEntity<Void> logout(HttpServletResponse response) {
         ResponseCookie accessTokenCookie = ResponseCookie.from("access_token", "")
                 .httpOnly(true)
-                .secure(true)
+                .secure(secureCookies)
                 .path("/")
                 .maxAge(0)
                 .domain(domain)
@@ -86,7 +89,7 @@ public class AuthenticationController {
 
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh_token", "")
                 .httpOnly(true)
-                .secure(true)
+                .secure(secureCookies)
                 .path("/")
                 .maxAge(0)
                 .domain(domain)
