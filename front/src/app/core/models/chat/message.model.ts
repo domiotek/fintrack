@@ -1,9 +1,9 @@
+import { User } from '../users/user';
+
 export interface ChatMessage {
   id: string;
   authorType: 'system' | 'user';
-  authorId?: number;
-  authorName?: string;
-  authorSurname?: string;
+  sentBy?: User;
   sentAt: string;
   content: string;
 }
