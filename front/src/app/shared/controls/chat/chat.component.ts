@@ -120,7 +120,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
         lastMessageSentAt.isValid &&
         lastMessageSentAt.plus({ minutes: DEFAULT_CHAT_MAX_BLOCK_TIME_DIFFERENCE }) < currentMessageSentAt;
 
-      if (!currentBlock || currentBlock.userId !== message.authorId || isMessageTooLateForBlock) {
+      if (!currentBlock || currentBlock.userId !== message.sentBy?.id || isMessageTooLateForBlock) {
         if (isMessageTooLateForBlock || !currentBlock) {
           blocks.push({
             id: message.id,
@@ -131,11 +131,11 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
 
         const newBlock: ChatBlock = {
           type: 'user',
-          userId: message.authorId!,
-          name: message.authorName!,
-          surname: message.authorSurname!,
+          userId: message.sentBy?.id!,
+          name: message.sentBy?.firstName!,
+          surname: message.sentBy?.lastName!,
           messages: [message],
-          perspective: this.currentUserId() === message.authorId ? 'my' : 'their',
+          perspective: this.currentUserId() === message.sentBy?.id ? 'my' : 'their',
         };
         blocks.push(newBlock);
 
@@ -164,7 +164,9 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
       this.currentUserId.set(state.userId);
     });
 
-    this.chatService.connectToChat(this.chatId());
+    this.chatService.connectToChat(this.chatId()).then(() => {
+      this.loading.set(false);
+    });
 
     document.addEventListener('visibilitychange', this.visibilityChangeEventDispatcher.bind(this));
     this.setupActivityUpdateTimer();

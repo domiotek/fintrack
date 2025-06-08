@@ -18,7 +18,7 @@ export class ChatItemComponent implements OnInit {
   readonly currentUserId = signal<number>(0);
 
   get isAuthorOfLastMessage(): boolean {
-    return this.item().lastMessage?.authorId === this.currentUserId();
+    return this.item().lastMessage?.sentBy?.id === this.currentUserId();
   }
 
   get isUnread(): boolean {

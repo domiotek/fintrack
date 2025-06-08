@@ -4,5 +4,5 @@ import { ChatMessage } from './message.model';
 
 export interface ChatState {
   messages: BasePagingResponse<ChatMessage>;
-  userReadMessages: Record<number, LastReadMessage>;
+  lastReadMessages: LastReadMessage[];
 }

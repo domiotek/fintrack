@@ -87,87 +87,92 @@ export class ChatService implements OnDestroy {
     return this.http.get<string>(`${environment.apiUrl}/chats/private/${userId}`);
   }
 
-  connectToChat(chatId: string) {
-    this.connectedChatId.next(chatId);
+  connectToChat(chatId: string): Promise<void> {
+    return new Promise((resolve) => {
+      this.connectedChatId.next(chatId);
 
-    const params = new HttpParams().set('amount', DEFAULT_CHAT_PAGE_SIZE.toString());
+      const params = new HttpParams().set('amount', DEFAULT_CHAT_PAGE_SIZE.toString());
 
-    this.http.get<ChatState>(`${environment.apiUrl}/chats/${chatId}/state`, { params }).subscribe((state) => {
-      this.messages.next(state.messages.content);
-      this.lastReadMessagesMap.next(
-        Object.fromEntries(
-          Object.entries(state.userReadMessages).map(([userId, lastReadMessage]) => [
-            userId,
-            lastReadMessage.messageId,
-          ]),
-        ),
-      );
+      this.http.get<ChatState>(`${environment.apiUrl}/chats/${chatId}/state`, { params }).subscribe((state) => {
+        this.messages.next(state.messages.content);
+        this.lastReadMessagesMap.next(
+          state.lastReadMessages.reduce(
+            (acc, curr) => {
+              acc[curr.userId] = curr.messageId;
+              return acc;
+            },
+            {} as Record<number, string>,
+          ),
+        );
 
-      this.stompClient
-        .watch(`/${chatId}/message`)
-        .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this.connectedChatId.asObservable()))
-        .subscribe((message: IMessage) => {
-          const chatMessage: ChatMessage = JSON.parse(message.body);
-          this.messages.next([...this.messages.value, chatMessage]);
-        });
-
-      this.stompClient
-        .watch(`/${chatId}/user-started-typing`)
-        .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this.connectedChatId.asObservable()))
-        .subscribe((message: IMessage) => {
-          const event: UserTypingEvent = JSON.parse(message.body);
-
-          if (typeof event.userId !== 'number') return;
-
-          if (event.userId === this.currentUserId()) return;
-
-          this.typingUsers.next([...this.typingUsers.value, event.userId]);
-        });
-
-      this.stompClient
-        .watch(`/${chatId}/user-stopped-typing`)
-        .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this.connectedChatId.asObservable()))
-        .subscribe((message: IMessage) => {
-          const event: UserTypingEvent = JSON.parse(message.body);
-
-          if (typeof event.userId !== 'number') return;
-
-          this.typingUsers.next([...this.typingUsers.value.filter((id) => id !== event.userId)]);
-        });
-
-      this.stompClient
-        .watch(`/${chatId}/user-read-message`)
-        .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this.connectedChatId.asObservable()))
-        .subscribe((message: IMessage) => {
-          const event: UserReadMessageEvent = JSON.parse(message.body);
-
-          if (typeof event.userId !== 'number') return;
-
-          if (typeof event.messageId !== 'string') return;
-
-          if (event.userId === this.currentUserId()) return;
-
-          this.lastReadMessagesMap.next({
-            ...this.lastReadMessagesMap.value,
-            [event.userId]: event.messageId,
+        this.stompClient
+          .watch(`/${chatId}/message`)
+          .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this.connectedChatId.asObservable()))
+          .subscribe((message: IMessage) => {
+            const chatMessage: ChatMessage = JSON.parse(message.body);
+            this.messages.next([...this.messages.value, chatMessage]);
           });
-        });
 
-      this.stompClient
-        .watch(`/${chatId}/user-last-activity`)
-        .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this.connectedChatId.asObservable()))
-        .subscribe((message: IMessage) => {
-          const event: UserAvailabilityEvent = JSON.parse(message.body);
+        this.stompClient
+          .watch(`/${chatId}/user-started-typing`)
+          .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this.connectedChatId.asObservable()))
+          .subscribe((message: IMessage) => {
+            const event: UserTypingEvent = JSON.parse(message.body);
 
-          if (typeof event.userId !== 'number') return;
+            if (typeof event.userId !== 'number') return;
 
-          if (event.userId === this.currentUserId()) return;
+            if (event.userId === this.currentUserId()) return;
 
-          this.lastUserActivityMap.next({
-            ...this.lastUserActivityMap.value,
-            [event.userId]: event.lastSeenAt,
+            this.typingUsers.next([...this.typingUsers.value, event.userId]);
           });
-        });
+
+        this.stompClient
+          .watch(`/${chatId}/user-stopped-typing`)
+          .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this.connectedChatId.asObservable()))
+          .subscribe((message: IMessage) => {
+            const event: UserTypingEvent = JSON.parse(message.body);
+
+            if (typeof event.userId !== 'number') return;
+
+            this.typingUsers.next([...this.typingUsers.value.filter((id) => id !== event.userId)]);
+          });
+
+        this.stompClient
+          .watch(`/${chatId}/user-read-message`)
+          .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this.connectedChatId.asObservable()))
+          .subscribe((message: IMessage) => {
+            const event: UserReadMessageEvent = JSON.parse(message.body);
+
+            if (typeof event.userId !== 'number') return;
+
+            if (typeof event.messageId !== 'string') return;
+
+            if (event.userId === this.currentUserId()) return;
+
+            this.lastReadMessagesMap.next({
+              ...this.lastReadMessagesMap.value,
+              [event.userId]: event.messageId,
+            });
+          });
+
+        this.stompClient
+          .watch(`/${chatId}/user-last-activity`)
+          .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this.connectedChatId.asObservable()))
+          .subscribe((message: IMessage) => {
+            const event: UserAvailabilityEvent = JSON.parse(message.body);
+
+            if (typeof event.userId !== 'number') return;
+
+            if (event.userId === this.currentUserId()) return;
+
+            this.lastUserActivityMap.next({
+              ...this.lastUserActivityMap.value,
+              [event.userId]: event.lastSeenAt,
+            });
+          });
+
+        resolve();
+      });
     });
   }
 
