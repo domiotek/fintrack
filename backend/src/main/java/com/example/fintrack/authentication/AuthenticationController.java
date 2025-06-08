@@ -17,14 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
-public class AuthenticationController {
+public class AuthenticationController {    
+	private final AuthenticationService authenticationService;
 
-    private final AuthenticationService authenticationService;
-
-    @Value("${SPRING_DOMAIN}")
+    @Value("${SPRING_DOMAIN:localhost}")
     private String domain;
 
-	@Value("${SPRING_SECURE_COOKIES}")
+    @Value("${SPRING_SECURE_COOKIES:false}")
     private String secureCookies;
 
     @PostMapping("/register")
