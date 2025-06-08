@@ -73,11 +73,10 @@ public class ChatController {
     @GetMapping("/{chat-id}/state")
     public ResponseEntity<ChatStateDto> getChatState(
             @PathVariable("chat-id") long chatId,
-            @RequestParam long messageId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        return ResponseEntity.ok().body(chatService.getChatState(messageId, chatId, page, size));
+        return ResponseEntity.ok().body(chatService.getChatState(chatId, page, size));
     }
 
     @GetMapping("/private/{friend-id}")

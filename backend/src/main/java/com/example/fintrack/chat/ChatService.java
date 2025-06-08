@@ -177,10 +177,10 @@ public class ChatService {
         return messages.map(MessageMapper::messageToMessageDto);
     }
 
-    public ChatStateDto getChatState(long messageId, long chatId, int page, int size) {
+    public ChatStateDto getChatState(long chatId, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
 
-        Page<Message> messages = messageRepository.getMessagesByIdLessThanEqualAndChatId(messageId, chatId, pageRequest);
+        Page<Message> messages = messageRepository.getFirstMessagesByChatId(chatId, pageRequest);
 
         Page<MessageDto> massagesDtos = messages.map(MessageMapper::messageToMessageDto);
 
