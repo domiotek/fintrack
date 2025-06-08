@@ -37,23 +37,11 @@ spring:
       repositories:
         enabled: false
 
-logging:
-  level:
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-    org.hibernate.tool.schema: DEBUG
-    org.springframework.orm.jpa: DEBUG
-    com.example.fintrack: DEBUG
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
-
 springdoc:
   swagger-ui:
     operationsSorter: method
 
 application:
-  database:
-    check-schema: ${APPLICATION_DATABASE_CHECK_SCHEMA:false}
   security:
     access-jwt:
       secret-key: 4158465a2f6a272c253b4468423246663f3c4a7951673a544c452e2c4d36465c
