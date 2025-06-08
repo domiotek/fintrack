@@ -32,4 +32,8 @@ public class FriendSpecification {
     public static Specification<Friend> hasFriendStatus(FriendStatus friendStatus) {
         return (root, query, builder) -> builder.equal(root.get("friendStatus"), friendStatus);
     }
+
+    public static Specification<Friend> hasChatStarted(boolean isStarted) {
+        return (root, query, builder) -> builder.equal(root.get("chat").get("isStarted"), isStarted);
+    }
 }

@@ -12,13 +12,15 @@ public class ChatConfiguration implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws");
+        registry.addEndpoint("/ws/chats")
+                .setAllowedOrigins("http://localhost:80", "http://localhost:4200", "http://localhost")
+                .withSockJS();
     }
 
     @Override
-    public void configureMessageBroker(MessageBrokerRegistry registry) { // od strony backendu
-        registry.setApplicationDestinationPrefixes("/app"); // odczytywanie
-        registry.enableSimpleBroker("/topic"); // wysyłanie
-        registry.setUserDestinationPrefix("/user"); // 1:1
+    public void configureMessageBroker(MessageBrokerRegistry registry) {
+        registry.setApplicationDestinationPrefixes("/app");
+        registry.enableSimpleBroker("/topic");
+        registry.setUserDestinationPrefix("/user");
     }
 }
