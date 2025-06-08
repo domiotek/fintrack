@@ -40,7 +40,7 @@ public class AuthenticationController {
 
         ResponseCookie accessTokenCookie = ResponseCookie.from("access_token", tokens.accessToken())
                 .httpOnly(true)
-                .secure(secureCookies)
+                .secure(secureCookies.equals("true"))
                 .path("/")
                 .maxAge(24 * 60 * 60) // 24h
                 .domain(domain)
@@ -48,7 +48,7 @@ public class AuthenticationController {
 
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh_token", tokens.refreshToken())
                 .httpOnly(true)
-                .secure(secureCookies)
+                .secure(secureCookies.equals("true"))
                 .path("/")
                 .maxAge(30 * 24 * 60 * 60) // 30d
                 .domain(domain)
@@ -66,7 +66,7 @@ public class AuthenticationController {
 
         ResponseCookie accessTokenCookie = ResponseCookie.from("access_token", tokens.accessToken())
                 .httpOnly(true)
-                .secure(secureCookies)
+                .secure(secureCookies.equals("true"))
                 .path("/")
                 .maxAge(24 * 60 * 60) // 24h
                 .domain(domain)
@@ -81,7 +81,7 @@ public class AuthenticationController {
     public ResponseEntity<Void> logout(HttpServletResponse response) {
         ResponseCookie accessTokenCookie = ResponseCookie.from("access_token", "")
                 .httpOnly(true)
-                .secure(secureCookies)
+                .secure(secureCookies.equals("true"))
                 .path("/")
                 .maxAge(0)
                 .domain(domain)
@@ -89,7 +89,7 @@ public class AuthenticationController {
 
         ResponseCookie refreshTokenCookie = ResponseCookie.from("refresh_token", "")
                 .httpOnly(true)
-                .secure(secureCookies)
+                .secure(secureCookies.equals("true"))
                 .path("/")
                 .maxAge(0)
                 .domain(domain)
