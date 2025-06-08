@@ -73,6 +73,7 @@ public class FriendService {
         }
 
         Chat chat = new Chat();
+        chat.setIsStarted(false);
 
         chatRepository.save(chat);
 

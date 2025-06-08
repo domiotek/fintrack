@@ -122,10 +122,15 @@ public class DataInitializer implements CommandLineRunner {
         userRepository.saveAll(List.of(user1, user2, user3));
 
         Chat chat1 = new Chat();
+        chat1.setIsStarted(true);
         Chat chat2 = new Chat();
+        chat2.setIsStarted(false);
         Chat chat3 = new Chat();
+        chat3.setIsStarted(true);
         Chat chat4 = new Chat();
+        chat4.setIsStarted(true);
         Chat chat5 = new Chat();
+        chat5.setIsStarted(true);
         chatRepository.saveAll(List.of(chat1, chat2, chat3, chat4, chat5));
 
         Friend friend1 = new Friend();
