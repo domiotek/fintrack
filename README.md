@@ -60,10 +60,11 @@ The application supports environment variables for production deployments. You c
 
 #### Available Environment Variables
 
-| Variable               | Description                                      | Default Value           | Used By  |
-| ---------------------- | ------------------------------------------------ | ----------------------- | -------- |
-| `CORS_ALLOWED_ORIGINS` | Comma-separated list of allowed origins for CORS | `http://localhost:4200` | Backend  |
-| `API_URL`              | Backend API URL used by frontend                 | `http://localhost:8080` | Frontend |
+| Variable               | Description                                         | Default Value           | Used By  |
+| ---------------------- | --------------------------------------------------- | ----------------------- | -------- |
+| `CORS_ALLOWED_ORIGINS` | Comma-separated list of allowed origins for CORS    | `http://localhost:4200` | Backend  |
+| `API_URL`              | Backend API URL used by frontend                    | `http://localhost:8080` | Frontend |
+| `APP_DOMAIN`           | Root level domain that the cookies should be set on | `localhost`             | Backend  |
 
 **Important Notes:**
 

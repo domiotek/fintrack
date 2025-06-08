@@ -38,6 +38,7 @@ services:
       SPRING_DB_PASSWORD: postgres
       SPRING_CACHE_DB_HOST: "fintrack_cache_database"
       SPRING_ALLOWED_ORIGINS: "${CORS_ALLOWED_ORIGINS:-http://localhost:4200,http://localhost}"
+      SPRING_DOMAIN: "${APP_DOMAIN:-localhost}"
     depends_on:
       - fintrack_database
       - fintrack_cache_database

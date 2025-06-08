@@ -41,6 +41,7 @@ services:
       SPRING_JPA_SHOW_SQL: "true"
       SPRING_PROFILES_ACTIVE: "production"
       APPLICATION_DATABASE_CHECK_SCHEMA: "true"
+      SPRING_DOMAIN: "${APP_DOMAIN}"
     depends_on:
       fintrack_database:
         condition: service_healthy
