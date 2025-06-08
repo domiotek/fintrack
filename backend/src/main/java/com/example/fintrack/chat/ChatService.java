@@ -174,7 +174,7 @@ public class ChatService {
 
         Page<Message> messages = messageRepository.getMessagesByIdLessThanEqualAndChatId(messageId, chatId, pageRequest);
 
-       return messages.map(MessageMapper::messageToMessageDto);
+        return messages.map(MessageMapper::messageToMessageDto);
     }
 
     public ChatStateDto getChatState(long messageId, long chatId, int page, int size) {
