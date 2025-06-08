@@ -165,7 +165,6 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     });
 
     this.chatService.connectToChat(this.chatId());
-    this.fetchAndMergeMessages();
 
     document.addEventListener('visibilitychange', this.visibilityChangeEventDispatcher.bind(this));
     this.setupActivityUpdateTimer();
