@@ -245,17 +245,17 @@ public class DataInitializer implements CommandLineRunner {
         limitRepository.saveAll(List.of(limit1, limit2, limit3, limit4, limit5));
 
         Event event1 = new Event();
-        event1.setName("Germany trip");
+        event1.setName("Wycieczka do Niemiec");
         event1.setCurrency(currency1);
         event1.setStartDateTime(ZonedDateTime.now().minusDays(2));
         event1.setChat(chat3);
         Event event2 = new Event();
-        event2.setName("Birthday gift");
+        event2.setName("Prezent urodzinowy");
         event2.setCurrency(currency1);
         event2.setStartDateTime(ZonedDateTime.now().plusDays(1).plusHours(4));
         event2.setChat(chat4);
         Event event3 = new Event();
-        event3.setName("Warsaw trip");
+        event3.setName("Wycieczka do Warszawy");
         event3.setCurrency(currency2);
         event3.setStartDateTime(ZonedDateTime.now().minusHours(5));
         event3.setChat(chat5);
