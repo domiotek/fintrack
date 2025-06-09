@@ -149,14 +149,18 @@ public class EventService {
         );
 
         BigDecimal totalSumInEventCurrency = currencyConverter
-                .convertFromUSDToGivenCurrency(event.getCurrency(), event.getStartDateTime().toLocalDate(), totalSum);
+                .convertFromUSDToGivenCurrency(event.getCurrency(), event.getStartDateTime().toLocalDate(), totalSum)
+                .setScale(2, RoundingMode.HALF_UP);
         BigDecimal totalCostPerUserInEventCurrency = currencyConverter
-                .convertFromUSDToGivenCurrency(event.getCurrency(), event.getStartDateTime().toLocalDate(), costPerUser);
+                .convertFromUSDToGivenCurrency(event.getCurrency(), event.getStartDateTime().toLocalDate(), costPerUser)
+                .setScale(2, RoundingMode.HALF_UP);
 
         BigDecimal totalSumInUserCurrency = currencyConverter
-                .convertFromUSDToGivenCurrency(user.getCurrency(), event.getStartDateTime().toLocalDate(), totalSum);
+                .convertFromUSDToGivenCurrency(user.getCurrency(), event.getStartDateTime().toLocalDate(), totalSum)
+                .setScale(2, RoundingMode.HALF_UP);
         BigDecimal totalCostPerUserInUserCurrency = currencyConverter
-                .convertFromUSDToGivenCurrency(event.getCurrency(), event.getStartDateTime().toLocalDate(), costPerUser);
+                .convertFromUSDToGivenCurrency(event.getCurrency(), event.getStartDateTime().toLocalDate(), costPerUser)
+                .setScale(2, RoundingMode.HALF_UP);
 
         return EventSummaryDto.builder()
                 .eventCurrency(EventSummaryCurrencyDto.builder()
