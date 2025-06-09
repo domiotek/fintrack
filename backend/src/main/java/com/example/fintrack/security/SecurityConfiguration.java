@@ -14,7 +14,9 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpHeaders.*;
 
@@ -38,12 +40,29 @@ public class SecurityConfiguration {
     @Bean
     public AuthenticationManager authenticationManager() {
         return new ProviderManager(authenticationProvider());
-    }
-
-    @Bean
+    }    
+	
+	@Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of(allowedOrigins.split(",")));
+        
+        String[] origins = allowedOrigins.split(",");
+        List<String> originPatterns = Arrays.stream(origins)
+                .map(origin -> {
+                    if (origin.startsWith("http://")) {
+                        String domain = origin.substring(7);
+                        return "http://*." + domain;
+                    } else if (origin.startsWith("https://")) {
+                        String domain = origin.substring(8);
+                        return "https://*." + domain;
+                    }
+                    return origin;
+                })
+                .collect(Collectors.toList());
+        
+        originPatterns.addAll(Arrays.asList(origins));
+        
+        configuration.setAllowedOriginPatterns(originPatterns);
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE"));
         configuration.setAllowedHeaders(List.of(ORIGIN, CONTENT_TYPE, ACCEPT, AUTHORIZATION));
         configuration.setAllowCredentials(true);
