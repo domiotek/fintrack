@@ -2,7 +2,6 @@ package com.example.fintrack.chat;
 
 import com.example.fintrack.chat.dto.ChatStateDto;
 import com.example.fintrack.chat.dto.PrivateChatDto;
-import com.example.fintrack.exception.BusinessErrorCodes;
 import com.example.fintrack.friend.Friend;
 import com.example.fintrack.friend.FriendRepository;
 import com.example.fintrack.friend.FriendStatus;
@@ -18,7 +17,6 @@ import com.example.fintrack.message.MessageType;
 import com.example.fintrack.message.dto.MessageDto;
 import com.example.fintrack.message.dto.MessageTypingDto;
 import com.example.fintrack.message.dto.ReadMessageDto;
-import com.example.fintrack.message.dto.SendMessageDto;
 import com.example.fintrack.security.service.UserProvider;
 import com.example.fintrack.user.User;
 import com.example.fintrack.user.UserRepository;
@@ -31,14 +29,13 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import java.security.Principal;
 import java.time.ZonedDateTime;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
 import static com.example.fintrack.exception.BusinessErrorCodes.*;
 import static com.example.fintrack.friend.FriendSpecification.*;
+import static java.util.Comparator.*;
 
 @Service
 @RequiredArgsConstructor
@@ -115,7 +112,7 @@ public class ChatService {
                     .orElseThrow(LAST_READ_MESSAGE_DOES_NOT_EXIST::getError);
 
             Message message = friend.getChat().getMessages().stream()
-                    .max(Comparator.comparing(Message::getSendTime))
+                    .max(comparing(Message::getSendTime))
                     .orElseThrow(MESSAGE_DOES_NOT_EXIST::getError);
 
             return ChatMapper.friendToPrivateChatDto(friend, message, lastReadMessage);

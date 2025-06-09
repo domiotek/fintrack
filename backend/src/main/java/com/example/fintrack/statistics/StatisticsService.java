@@ -26,6 +26,7 @@ import java.util.*;
 
 import static com.example.fintrack.bill.BillSpecification.*;
 import static com.example.fintrack.bill.BillSpecification.hasCategoryId;
+import static java.util.Comparator.*;
 
 @Service
 @RequiredArgsConstructor
@@ -82,11 +83,16 @@ public class StatisticsService {
         List<String> formattedLabels = labels.stream().map(dateTimeFormatter::format).toList();
 
         BigDecimal totalSumInUserCurrency = currencyConverter
-                .convertFromUSDToGivenCurrency(user.getCurrency(), LocalDate.now(), totalSum);
+                .convertFromUSDToGivenCurrency(user.getCurrency(), LocalDate.now(), totalSum)
+                .setScale(2, RoundingMode.HALF_UP);
         BigDecimal previousMonthDifferenceInUserCurrency = currencyConverter
-                .convertFromUSDToGivenCurrency(user.getCurrency(), LocalDate.now(), previousMonthDifference);
+                .convertFromUSDToGivenCurrency(user.getCurrency(), LocalDate.now(), previousMonthDifference)
+                .setScale(2, RoundingMode.HALF_UP);
         List<BigDecimal> dataInUserCurrency = data.stream()
-                .map(value -> currencyConverter.convertFromUSDToGivenCurrency(user.getCurrency(), LocalDate.now(), value))
+                .map(value -> currencyConverter
+                        .convertFromUSDToGivenCurrency(user.getCurrency(), LocalDate.now(), value)
+                        .setScale(2, RoundingMode.HALF_UP)
+                )
                 .toList();
 
         return StatisticsDashboardDto.builder()
@@ -151,7 +157,10 @@ public class StatisticsService {
         }
 
         List<BigDecimal> dataInUserCurrency = data.stream()
-                .map(value -> currencyConverter.convertFromUSDToGivenCurrency(user.getCurrency(), LocalDate.now(), value))
+                .map(value -> currencyConverter
+                        .convertFromUSDToGivenCurrency(user.getCurrency(), LocalDate.now(), value)
+                        .setScale(2, RoundingMode.HALF_UP)
+                )
                 .toList();
 
         return StatisticsChartDataDto.builder()
@@ -216,13 +225,9 @@ public class StatisticsService {
             formattedLabels = labels.stream().map(Object::toString).toList();
         }
 
-        List<BigDecimal> dataInUserCurrency = data.stream()
-                .map(value -> currencyConverter.convertFromUSDToGivenCurrency(user.getCurrency(), LocalDate.now(), value))
-                .toList();
-
         return StatisticsChartDataDto.builder()
                 .labels(formattedLabels)
-                .data(dataInUserCurrency)
+                .data(data)
                 .build();
     }
 
@@ -234,7 +239,7 @@ public class StatisticsService {
 
         List<Bill> bills = billRepository.findAll(billSpecification);
 
-        Map<Category, BigDecimal> spendingPerCategory = new TreeMap<>(Comparator.comparing(Category::getName));
+        Map<Category, BigDecimal> spendingPerCategory = new TreeMap<>(comparing(Category::getName));
 
         bills.forEach(bill -> spendingPerCategory.merge(bill.getCategory(), bill.getAmount(), BigDecimal::add));
 
@@ -244,7 +249,10 @@ public class StatisticsService {
         List<String> formattedLabels = labels.stream().map(Category::getName).toList();
 
         List<BigDecimal> dataInUserCurrency = data.stream()
-                .map(value -> currencyConverter.convertFromUSDToGivenCurrency(user.getCurrency(), LocalDate.now(), value))
+                .map(value -> currencyConverter
+                        .convertFromUSDToGivenCurrency(user.getCurrency(), LocalDate.now(), value)
+                        .setScale(2, RoundingMode.HALF_UP)
+                )
                 .toList();
 
         return StatisticsChartDataDto.builder()
@@ -283,7 +291,7 @@ public class StatisticsService {
                 } else {
                     BigDecimal sum = value.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
 
-                    spendingPerCategory.put(key, sum.divide(BigDecimal.valueOf(value.size()), RoundingMode.HALF_UP));
+                    spendingPerCategory.put(key, sum.divide(BigDecimal.valueOf(value.size()), 6, RoundingMode.HALF_UP));
                 }
             });
         }
@@ -296,7 +304,10 @@ public class StatisticsService {
                 .toList();
 
         List<BigDecimal> dataInUserCurrency = data.stream()
-                .map(value -> currencyConverter.convertFromUSDToGivenCurrency(user.getCurrency(), LocalDate.now(), value))
+                .map(value -> currencyConverter
+                        .convertFromUSDToGivenCurrency(user.getCurrency(), LocalDate.now(), value)
+                        .setScale(2, RoundingMode.HALF_UP)
+                )
                 .toList();
 
         return StatisticsChartDataDto.builder()
