@@ -9,9 +9,28 @@ RUN npm ci --ignore-scripts
 COPY . .
 
 ARG API_URL
+ARG IS_COOLIFY=false
+ARG BRANCH_NAME
+
 ENV API_URL=$API_URL
 
-RUN sed -i "s|PRODUCTION_API_URL|$API_URL|g" src/app/environments/environment.prod.ts
+RUN if [ "$IS_COOLIFY" = "true" ] && [ -n "$BRANCH_NAME" ]; then \
+        PR_ID=$(echo "$BRANCH_NAME" | sed -n 's|^pull/\([0-9]*\)/head$|\1|p'); \
+        if [ -n "$PR_ID" ] && [ "$PR_ID" != "" ]; then \
+            PROTOCOL=$(echo "$API_URL" | sed -n 's|^\(https\?\)://.*|\1|p'); \
+            DOMAIN=$(echo "$API_URL" | sed -n 's|^https\?://\([^/]*\).*|\1|p'); \
+            if [ -n "$PROTOCOL" ] && [ -n "$DOMAIN" ]; then \
+                FINAL_API_URL="${PROTOCOL}://${PR_ID}.${DOMAIN}"; \
+            else \
+                FINAL_API_URL="$API_URL"; \
+            fi; \
+        else \
+            FINAL_API_URL="$API_URL"; \
+        fi; \
+    else \
+        FINAL_API_URL="$API_URL"; \
+    fi && \
+    sed -i "s|PRODUCTION_API_URL|$FINAL_API_URL|g" src/app/environments/environment.prod.ts
 
 RUN npm run build --omit=dev
 
