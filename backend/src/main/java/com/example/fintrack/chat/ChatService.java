@@ -2,6 +2,7 @@ package com.example.fintrack.chat;
 
 import com.example.fintrack.chat.dto.ChatStateDto;
 import com.example.fintrack.chat.dto.PrivateChatDto;
+import com.example.fintrack.exception.BusinessErrorCodes;
 import com.example.fintrack.friend.Friend;
 import com.example.fintrack.friend.FriendRepository;
 import com.example.fintrack.friend.FriendStatus;
@@ -29,6 +30,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -83,9 +85,10 @@ public class ChatService {
         simpMessagingTemplate.convertAndSend("/topic/chats/" + chatId + "/message", MessageMapper.messageToMessageDto(savedMessage));
         if(friends.size() == 2) {
             Friend friend = friends.stream()
-                    .filter(s -> !Objects.equals(s.getUser().getId(), user.getId()))
+                    .filter(s -> Objects.equals(s.getUser().getId(), user.getId()))
                     .findFirst()
                     .orElseThrow(FRIEND_DOES_NOT_EXIST::getError);
+
             simpMessagingTemplate.convertAndSend("/topic/chats/" + friend.getFriend().getId() + "/private-chat-updates", ChatMapper.friendToPrivateChatDto(friend, message, lastReadMessage));
             simpMessagingTemplate.convertAndSend("/topic/chats/" + friend.getUser() .getId() + "/private-chat-updates", ChatMapper.friendToPrivateChatDto(friend, message, lastReadMessage));
         }
