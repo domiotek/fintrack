@@ -1,13 +1,11 @@
 package com.example.fintrack.bill;
 
-import com.example.fintrack.bill.dto.AddBillDto;
-import com.example.fintrack.bill.dto.BillDto;
-import com.example.fintrack.bill.dto.EventBillDto;
-import com.example.fintrack.bill.dto.EventBillUserDto;
+import com.example.fintrack.bill.dto.*;
 import com.example.fintrack.category.Category;
 import com.example.fintrack.category.dto.BillCategoryDto;
 import com.example.fintrack.currency.Currency;
 import com.example.fintrack.currency.CurrencyConverter;
+import com.example.fintrack.event.Event;
 import com.example.fintrack.event.dto.EventBillCurrencyDto;
 import com.example.fintrack.user.User;
 
@@ -56,9 +54,12 @@ public class BillMapper {
     }
 
     public static BillDto billToBillDto(Bill bill, CurrencyConverter currencyConverter, User user) {
-        BigDecimal amountInUSD = currencyConverter.convertFromGivenCurrencyToUSD(bill.getCurrency(), bill.getAmount());
-        BigDecimal userAmountInUsersCurrency = currencyConverter
-                .convertFromUSDToGivenCurrency(user.getCurrency(), bill.getDate().toLocalDate(), amountInUSD);
+        BigDecimal amount = bill.getAmount();
+
+        BigDecimal amountInBillCurrency = currencyConverter
+                .convertFromUSDToGivenCurrency(bill.getCurrency(), bill.getDate().toLocalDate(), amount);
+        BigDecimal amountInUserCurrency = currencyConverter
+                .convertFromUSDToGivenCurrency(user.getCurrency(), bill.getDate().toLocalDate(), amount);
 
         BillCategoryDto categoryDto = BillCategoryDto.builder()
                 .id(bill.getCategory().getId())
@@ -71,21 +72,43 @@ public class BillMapper {
                 .name(bill.getName())
                 .category(categoryDto)
                 .date(bill.getDate())
-                .userValue(userAmountInUsersCurrency)
-                .billValue(bill.getAmount())
+                .userValue(amountInUserCurrency)
+                .billValue(amountInBillCurrency)
                 .currencyId(bill.getCurrency().getId())
                 .build();
     }
 
-    public static Bill addBillDtoToBill(AddBillDto addBillDto, Category category, Currency currency, User user) {
+    public static Bill addBillDtoToBill(
+            AddBillDto addBillDto, Category category, Currency currency, User user, CurrencyConverter currencyConverter
+    ) {
+        BigDecimal amountInUSD = currencyConverter.convertFromGivenCurrencyToUSD(currency, addBillDto.amount());
+
         Bill bill = new Bill();
 
         bill.setName(addBillDto.name());
-        bill.setAmount(addBillDto.amount());
+        bill.setAmount(amountInUSD);
         bill.setCategory(category);
         bill.setCurrency(currency);
         bill.setDate(addBillDto.date());
         bill.setUser(user);
+
+        return bill;
+    }
+
+    public static Bill addBillEventDtoToBill(
+            AddBillEventDto addBillEventDto, Category category, Event event, Currency currency, User user, CurrencyConverter currencyConverter
+    ) {
+        BigDecimal amountInUSD = currencyConverter.convertFromGivenCurrencyToUSD(currency, addBillEventDto.amount());
+
+        Bill bill = new Bill();
+
+        bill.setName(addBillEventDto.name());
+        bill.setDate(addBillEventDto.date());
+        bill.setAmount(amountInUSD);
+        bill.setEvent(event);
+        bill.setCurrency(currency);
+        bill.setCategory(category);
+        bill.setPaidBy(user);
 
         return bill;
     }

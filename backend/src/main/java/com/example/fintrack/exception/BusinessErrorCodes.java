@@ -26,6 +26,7 @@ public enum BusinessErrorCodes {
     USER_ALREADY_PAID(306, "User already paid", HttpStatus.CONFLICT),
     USER_IS_FOUNDER(307, "User is a founder", HttpStatus.CONFLICT),
     EVENT_ALREADY_CONTAINS_USER(308, "Event already contains user", HttpStatus.CONFLICT),
+    CATEGORY_ALREADY_EXISTS(309, "Category already exists", HttpStatus.CONFLICT),
     CURRENCY_DOES_NOT_EXIST(401, "Currency does not exist", HttpStatus.NOT_FOUND),
     EVENT_DOES_NOT_EXIST(402, "Event does not exist", HttpStatus.NOT_FOUND),
     USER_DOES_NOT_EXIST(403, "User does not exist", HttpStatus.NOT_FOUND),

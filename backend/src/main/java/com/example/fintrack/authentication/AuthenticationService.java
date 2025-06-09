@@ -45,7 +45,7 @@ public class AuthenticationService {
     private final CategoryRepository categoryRepository;
 
     public void register(RegisterRequestDto registerRequestDto) {
-        if (userRepository.existsByEmail(registerRequestDto.email())) {
+        if (userRepository.existsUserByEmail(registerRequestDto.email())) {
             throw USER_ALREADY_EXISTS.getError();
         }
 

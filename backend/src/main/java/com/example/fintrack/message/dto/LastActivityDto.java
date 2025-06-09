@@ -5,6 +5,8 @@ import lombok.Builder;
 import java.time.ZonedDateTime;
 
 @Builder
-public record LastActivityDto(Long userId,
-                              ZonedDateTime lastSeenAt) {
+public record LastActivityDto(
+        Long userId,
+        ZonedDateTime lastSeenAt
+) {
 }
