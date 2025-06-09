@@ -70,6 +70,7 @@ public class CategoryMapper {
                 .map(Bill::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        return currencyConverter.convertFromUSDToGivenCurrency(category.getUser().getCurrency(), LocalDate.now(), sum);
+        return currencyConverter.convertFromUSDToGivenCurrency(category.getUser().getCurrency(), LocalDate.now(), sum)
+                .setScale(2, RoundingMode.HALF_UP);
     }
 }
