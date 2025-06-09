@@ -258,6 +258,18 @@ public class EventService {
                 .map(UserEvent::getUser)
                 .collect(Collectors.toMap(user -> user, user -> new HashMap<>(), (u1, u2) -> u1));
 
+        List<User> users = event.getUsers().stream()
+                .map(UserEvent::getUser)
+                .toList();
+
+        users.forEach(user -> {
+            List<User> restOfUsers = users.stream()
+                    .filter(u -> !u.equals(user))
+                    .toList();
+
+            restOfUsers.forEach(u -> settlements.get(user).put(u, BigDecimal.ZERO));
+        });
+
         int start = 0;
         int end = entries.size() - 1;
 

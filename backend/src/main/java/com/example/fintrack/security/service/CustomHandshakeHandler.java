@@ -16,5 +16,4 @@ public class CustomHandshakeHandler extends DefaultHandshakeHandler {
     protected Principal determineUser(ServerHttpRequest request, WebSocketHandler wsHandler, Map<String, Object> attributes) {
         return (Authentication) attributes.get("user");
     }
-
 }

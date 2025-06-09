@@ -10,6 +10,16 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create-drop
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show-sql: ${SPRING_JPA_SHOW_SQL:false}
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+        jdbc:
+          lob:
+            non_contextual_creation: true
     open-in-view: true
 
   threads:
