@@ -84,15 +84,26 @@ public class ChatService {
 
         simpMessagingTemplate.convertAndSend("/topic/chats/" + chatId + "/message", MessageMapper.messageToMessageDto(savedMessage));
         if(friends.size() == 2) {
-            Friend friend = friends.stream()
+            Friend userAsAFriend = friends.stream()
                     .filter(s -> Objects.equals(s.getUser().getId(), user.getId()))
                     .findFirst()
                     .orElseThrow(FRIEND_DOES_NOT_EXIST::getError);
 
-            simpMessagingTemplate.convertAndSend("/topic/chats/" + friend.getFriend().getId() + "/private-chat-updates", ChatMapper.friendToPrivateChatDto(friend, message, lastReadMessage));
-            simpMessagingTemplate.convertAndSend("/topic/chats/" + friend.getUser().getId() + "/private-chat-updates", ChatMapper.friendToPrivateChatDto(friend, message, lastReadMessage));
-        }
+            Friend friend = friends.stream()
+                    .filter(s -> !Objects.equals(s.getUser().getId(), user.getId()))
+                    .findFirst()
+                    .orElseThrow(FRIEND_DOES_NOT_EXIST::getError);
 
+            LastReadMessage friendLastReadMessage = lastReadMessageRepository
+                    .findLastReadMessageByUserIdAndChatId(friend.getUser().getId(), chatId)
+                    .orElseThrow(LAST_READ_MESSAGE_DOES_NOT_EXIST::getError);
+
+            friendLastReadMessage.setMessage(savedMessage);
+
+            simpMessagingTemplate.convertAndSend("/topic/chats/" + friend.getUser().getId() + "/private-chat-updates", ChatMapper.friendToPrivateChatDto(friend, message, friendLastReadMessage));
+            simpMessagingTemplate.convertAndSend("/topic/chats/" + userAsAFriend.getUser().getId() + "/private-chat-updates", ChatMapper.friendToPrivateChatDto(userAsAFriend, message, lastReadMessage));
+            lastReadMessageRepository.save(friendLastReadMessage);
+        }
         lastReadMessageRepository.save(lastReadMessage);
     }
 
