@@ -2,6 +2,7 @@ package com.example.fintrack.chat;
 
 import com.example.fintrack.chat.dto.ChatStateDto;
 import com.example.fintrack.chat.dto.PrivateChatDto;
+import com.example.fintrack.lastreadmessage.dto.SentLastReadMessageDto;
 import com.example.fintrack.message.dto.MessageDto;
 import com.example.fintrack.message.dto.SendMessageDto;
 import lombok.RequiredArgsConstructor;
@@ -43,8 +44,8 @@ public class ChatController {
     }
 
     @MessageMapping("/chats/{chat-id}/update-last-read-message")
-    public void updateLastReadMessage(Authentication principal, @DestinationVariable("chat-id") long chatId, @Payload SendMessageDto sendMessageDto) {
-        chatService.updateLastReadMessage(principal, chatId, sendMessageDto);
+    public void updateLastReadMessage(Authentication principal, @DestinationVariable("chat-id") long chatId, @Payload SentLastReadMessageDto messageId) {
+        chatService.updateLastReadMessage(principal, chatId, messageId);
     }
 
     @GetMapping("/private")
