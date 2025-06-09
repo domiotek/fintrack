@@ -149,7 +149,7 @@ public class ChatService {
         user.setLastSeenAt(ZonedDateTime.now());
         userRepository.save(user);
 
-        simpMessagingTemplate.convertAndSend("/topic/chats" + chatId + "/user-last-activity", MessageMapper.messageToLastActivityDto(user));
+        simpMessagingTemplate.convertAndSend("/topic/chats/" + chatId + "/user-last-activity", MessageMapper.messageToLastActivityDto(user));
     }
 
     public void updateLastReadMessage(Authentication principal, long chatId, SentLastReadMessageDto sentLastReadMessageDto) {
