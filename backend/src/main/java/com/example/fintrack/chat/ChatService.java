@@ -23,12 +23,12 @@ import com.example.fintrack.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import java.security.Principal;
 import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.List;
@@ -172,7 +172,7 @@ public class ChatService {
     }
 
     public Page<MessageDto> getChatMessages(long messageId, long chatId, int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page, size);
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("id").descending());
 
         Page<Message> messages = messageRepository.getMessagesByIdLessThanEqualAndChatId(messageId, chatId, pageRequest);
 
@@ -180,9 +180,9 @@ public class ChatService {
     }
 
     public ChatStateDto getChatState(long chatId, int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page, size);
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("id").descending());
 
-        Page<Message> messages = messageRepository.getFirstMessagesByChatId(chatId, pageRequest);
+        Page<Message> messages = messageRepository.getMessagesByChatId(chatId, pageRequest);
 
         Page<MessageDto> massagesDtos = messages.map(MessageMapper::messageToMessageDto);
 
