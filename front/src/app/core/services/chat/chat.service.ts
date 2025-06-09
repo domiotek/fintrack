@@ -106,7 +106,7 @@ export class ChatService implements OnDestroy {
         );
 
         this.stompClient
-          .watch(`/${chatId}/message`)
+          .watch(`/topic/chats/${chatId}/message`)
           .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this.connectedChatId.asObservable()))
           .subscribe((message: IMessage) => {
             const chatMessage: ChatMessage = JSON.parse(message.body);
@@ -114,7 +114,7 @@ export class ChatService implements OnDestroy {
           });
 
         this.stompClient
-          .watch(`/${chatId}/user-started-typing`)
+          .watch(`/topic/chats/${chatId}/user-started-typing`)
           .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this.connectedChatId.asObservable()))
           .subscribe((message: IMessage) => {
             const event: UserTypingEvent = JSON.parse(message.body);
@@ -127,7 +127,7 @@ export class ChatService implements OnDestroy {
           });
 
         this.stompClient
-          .watch(`/${chatId}/user-stopped-typing`)
+          .watch(`/topic/chats/${chatId}/user-stopped-typing`)
           .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this.connectedChatId.asObservable()))
           .subscribe((message: IMessage) => {
             const event: UserTypingEvent = JSON.parse(message.body);
@@ -138,7 +138,7 @@ export class ChatService implements OnDestroy {
           });
 
         this.stompClient
-          .watch(`/${chatId}/user-read-message`)
+          .watch(`/topic/chats/${chatId}/user-read-message`)
           .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this.connectedChatId.asObservable()))
           .subscribe((message: IMessage) => {
             const event: UserReadMessageEvent = JSON.parse(message.body);
@@ -156,7 +156,7 @@ export class ChatService implements OnDestroy {
           });
 
         this.stompClient
-          .watch(`/${chatId}/user-last-activity`)
+          .watch(`/topic/chats/${chatId}/user-last-activity`)
           .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this.connectedChatId.asObservable()))
           .subscribe((message: IMessage) => {
             const event: UserAvailabilityEvent = JSON.parse(message.body);
@@ -178,7 +178,7 @@ export class ChatService implements OnDestroy {
 
   sendMessage(message: string) {
     return this.stompClient.publish({
-      destination: `/${this.connectedChatId.value}/post-message`,
+      destination: `/app/chats/${this.connectedChatId.value}/post-message`,
       body: message,
     });
   }
@@ -204,7 +204,7 @@ export class ChatService implements OnDestroy {
     if (!this.ensureConnected()) return;
 
     this.stompClient.publish({
-      destination: `/${this.connectedChatId.value}/started-typing`,
+      destination: `/app/chats/${this.connectedChatId.value}/started-typing`,
     });
   }
 
@@ -212,7 +212,7 @@ export class ChatService implements OnDestroy {
     if (!this.ensureConnected()) return;
 
     this.stompClient.publish({
-      destination: `/${this.connectedChatId.value}/stopped-typing`,
+      destination: `/app/chats/${this.connectedChatId.value}/stopped-typing`,
     });
   }
 
@@ -220,7 +220,7 @@ export class ChatService implements OnDestroy {
     if (!this.ensureConnected()) return;
 
     this.stompClient.publish({
-      destination: `/${this.connectedChatId.value}/report-last-activity`,
+      destination: `/app/chats/${this.connectedChatId.value}/report-last-activity`,
     });
   }
 
@@ -231,7 +231,7 @@ export class ChatService implements OnDestroy {
 
     if (lastReadMessages[this.currentUserId()!] !== messageId) {
       this.stompClient.publish({
-        destination: `/${this.connectedChatId.value}/update-last-read-message`,
+        destination: `/app/chats/${this.connectedChatId.value}/update-last-read-message`,
         body: JSON.stringify({ messageId }),
       });
     }
