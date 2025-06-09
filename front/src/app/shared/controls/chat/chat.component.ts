@@ -1,4 +1,5 @@
 import {
+  AfterViewChecked,
   AfterViewInit,
   Component,
   computed,
@@ -60,7 +61,7 @@ import { User } from '../../../core/models/user/user.model';
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.scss',
 })
-export class ChatComponent implements AfterViewInit, OnDestroy {
+export class ChatComponent implements AfterViewInit, AfterViewChecked, OnDestroy {
   @ViewChild('scrollbarRef') scrollbarRef!: NgScrollbar;
   @ViewChildren('readIndicatorRef') readIndicatorRefs!: QueryList<ElementRef<HTMLDivElement>>;
 
@@ -71,13 +72,14 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   readonly scrollToBottomVisible = signal<boolean>(false);
   readonly typingUsers = signal<string[]>([]);
   readonly messages = signal<ChatMessage[]>([]);
-  readonly lastReadMessagesMap = signal<Record<number, string>>({});
+  readonly lastReadMessagesMap = signal<Record<number, number>>({});
   readonly lastUserActivityTime = signal<Record<number, string>>({});
   readonly messagesWithReadIndicators = signal<Record<string, number[]>>({});
   readonly currentUserId = signal<number | null>(null);
-  readonly scrollSnapMessageId = signal<string | null>(null);
+  readonly scrollSnapMessageId = signal<number | null>(null);
   readonly loading = signal<boolean>(true);
   readonly hasMorePages = signal<boolean>(false);
+  readonly isWindowActive = signal<boolean>(!document.hidden && document.hasFocus());
 
   readonly myLastReadMessageId = computed(() => {
     return this.currentUserId() !== null ? this.lastReadMessagesMap()[this.currentUserId()!] : null;
@@ -85,15 +87,6 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
 
   readonly otherChatParticipants = computed(() => {
     return this.chatParticipants().filter((user) => user.id !== this.currentUserId());
-  });
-
-  readonly activeChatParticipants = computed(() => {
-    return this.otherChatParticipants()
-      .filter((user) => {
-        const dateTime = DateTime.fromISO(this.lastUserActivityTime()[user.id]);
-        return dateTime?.isValid && dateTime.plus({ minutes: 5 }) > DateTime.now();
-      })
-      .map((user) => user.id);
   });
 
   readonly messageBlocks = computed(() => {
@@ -134,6 +127,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
           userId: message.sentBy?.id!,
           name: message.sentBy?.firstName!,
           surname: message.sentBy?.lastName!,
+          lastActivityDateTime: this.lastUserActivityTime()[message.sentBy?.id!] || '',
           messages: [message],
           perspective: this.currentUserId() === message.sentBy?.id ? 'my' : 'their',
         };
@@ -169,6 +163,8 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     });
 
     document.addEventListener('visibilitychange', this.visibilityChangeEventDispatcher.bind(this));
+    window.addEventListener('focus', this.visibilityChangeEventDispatcher.bind(this));
+    window.addEventListener('blur', this.visibilityChangeEventDispatcher.bind(this));
     this.setupActivityUpdateTimer();
 
     this.chatService.typingUsers$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((typingUsers) => {
@@ -192,18 +188,24 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
 
     this.chatService.lastReadMessagesMap$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((lastReadMessagesMap) => {
       this.lastReadMessagesMap.set(lastReadMessagesMap);
+
       this.updateReadIndicatorPositions();
     });
 
     this.chatService.lastUserActivityMap$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((lastUserActivityMap) => {
       this.lastUserActivityTime.set(lastUserActivityMap);
-      this.updateReadIndicatorPositions();
     });
+  }
+
+  ngAfterViewChecked(): void {
+    this.updateReadIndicatorPositions();
   }
 
   ngOnDestroy(): void {
     this.teardownActivityUpdateTimer();
     document.removeEventListener('visibilitychange', this.visibilityChangeEventDispatcher.bind(this));
+    window.removeEventListener('focus', this.visibilityChangeEventDispatcher.bind(this));
+    window.removeEventListener('blur', this.visibilityChangeEventDispatcher.bind(this));
   }
 
   onSendMessage(message: string): void {
@@ -220,7 +222,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     this.scrollSnapMessageId.set(null);
   }
   onMessageRead = callDebounced(
-    (messageId: string) => {
+    (messageId: number) => {
       const message = this.messages().find((msg) => msg.id === messageId);
       const lastReadMessage = this.messages().find((msg) => msg.id === this.myLastReadMessageId());
 
@@ -266,7 +268,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
 
     if (!elementArray || elementArray.length === 0) return;
 
-    const messagesWithReadIndicatorsMap = new Map<string, number[]>();
+    const messagesWithReadIndicatorsMap = new Map<number, number[]>();
 
     for (const participant of this.otherChatParticipants()) {
       const targetIndicator = elementArray.find((el) => el.nativeElement.dataset['id'] === participant.id.toString());
@@ -323,10 +325,12 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   private onWindowFocused(): void {
     this.setupActivityUpdateTimer();
     this.chatService.updateLastActivity();
+    this.isWindowActive.set(true);
   }
 
   private onWindowBlurred(): void {
     this.teardownActivityUpdateTimer();
+    this.isWindowActive.set(false);
   }
 
   private visibilityChangeEventDispatcher() {

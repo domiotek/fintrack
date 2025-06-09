@@ -23,6 +23,7 @@ import { AppStateStore } from '../../../../core/store/app-state.store';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DateTime } from 'luxon';
 import { User } from '../../../../core/models/user/user.model';
+import { ActivityTextPipe } from '../../../../shared/pipes/activity-text.pipe';
 
 @Component({
   selector: 'app-chat-container',
@@ -60,6 +61,7 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
   private readonly chatService = inject(ChatService);
   private readonly appStateStore = inject(AppStateStore);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly activityTextPipe = new ActivityTextPipe();
 
   constructor() {
     effect(() => {
@@ -101,14 +103,7 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
   private generateActivityText() {
     if (!this.otherParticipant()) return;
 
-    if (!this.lastActiveDateTime()?.isValid) {
-      return this.activityText.set('');
-    }
-
-    const diffInMinutes = Math.abs(this.lastActiveDateTime()!.diffNow('minutes').minutes);
-
-    const newdiff = diffInMinutes < 4 ? 'teraz' : (this.lastActiveDateTime()!.toRelative({ style: 'long' }) ?? '');
-
-    this.activityText.set(newdiff);
+    const text = this.activityTextPipe.transform(this.lastActiveDateTime());
+    this.activityText.set(text);
   }
 }

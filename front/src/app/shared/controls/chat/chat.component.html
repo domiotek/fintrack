@@ -29,7 +29,8 @@
             [surname]="block.surname"
             [readIndicators]="messagesWithReadIndicators()"
             [finalized]="isMessageBlockFinalized(block.messages[block.messages.length - 1])"
-            [isAuthorActive]="activeChatParticipants().includes(block.userId)"
+            [authorActivityDateTime]="block.lastActivityDateTime"
+            [isWindowActive]="isWindowActive()"
             (messageReadEmit)="onMessageRead($event)"
           />
         }
