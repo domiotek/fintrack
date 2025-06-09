@@ -25,22 +25,6 @@ public class MessageMapper {
                 .build();
     }
 
-    public static PrivateMessageDto messageToPrivateMessageDto(Message message, LastReadMessage lastReadMessage, Friend friend) {
-        PrivateChatLastMessageUserDto lastReadMessageDto = PrivateChatLastMessageUserDto.builder()
-                .id(friend.getId())
-                .firstName(friend.getUser().getFirstName())
-                .lastName(friend.getUser().getLastName())
-                .build();
-
-        return PrivateMessageDto.builder()
-                .id(message.getId())
-                .lastMessage(message.getContent())
-                .lastMessageId(lastReadMessage.getId())
-                .isFriend(friend.getFriendStatus() == FriendStatus.ACCEPTED)
-                .otherParticipant(lastReadMessageDto)
-                .build();
-    }
-
     public static ReadMessageDto messageToReadMessageDto(Long userId, LastReadMessage message) {
         return ReadMessageDto.builder()
                 .userId(userId)

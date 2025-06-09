@@ -38,6 +38,7 @@ public enum BusinessErrorCodes {
     MESSAGE_DOES_NOT_EXIST(409, "Message does not exist", HttpStatus.NOT_FOUND),
     LAST_READ_MESSAGE_DOES_NOT_EXIST(410, "Last read message does not exist", HttpStatus.NOT_FOUND),
     CHAT_DOES_NOT_EXIST(411, "Chat does not exist", HttpStatus.NOT_FOUND),
+    INVALID_MESSAGE_ID(412, "Invalid message id", HttpStatus.NOT_FOUND),
     MISSING_REQUEST_BODY(501, "Missing request body", HttpStatus.FAILED_DEPENDENCY),
     REQUEST_FAILED(502, "Request failed", HttpStatus.BAD_GATEWAY),
     CANNOT_INVITE_YOURSELF(601, "Cannot invite yourself", HttpStatus.CONFLICT),
