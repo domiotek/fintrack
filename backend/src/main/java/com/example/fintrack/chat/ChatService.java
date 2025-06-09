@@ -128,8 +128,11 @@ public class ChatService {
     public void updateLastReadMessage(Authentication principal, long chatId, SentLastReadMessageDto sentLastReadMessageDto) {
         User user = (User) principal.getPrincipal();
 
-        var lastReadMessage = lastReadMessageRepository.findLastReadMessageByUserIdAndChatId(user.getId(), chatId).orElseThrow(LAST_READ_MESSAGE_DOES_NOT_EXIST::getError);
-        var message = messageRepository.findById(sentLastReadMessageDto.messageId()).orElseThrow(MESSAGE_DOES_NOT_EXIST::getError);
+        LastReadMessage lastReadMessage = lastReadMessageRepository.findLastReadMessageByUserIdAndChatId(user.getId(), chatId)
+                .orElseThrow(LAST_READ_MESSAGE_DOES_NOT_EXIST::getError);
+
+        Message message = messageRepository.findById(sentLastReadMessageDto.messageId())
+                .orElseThrow(MESSAGE_DOES_NOT_EXIST::getError);
 
         ZonedDateTime now = ZonedDateTime.now();
 
