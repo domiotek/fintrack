@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, input, OnInit, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, input, OnInit, signal } from '@angular/core';
 import { PrivateChat } from '../../../../core/models/chat/chat.model';
 import { AvatarComponent } from '../../../../shared/components/avatar/avatar.component';
 import { MatIconModule } from '@angular/material/icon';
@@ -28,10 +28,20 @@ export class ChatItemComponent implements OnInit {
       this.item().lastMessage?.id !== this.item().lastReadMessageId
     );
   }
+  readonly sentDiff = computed(() => {
+    const sentAt = this.item().lastMessage?.sentAt;
+    if (!sentAt) return '';
 
-  get sentDiff(): string {
-    return DateTime.fromISO(this.item().lastMessage?.sentAt ?? '').toRelative() ?? '';
-  }
+    const messageTime = DateTime.fromISO(sentAt);
+    const now = DateTime.now();
+    const diffInMinutes = now.diff(messageTime, 'minutes').minutes;
+
+    if (diffInMinutes < 1) {
+      return 'Przed chwilą';
+    }
+
+    return messageTime.toRelative() ?? '';
+  });
 
   readonly appStateStore = inject(AppStateStore);
   readonly destroyRef = inject(DestroyRef);

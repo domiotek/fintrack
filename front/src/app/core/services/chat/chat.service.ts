@@ -26,7 +26,7 @@ export class ChatService implements OnDestroy {
   private readonly privateChatsUpdates = new Subject<PrivateChat>();
   private readonly typingUsers = new BehaviorSubject<number[]>([]);
   private readonly messages = new BehaviorSubject<ChatMessage[]>([]);
-  private readonly lastReadMessagesMap = new BehaviorSubject<Record<number, string>>({});
+  private readonly lastReadMessagesMap = new BehaviorSubject<Record<number, number>>({});
   private readonly lastUserActivityMap = new BehaviorSubject<Record<number, string>>({});
 
   readonly privateChatsUpdates$ = this.privateChatsUpdates.asObservable();
@@ -54,8 +54,8 @@ export class ChatService implements OnDestroy {
     });
 
     this.stompClient
-      .watch(`/${this.currentUserId()}/private-chat-updates`)
-      .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this.connectedChatId.asObservable()))
+      .watch(`/topic/chats/${this.currentUserId()}/private-chat-updates`)
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((message: IMessage) => {
         const chat: PrivateChat = JSON.parse(message.body);
 
@@ -101,21 +101,31 @@ export class ChatService implements OnDestroy {
               acc[curr.userId] = curr.messageId;
               return acc;
             },
+            {} as Record<number, number>,
+          ),
+        );
+
+        this.lastUserActivityMap.next(
+          state.lastActivities.reduce(
+            (acc, curr) => {
+              acc[curr.userId] = curr.lastSeenAt;
+              return acc;
+            },
             {} as Record<number, string>,
           ),
         );
 
         this.stompClient
-          .watch(`/${chatId}/message`)
-          .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this.connectedChatId.asObservable()))
+          .watch(`/topic/chats/${chatId}/message`)
+          .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe((message: IMessage) => {
             const chatMessage: ChatMessage = JSON.parse(message.body);
             this.messages.next([...this.messages.value, chatMessage]);
           });
 
         this.stompClient
-          .watch(`/${chatId}/user-started-typing`)
-          .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this.connectedChatId.asObservable()))
+          .watch(`/topic/chats/${chatId}/user-started-typing`)
+          .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe((message: IMessage) => {
             const event: UserTypingEvent = JSON.parse(message.body);
 
@@ -127,8 +137,8 @@ export class ChatService implements OnDestroy {
           });
 
         this.stompClient
-          .watch(`/${chatId}/user-stopped-typing`)
-          .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this.connectedChatId.asObservable()))
+          .watch(`/topic/chats/${chatId}/user-stopped-typing`)
+          .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe((message: IMessage) => {
             const event: UserTypingEvent = JSON.parse(message.body);
 
@@ -138,14 +148,14 @@ export class ChatService implements OnDestroy {
           });
 
         this.stompClient
-          .watch(`/${chatId}/user-read-message`)
-          .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this.connectedChatId.asObservable()))
+          .watch(`/topic/chats/${chatId}/user-read-message`)
+          .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe((message: IMessage) => {
             const event: UserReadMessageEvent = JSON.parse(message.body);
 
             if (typeof event.userId !== 'number') return;
 
-            if (typeof event.messageId !== 'string') return;
+            if (typeof event.messageId !== 'number') return;
 
             if (event.userId === this.currentUserId()) return;
 
@@ -156,8 +166,8 @@ export class ChatService implements OnDestroy {
           });
 
         this.stompClient
-          .watch(`/${chatId}/user-last-activity`)
-          .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this.connectedChatId.asObservable()))
+          .watch(`/topic/chats/${chatId}/user-last-activity`)
+          .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe((message: IMessage) => {
             const event: UserAvailabilityEvent = JSON.parse(message.body);
 
@@ -178,12 +188,12 @@ export class ChatService implements OnDestroy {
 
   sendMessage(message: string) {
     return this.stompClient.publish({
-      destination: `/${this.connectedChatId.value}/post-message`,
+      destination: `/app/chats/${this.connectedChatId.value}/post-message`,
       body: message,
     });
   }
 
-  getNextChatMessages(lastFetchedMessageId: string | null): Observable<BasePagingResponse<ChatMessage>> {
+  getNextChatMessages(lastFetchedMessageId: number | null): Observable<BasePagingResponse<ChatMessage>> {
     let params = new HttpParams();
 
     if (lastFetchedMessageId) {
@@ -204,7 +214,7 @@ export class ChatService implements OnDestroy {
     if (!this.ensureConnected()) return;
 
     this.stompClient.publish({
-      destination: `/${this.connectedChatId.value}/started-typing`,
+      destination: `/app/chats/${this.connectedChatId.value}/started-typing`,
     });
   }
 
@@ -212,7 +222,7 @@ export class ChatService implements OnDestroy {
     if (!this.ensureConnected()) return;
 
     this.stompClient.publish({
-      destination: `/${this.connectedChatId.value}/stopped-typing`,
+      destination: `/app/chats/${this.connectedChatId.value}/stopped-typing`,
     });
   }
 
@@ -220,18 +230,18 @@ export class ChatService implements OnDestroy {
     if (!this.ensureConnected()) return;
 
     this.stompClient.publish({
-      destination: `/${this.connectedChatId.value}/report-last-activity`,
+      destination: `/app/chats/${this.connectedChatId.value}/report-last-activity`,
     });
   }
 
-  updateLastReadMessage(messageId: string): void {
+  updateLastReadMessage(messageId: number): void {
     if (!this.ensureConnected()) return;
 
     const lastReadMessages = this.lastReadMessagesMap.value;
 
     if (lastReadMessages[this.currentUserId()!] !== messageId) {
       this.stompClient.publish({
-        destination: `/${this.connectedChatId.value}/update-last-read-message`,
+        destination: `/app/chats/${this.connectedChatId.value}/update-last-read-message`,
         body: JSON.stringify({ messageId }),
       });
     }

@@ -6,7 +6,7 @@
       Ty:
     }
     @if (this.item().lastMessage; as message) {
-      <span class="collapsable">{{ message.content }}</span> <span class="separator"></span> {{ sentDiff }}
+      <span class="collapsable">{{ message.content }}</span> <span class="separator"></span> {{ sentDiff() }}
     } @else {
       <span class="collapsable">Nowy czat</span>
     }

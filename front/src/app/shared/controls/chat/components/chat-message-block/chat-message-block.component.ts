@@ -5,6 +5,8 @@ import { ChatMessageComponent } from '../chat-message/chat-message.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ChatMessage } from '../../../../../core/models/chat/message.model';
 import { DateTime } from 'luxon';
+import { ActivityTextPipe } from '../../../../pipes/activity-text.pipe';
+import { DEFAULT_CHAT_ACTIVITY_THRESHOLD } from '../../constants/chat.const';
 
 @Component({
   selector: 'app-chat-message-block',
@@ -19,14 +21,21 @@ export class ChatMessageBlockComponent implements OnInit, OnDestroy {
   readonly messages = input.required<ChatMessage[]>();
   readonly readIndicators = input<Record<string, number[]>>({});
   readonly finalized = input<boolean>(false);
-  readonly isAuthorActive = input<boolean>(false);
-  readonly messageReadEmit = output<string>();
+  readonly isWindowActive = input<boolean>(true);
+  readonly authorActivityDateTime = input.required<string>();
+  readonly messageReadEmit = output<number>();
 
   private readonly isInViewport = signal<boolean>(true);
-  private readonly isWindowActive = signal<boolean>(!document.hidden && document.hasFocus());
+  readonly activityText = signal<string>('');
+  readonly isAuthorActive = signal<boolean>(false);
   private observer!: IntersectionObserver;
 
   private readonly elementRef = inject(ElementRef);
+
+  private readonly updateInterval = 60000;
+  private intervalId: ReturnType<typeof setInterval> | null = null;
+
+  private readonly activityTextPipe = new ActivityTextPipe();
 
   get lastMessage(): ChatMessage {
     return this.messages()[this.messages().length - 1];
@@ -46,11 +55,17 @@ export class ChatMessageBlockComponent implements OnInit, OnDestroy {
         this.messageReadEmit.emit(this.lastMessage.id);
       }
     });
+
+    effect(() => {
+      this.authorActivityDateTime();
+      this.generateActivityText();
+    });
+
+    this.intervalId = setInterval(this.generateActivityText.bind(this), this.updateInterval);
   }
 
   ngOnInit(): void {
     this.setupObserver();
-    document.addEventListener('visibilitychange', this.onWindowStateChange);
   }
 
   ngOnDestroy(): void {
@@ -58,7 +73,10 @@ export class ChatMessageBlockComponent implements OnInit, OnDestroy {
       this.observer.disconnect();
     }
 
-    document.removeEventListener('visibilitychange', this.onWindowStateChange);
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+      this.intervalId = null;
+    }
   }
 
   getReadIndicatorStatus(message: ChatMessage): boolean {
@@ -91,7 +109,12 @@ export class ChatMessageBlockComponent implements OnInit, OnDestroy {
     this.observer.observe(this.elementRef.nativeElement);
   }
 
-  private readonly onWindowStateChange = (): void => {
-    this.isWindowActive.set(!document.hidden && document.hasFocus());
-  };
+  private generateActivityText() {
+    const activityDateTime = DateTime.fromISO(this.authorActivityDateTime());
+
+    this.isAuthorActive.set(activityDateTime > DateTime.now().minus({ minutes: DEFAULT_CHAT_ACTIVITY_THRESHOLD }));
+
+    const text = this.activityTextPipe.transform(activityDateTime);
+    this.activityText.set(text);
+  }
 }

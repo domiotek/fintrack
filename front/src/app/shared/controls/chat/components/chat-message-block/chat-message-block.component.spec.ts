@@ -19,12 +19,13 @@ describe('ChatMessageBlockComponent', () => {
     fixture.componentRef.setInput('name', 'Test User');
     fixture.componentRef.setInput('surname', 'User');
     const chatMessage: ChatMessage = {
-      id: '1',
+      id: 1,
       content: 'Hello, this is a test message.',
       authorType: 'user',
       sentAt: new Date().toISOString(),
     };
     fixture.componentRef.setInput('messages', [chatMessage]);
+    fixture.componentRef.setInput('authorActivityDateTime', '2023-10-01T12:00:00Z');
 
     component = fixture.componentInstance;
     fixture.detectChanges();
