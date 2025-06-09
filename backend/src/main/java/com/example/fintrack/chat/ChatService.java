@@ -172,7 +172,7 @@ public class ChatService {
     }
 
     public Page<MessageDto> getChatMessages(long messageId, long chatId, int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page, size);
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("id").descending());
 
         Page<Message> messages = messageRepository.getMessagesByIdLessThanEqualAndChatId(messageId, chatId, pageRequest);
 
