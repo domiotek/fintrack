@@ -145,7 +145,7 @@ public class EventService {
                 .map(Bill::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal costPerUser = totalSum.divide(
-                BigDecimal.valueOf(event.getUsers().size()), 2, RoundingMode.HALF_UP
+                BigDecimal.valueOf(event.getUsers().size()), 6, RoundingMode.HALF_UP
         );
 
         BigDecimal totalSumInEventCurrency = currencyConverter
