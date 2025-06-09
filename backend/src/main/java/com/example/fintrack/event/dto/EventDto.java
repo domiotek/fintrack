@@ -13,6 +13,7 @@ public record EventDto(
         Boolean isFounder,
         Integer numberOfNotifications,
         EventCurrencyDto currency,
+        Long chatId,
         List<EventUserDto> users
 ) {
 }

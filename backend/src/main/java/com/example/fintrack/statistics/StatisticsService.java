@@ -60,7 +60,7 @@ public class StatisticsService {
         BigDecimal totalSumPreviousMonth = billsPreviousMonth.stream().map(Bill::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        BigDecimal previousMonthDifference = totalSumPreviousMonth.subtract(totalSum);
+        BigDecimal previousMonthDifference = totalSum.subtract(totalSumPreviousMonth);
 
         NavigableMap<LocalDate, BigDecimal> spendingPerDay = new TreeMap<>();
 
