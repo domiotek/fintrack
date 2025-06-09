@@ -17,9 +17,9 @@
 </div>
 <div class="right_container">
   @if (transaction().currencyId === userCurrency().id) {
-    <p class="main_amount bold">{{ transaction().amount }} {{ userCurrency().code }}</p>
+    <p class="main_amount bold">{{ transaction().userValue }} {{ userCurrency().code }}</p>
   } @else {
-    <p class="main_amount bold">~ {{ transaction().amount }} {{ userCurrency().code }}</p>
+    <p class="main_amount bold">~ {{ transaction().userValue }} {{ userCurrency().code }}</p>
     <p class="payment_amount">{{ transaction().billValue }} {{ secondCurrencyCode }}</p>
   }
 </div>

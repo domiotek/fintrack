@@ -1,0 +1,26 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1em;
+  min-height: 200px;
+
+  .spending_info_container {
+    display: flex;
+    gap: 8px;
+
+    .prev_month_diff {
+      display: flex;
+      align-items: center;
+      p {
+        font-size: 14px;
+      }
+    }
+  }
+
+  app-line-chart {
+    margin: auto;
+    height: 450px;
+    width: 95%;
+  }
+}
