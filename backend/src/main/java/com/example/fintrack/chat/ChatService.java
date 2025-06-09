@@ -25,8 +25,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.List;
@@ -47,8 +49,8 @@ public class ChatService {
     private final ChatRepository chatRepository;
     private final UserRepository userRepository;
 
-    public void sendMessage(long chatId, SendMessageDto sendMessageDto) {
-        User user = userProvider.getLoggedUser();
+    public void sendMessage(Authentication principal, long chatId, String sendMessage) {
+        User user = (User) principal.getPrincipal();
 
         Chat chat = chatRepository.findById(chatId).orElseThrow(CHAT_DOES_NOT_EXIST::getError);
 
@@ -65,7 +67,7 @@ public class ChatService {
         message.setChat(chat);
         message.setSendTime(now);
         message.setMessageType(MessageType.USER);
-        message.setContent(sendMessageDto.message());
+        message.setContent(sendMessage);
 
         Message savedMessage = messageRepository.save(message);
 
@@ -118,8 +120,8 @@ public class ChatService {
         });
     }
 
-    public void startTyping(long chatId) {
-        User user = userProvider.getLoggedUser();
+    public void startTyping(Authentication principal, long chatId) {
+        User user = (User) principal.getPrincipal();
 
         MessageTypingDto startTypingDto = MessageTypingDto.builder()
                 .userId(user.getId())
@@ -128,18 +130,18 @@ public class ChatService {
         simpMessagingTemplate.convertAndSend("/topic/chats/" + chatId + "/user-started-typing", startTypingDto);
     }
 
-    public void stopTyping(long chatId) {
-        User user = userProvider.getLoggedUser();
+    public void stopTyping(Authentication principal, long chatId) {
+        User user = (User) principal.getPrincipal();
 
         MessageTypingDto stopTypingDto = MessageTypingDto.builder()
                 .userId(user.getId())
                 .build();
 
-        simpMessagingTemplate.convertAndSend("/topic/chats" + chatId + "/user-stopped-typing", stopTypingDto);
+        simpMessagingTemplate.convertAndSend("/topic/chats/" + chatId + "/user-stopped-typing", stopTypingDto);
     }
 
-    public void reportLastActivity(long chatId) {
-        User user = userProvider.getLoggedUser();
+    public void reportLastActivity(Authentication principal, long chatId) {
+        User user = (User) principal.getPrincipal();
 
         user.setLastSeenAt(ZonedDateTime.now());
         userRepository.save(user);
@@ -147,8 +149,8 @@ public class ChatService {
         simpMessagingTemplate.convertAndSend("/topic/chats" + chatId + "/user-last-activity", MessageMapper.messageToLastActivityDto(user));
     }
 
-    public void updateLastReadMessage(long chatId, SendMessageDto sendMessageDto) {
-        User user = userProvider.getLoggedUser();
+    public void updateLastReadMessage(Authentication principal, long chatId, SendMessageDto sendMessageDto) {
+        User user = (User) principal.getPrincipal();
 
         LastReadMessage lastReadMessage = lastReadMessageRepository
                 .findLastReadMessageByUserIdAndChatId(user.getId(), chatId)
