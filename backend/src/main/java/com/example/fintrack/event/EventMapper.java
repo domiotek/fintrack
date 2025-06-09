@@ -26,6 +26,7 @@ public class EventMapper {
                         .code(userEvent.getEvent().getCurrency().getCode())
                         .build()
                 )
+                .chatId(userEvent.getEvent().getChat().getId())
                 .users(userEvent.getEvent().getUsers().stream()
                         .map(UserEvent::getUser)
                         .map(user -> EventUserDto.builder()
