@@ -3,6 +3,7 @@ import { Event } from '../models/events/event';
 import { EventBill, EventCurrency } from '../models/events/event-bill';
 import { EventStatus } from '../models/events/event-status.enum';
 import { EventSummary } from '../models/events/event-summary';
+import { Stats } from '../models/statistics/stats.model';
 import { User } from '../models/users/user';
 
 export const mocked_currency: Currency = {
@@ -56,4 +57,9 @@ export const mocked_eventCurrency: EventCurrency = {
 export const mocked_summary: EventSummary = {
   eventCurrency: mocked_eventCurrency,
   userCurrency: mocked_eventCurrency,
+};
+
+export const mocked_chartData: Stats = {
+  labels: ['1', '2', '3', '4', '5'],
+  data: [10, 20, 30, 40, 50],
 };
