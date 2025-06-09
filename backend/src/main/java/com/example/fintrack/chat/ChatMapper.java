@@ -32,6 +32,7 @@ public class ChatMapper {
                         .id(friend.getFriend().getId())
                         .firstName(friend.getFriend().getFirstName())
                         .lastName(friend.getFriend().getLastName())
+                        .lastSeenAt(friend.getFriend().getLastSeenAt())
                         .build()
                 )
                 .build();
