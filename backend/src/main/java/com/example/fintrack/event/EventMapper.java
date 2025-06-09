@@ -8,6 +8,7 @@ import com.example.fintrack.user.User;
 import com.example.fintrack.userevent.UserEvent;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Map;
 
 public class EventMapper {
@@ -63,12 +64,12 @@ public class EventMapper {
                 .eventCurrency(
                         currencyConverter.convertFromUSDToGivenCurrency(
                                 event.getCurrency(), event.getStartDateTime().toLocalDate(), settlementEntry.getValue()
-                        )
+                        ).setScale(2, RoundingMode.HALF_UP)
                 )
                 .userCurrency(
                         currencyConverter.convertFromUSDToGivenCurrency(
                                 user.getCurrency(), event.getStartDateTime().toLocalDate(), settlementEntry.getValue()
-                        )
+                        ).setScale(2, RoundingMode.HALF_UP)
                 )
                 .build();
 
