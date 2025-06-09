@@ -2,7 +2,6 @@ package com.example.fintrack.chat;
 
 import com.example.fintrack.chat.dto.ChatStateDto;
 import com.example.fintrack.chat.dto.PrivateChatDto;
-import com.example.fintrack.exception.BusinessErrorCodes;
 import com.example.fintrack.friend.Friend;
 import com.example.fintrack.friend.FriendRepository;
 import com.example.fintrack.friend.FriendStatus;
@@ -15,12 +14,14 @@ import com.example.fintrack.message.Message;
 import com.example.fintrack.message.MessageMapper;
 import com.example.fintrack.message.MessageRepository;
 import com.example.fintrack.message.MessageType;
+import com.example.fintrack.message.dto.LastActivityDto;
 import com.example.fintrack.message.dto.MessageDto;
 import com.example.fintrack.message.dto.MessageTypingDto;
 import com.example.fintrack.message.dto.ReadMessageDto;
 import com.example.fintrack.security.service.UserProvider;
 import com.example.fintrack.user.User;
 import com.example.fintrack.user.UserRepository;
+import com.example.fintrack.userevent.UserEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,7 +31,6 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import java.security.Principal;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -148,7 +148,7 @@ public class ChatService {
         user.setLastSeenAt(ZonedDateTime.now());
         userRepository.save(user);
 
-        simpMessagingTemplate.convertAndSend("/topic/chats/" + chatId + "/user-last-activity", MessageMapper.messageToLastActivityDto(user));
+        simpMessagingTemplate.convertAndSend("/topic/chats/" + chatId + "/user-last-activity", MessageMapper.userToLastActivityDto(user));
     }
 
     public void updateLastReadMessage(Authentication principal, long chatId, SentLastReadMessageDto sentLastReadMessageDto) {
@@ -190,9 +190,26 @@ public class ChatService {
                 .map(LastReadMessageMapper::lastReadMessageToLastReadMessageDto)
                 .toList();
 
+        Chat chat = chatRepository.findById(chatId).orElseThrow(CHAT_DOES_NOT_EXIST::getError);
+
+        List<LastActivityDto> lastActivities;
+
+        if (chat.getEvent() != null) {
+            lastActivities = chat.getEvent().getUsers().stream()
+                    .map(UserEvent::getUser)
+                    .map(MessageMapper::userToLastActivityDto)
+                    .toList();
+        } else {
+            lastActivities = chat.getFriends().stream()
+                    .map(Friend::getUser)
+                    .map(MessageMapper::userToLastActivityDto)
+                    .toList();
+        }
+
         return ChatStateDto.builder()
                 .messages(massagesDtos)
                 .lastReadMessages(userLastReadMessages)
+                .lastActivities(lastActivities)
                 .build();
     }
 
