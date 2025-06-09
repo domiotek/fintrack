@@ -3,6 +3,7 @@ package com.example.fintrack.statistics;
 import com.example.fintrack.bill.Bill;
 import com.example.fintrack.bill.BillRepository;
 import com.example.fintrack.category.Category;
+import com.example.fintrack.currency.CurrencyConverter;
 import com.example.fintrack.security.service.UserProvider;
 import com.example.fintrack.statistics.dto.StatisticsChartDataDto;
 import com.example.fintrack.statistics.dto.StatisticsDashboardDto;
@@ -32,6 +33,7 @@ public class StatisticsService {
 
     private final UserProvider userProvider;
     private final BillRepository billRepository;
+    private final CurrencyConverter currencyConverter;
 
     public StatisticsDashboardDto getDashboardStatistics(ZonedDateTime from, ZonedDateTime to, Long categoryId) {
         User user = userProvider.getLoggedUser();
@@ -57,6 +59,8 @@ public class StatisticsService {
         BigDecimal totalSumPreviousMonth = billsPreviousMonth.stream().map(Bill::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
+        BigDecimal previousMonthDifference = totalSumPreviousMonth.subtract(totalSum);
+
         NavigableMap<LocalDate, BigDecimal> spendingPerDay = new TreeMap<>();
 
         bills.forEach(bill -> spendingPerDay.merge(bill.getDate().toLocalDate(), bill.getAmount(), BigDecimal::add));
@@ -77,12 +81,20 @@ public class StatisticsService {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         List<String> formattedLabels = labels.stream().map(dateTimeFormatter::format).toList();
 
+        BigDecimal totalSumInUserCurrency = currencyConverter
+                .convertFromUSDToGivenCurrency(user.getCurrency(), LocalDate.now(), totalSum);
+        BigDecimal previousMonthDifferenceInUserCurrency = currencyConverter
+                .convertFromUSDToGivenCurrency(user.getCurrency(), LocalDate.now(), previousMonthDifference);
+        List<BigDecimal> dataInUserCurrency = data.stream()
+                .map(value -> currencyConverter.convertFromUSDToGivenCurrency(user.getCurrency(), LocalDate.now(), value))
+                .toList();
+
         return StatisticsDashboardDto.builder()
-                .totalSpending(totalSum)
-                .previousMonthDifference(totalSumPreviousMonth.subtract(totalSum))
+                .totalSpending(totalSumInUserCurrency)
+                .previousMonthDifference(previousMonthDifferenceInUserCurrency)
                 .chartData(StatisticsChartDataDto.builder()
                         .labels(formattedLabels)
-                        .data(data)
+                        .data(dataInUserCurrency)
                         .build()
                 )
                 .build();
@@ -138,9 +150,13 @@ public class StatisticsService {
             formattedLabels = labels.stream().map(Object::toString).toList();
         }
 
+        List<BigDecimal> dataInUserCurrency = data.stream()
+                .map(value -> currencyConverter.convertFromUSDToGivenCurrency(user.getCurrency(), LocalDate.now(), value))
+                .toList();
+
         return StatisticsChartDataDto.builder()
                 .labels(formattedLabels)
-                .data(data)
+                .data(dataInUserCurrency)
                 .build();
     }
 
@@ -200,9 +216,13 @@ public class StatisticsService {
             formattedLabels = labels.stream().map(Object::toString).toList();
         }
 
+        List<BigDecimal> dataInUserCurrency = data.stream()
+                .map(value -> currencyConverter.convertFromUSDToGivenCurrency(user.getCurrency(), LocalDate.now(), value))
+                .toList();
+
         return StatisticsChartDataDto.builder()
                 .labels(formattedLabels)
-                .data(data)
+                .data(dataInUserCurrency)
                 .build();
     }
 
@@ -223,9 +243,13 @@ public class StatisticsService {
 
         List<String> formattedLabels = labels.stream().map(Category::getName).toList();
 
+        List<BigDecimal> dataInUserCurrency = data.stream()
+                .map(value -> currencyConverter.convertFromUSDToGivenCurrency(user.getCurrency(), LocalDate.now(), value))
+                .toList();
+
         return StatisticsChartDataDto.builder()
                 .labels(formattedLabels)
-                .data(data)
+                .data(dataInUserCurrency)
                 .build();
     }
 
@@ -271,9 +295,13 @@ public class StatisticsService {
                 .map(dayOfWeek -> dayOfWeek.getDisplayName(TextStyle.FULL, Locale.of("pl", "PL")))
                 .toList();
 
+        List<BigDecimal> dataInUserCurrency = data.stream()
+                .map(value -> currencyConverter.convertFromUSDToGivenCurrency(user.getCurrency(), LocalDate.now(), value))
+                .toList();
+
         return StatisticsChartDataDto.builder()
                 .labels(formattedLabels)
-                .data(data)
+                .data(dataInUserCurrency)
                 .build();
     }
 }

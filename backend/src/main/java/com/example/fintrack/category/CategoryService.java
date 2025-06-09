@@ -20,6 +20,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 import static com.example.fintrack.category.CategorySpecification.*;
+import static com.example.fintrack.exception.BusinessErrorCodes.*;
 import static com.example.fintrack.exception.BusinessErrorCodes.CANNOT_DELETE_DEFAULT_CATEGORY;
 import static com.example.fintrack.exception.BusinessErrorCodes.CATEGORY_DOES_NOT_EXIST;
 
@@ -52,6 +53,10 @@ public class CategoryService {
 
     public void addCategory(AddCategoryDto addCategoryDto) {
         User user = userProvider.getLoggedUser();
+
+        if (categoryRepository.existsCategoryByNameIgnoringCaseAndUserId(addCategoryDto.name(), user.getId())) {
+            throw CATEGORY_ALREADY_EXISTS.getError();
+        }
 
         Category category = CategoryMapper.addCategoryDtoToCategory(addCategoryDto, user);
 
