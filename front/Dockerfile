@@ -13,7 +13,7 @@ ARG COOLIFY_BRANCH
 
 ENV API_URL=$API_URL
 
-RUN if [ -n "$COOLIFY_BRANCH" ] then \
+RUN if [ -n "$COOLIFY_BRANCH" ]; then \
         PR_ID=$(echo "$COOLIFY_BRANCH" | sed -n 's|^pull/\([0-9]*\)/head$|\1|p'); \
         if [ -n "$PR_ID" ] && [ "$PR_ID" != "" ]; then \
             PROTOCOL=$(echo "$API_URL" | sed -n 's|^\(https\?\)://.*|\1|p'); \
