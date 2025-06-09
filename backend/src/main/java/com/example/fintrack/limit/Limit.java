@@ -27,7 +27,7 @@ public class Limit {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    @Column(nullable = false)
+    @Column(nullable = false, precision = 18, scale = 6)
     private BigDecimal amount;
 
     @Column(nullable = false)

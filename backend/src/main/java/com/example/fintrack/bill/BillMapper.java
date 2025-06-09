@@ -17,18 +17,22 @@ public class BillMapper {
     public static EventBillDto billToEventBillDto(Bill bill, CurrencyConverter currencyConverter, User user) {
         BigDecimal amount = bill.getAmount();
         BigDecimal costPerUser = amount.divide(
-                BigDecimal.valueOf(bill.getEvent().getUsers().size()), 2, RoundingMode.HALF_UP
+                BigDecimal.valueOf(bill.getEvent().getUsers().size()), 6, RoundingMode.HALF_UP
         );
 
         BigDecimal amountInEventCurrency = currencyConverter
-                .convertFromUSDToGivenCurrency(bill.getCurrency(), bill.getDate().toLocalDate(), amount);
+                .convertFromUSDToGivenCurrency(bill.getCurrency(), bill.getDate().toLocalDate(), amount)
+                .setScale(2, RoundingMode.HALF_UP);
         BigDecimal costPerUserInEventCurrency = currencyConverter
-                .convertFromUSDToGivenCurrency(bill.getCurrency(), bill.getDate().toLocalDate(), costPerUser);
+                .convertFromUSDToGivenCurrency(bill.getCurrency(), bill.getDate().toLocalDate(), costPerUser)
+                .setScale(2, RoundingMode.HALF_UP);
 
         BigDecimal amountInUserCurrency = currencyConverter
-                .convertFromUSDToGivenCurrency(user.getCurrency(), bill.getDate().toLocalDate(), amount);
+                .convertFromUSDToGivenCurrency(user.getCurrency(), bill.getDate().toLocalDate(), amount)
+                .setScale(2, RoundingMode.HALF_UP);
         BigDecimal costPerUserInUserCurrency = currencyConverter
-                .convertFromUSDToGivenCurrency(user.getCurrency(), bill.getDate().toLocalDate(), costPerUser);
+                .convertFromUSDToGivenCurrency(user.getCurrency(), bill.getDate().toLocalDate(), costPerUser)
+                .setScale(2, RoundingMode.HALF_UP);
 
         return EventBillDto.builder()
                 .id(bill.getId())
@@ -57,9 +61,11 @@ public class BillMapper {
         BigDecimal amount = bill.getAmount();
 
         BigDecimal amountInBillCurrency = currencyConverter
-                .convertFromUSDToGivenCurrency(bill.getCurrency(), bill.getDate().toLocalDate(), amount);
+                .convertFromUSDToGivenCurrency(bill.getCurrency(), bill.getDate().toLocalDate(), amount)
+                .setScale(2, RoundingMode.HALF_UP);
         BigDecimal amountInUserCurrency = currencyConverter
-                .convertFromUSDToGivenCurrency(user.getCurrency(), bill.getDate().toLocalDate(), amount);
+                .convertFromUSDToGivenCurrency(user.getCurrency(), bill.getDate().toLocalDate(), amount)
+                .setScale(2, RoundingMode.HALF_UP);
 
         BillCategoryDto categoryDto = BillCategoryDto.builder()
                 .id(bill.getCategory().getId())
