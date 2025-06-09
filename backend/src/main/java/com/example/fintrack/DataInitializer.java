@@ -383,7 +383,7 @@ public class DataInitializer implements CommandLineRunner {
         Bill bill9 = new Bill();
         bill9.setName("Komputer");
         bill9.setDate(ZonedDateTime.now().minusDays(1).minusHours(6));
-        bill9.setCategory(category7);
+        bill9.setCategory(category1);
         bill9.setCurrency(currency2);
         bill9.setUser(user1);
         bill9.setAmount(BigDecimal.valueOf(75));

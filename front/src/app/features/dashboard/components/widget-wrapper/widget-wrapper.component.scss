@@ -3,7 +3,6 @@
 :host {
   flex: 1;
   min-width: min(100%, 300px);
-  min-height: 300px;
 
   mat-card,
   mat-card-content {
@@ -25,6 +24,7 @@
 
   .widgetContent {
     margin-top: 1em;
+    height: 100%;
   }
 
   .widgetContent--loading {

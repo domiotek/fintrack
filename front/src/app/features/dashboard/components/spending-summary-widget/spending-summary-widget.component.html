@@ -1,1 +1,22 @@
-<p>spending-summary-widget works!</p>
+@let userCurrency = userCurrency$ | async;
+
+@if (data()) {
+  @if (data()!.totalSpending && userCurrency) {
+    <div class="spending_info_container">
+      <p class="total_spending bold">{{ data()!.totalSpending }} {{ userCurrency.code }}</p>
+      <div class="prev_month_diff">
+        @if (data()!.previousMonthDifference >= 0) {
+          <mat-icon class="green">arrow_drop_up</mat-icon>
+        } @else {
+          <mat-icon class="red">arrow_drop_down</mat-icon>
+        }
+        <p class="bold" [ngClass]="data()!.previousMonthDifference >= 0 ? 'green' : 'red'">
+          {{ data()?.previousMonthDifference }} {{ userCurrency.code }}
+        </p>
+      </div>
+    </div>
+    <app-line-chart [chartData]="data()!.chartData" [tooltipLabel]="'Wartość wydatków [' + userCurrency.code + ']'" />
+  } @else {
+    <app-no-data [noDataMessage]="'Brak wydatków w tym miesiącu'" />
+  }
+}
