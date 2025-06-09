@@ -102,21 +102,21 @@ public class DataInitializer implements CommandLineRunner {
         rateRepository.saveAll(List.of(rate1, rate2, rate3, rate4, rate5, rate6));
 
         User user1 = new User();
-        user1.setFirstName("abc");
-        user1.setLastName("def");
-        user1.setEmail("abc@def.com");
+        user1.setFirstName("Jan");
+        user1.setLastName("Kowalski");
+        user1.setEmail("jan@kowalski.com");
         user1.setPassword(passwordEncoder.encode("password"));
         user1.setCurrency(currency1);
         User user2 = new User();
-        user2.setFirstName("qwe");
-        user2.setLastName("zxc");
-        user2.setEmail("qwe@zxc.com");
+        user2.setFirstName("Piotr");
+        user2.setLastName("Nowak");
+        user2.setEmail("piotr@nowak.com");
         user2.setPassword(passwordEncoder.encode("password"));
         user2.setCurrency(currency1);
         User user3 = new User();
-        user3.setFirstName("asd");
-        user3.setLastName("qwe");
-        user3.setEmail("asd@qwe.com");
+        user3.setFirstName("Michał");
+        user3.setLastName("Orzeł");
+        user3.setEmail("michal@orzel.com");
         user3.setPassword(passwordEncoder.encode("password"));
         user3.setCurrency(currency2);
         userRepository.saveAll(List.of(user1, user2, user3));
@@ -419,6 +419,7 @@ public class DataInitializer implements CommandLineRunner {
         bill14.setCurrency(currency2);
         bill14.setUser(user1);
         bill14.setAmount(BigDecimal.valueOf(13));
-        billRepository.saveAll(List.of(bill1, bill2, bill3, bill4, bill5, bill6, bill7, bill8, bill9, bill10, bill11, bill12, bill13, bill14));
+        billRepository.saveAll(List.of(bill1, bill2, bill3, bill4, bill5, bill6, bill7, bill8, bill9, bill10,
+                bill11, bill12, bill13, bill14));
     }
 }
