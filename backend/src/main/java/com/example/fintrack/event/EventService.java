@@ -86,12 +86,7 @@ public class EventService {
 
         chatRepository.save(chat);
 
-        Event event = new Event();
-        event.setName(addEventDto.name());
-        event.setCurrency(currency);
-        event.setStartDateTime(addEventDto.startDate());
-        event.setEndDateTime(addEventDto.endDate());
-        event.setChat(chat);
+        Event event = EventMapper.addEventDtoToEvent(addEventDto, currency, chat);
 
         eventRepository.save(event);
 

@@ -1,5 +1,7 @@
 package com.example.fintrack.event;
 
+import com.example.fintrack.chat.Chat;
+import com.example.fintrack.currency.Currency;
 import com.example.fintrack.currency.CurrencyConverter;
 import com.example.fintrack.event.dto.*;
 import com.example.fintrack.user.User;
@@ -34,6 +36,18 @@ public class EventMapper {
                         .toList()
                 )
                 .build();
+    }
+
+    public static Event addEventDtoToEvent(AddEventDto addEventDto, Currency currency, Chat chat) {
+        Event event = new Event();
+
+        event.setName(addEventDto.name());
+        event.setCurrency(currency);
+        event.setStartDateTime(addEventDto.startDate());
+        event.setEndDateTime(addEventDto.endDate());
+        event.setChat(chat);
+
+        return event;
     }
 
     public static SettlementDto settlementEntryToSettlementDto(
