@@ -62,12 +62,12 @@ public class CurrencyConverter {
                 .filter(rate -> rate.getCurrency().equals(toCurrency))
                 .findFirst()
                 .orElseGet(() -> latestRates.stream()
-                        .filter(rate -> rate.getCurrency().equals(fromCurrency))
+                        .filter(rate -> rate.getCurrency().equals(toCurrency))
                         .findFirst()
                         .orElseThrow(RATE_DOES_NOT_EXIST::getError)
                 );
 
-        return amount.divide(fromRate.getAmount(), 2, RoundingMode.HALF_UP).multiply(toRate.getAmount())
-                .setScale(2, RoundingMode.HALF_UP);
+        return amount.divide(fromRate.getAmount(), 6, RoundingMode.HALF_UP).multiply(toRate.getAmount())
+                .setScale(6, RoundingMode.HALF_UP);
     }
 }
