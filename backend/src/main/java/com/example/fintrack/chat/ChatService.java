@@ -2,6 +2,7 @@ package com.example.fintrack.chat;
 
 import com.example.fintrack.chat.dto.ChatStateDto;
 import com.example.fintrack.chat.dto.PrivateChatDto;
+import com.example.fintrack.exception.BusinessErrorCodes;
 import com.example.fintrack.friend.Friend;
 import com.example.fintrack.friend.FriendRepository;
 import com.example.fintrack.friend.FriendStatus;
@@ -9,6 +10,7 @@ import com.example.fintrack.lastreadmessage.LastReadMessage;
 import com.example.fintrack.lastreadmessage.LastReadMessageMapper;
 import com.example.fintrack.lastreadmessage.LastReadMessageRepository;
 import com.example.fintrack.lastreadmessage.dto.LastReadMessageDto;
+import com.example.fintrack.lastreadmessage.dto.SentLastReadMessageDto;
 import com.example.fintrack.message.Message;
 import com.example.fintrack.message.MessageMapper;
 import com.example.fintrack.message.MessageRepository;
@@ -81,15 +83,14 @@ public class ChatService {
 
         List<Friend> friends = friendRepository.findFriendsByChatId(chatId);
 
-        if(friends.size() > 2) {
-            simpMessagingTemplate.convertAndSend("/topic/chats/" + chatId + "/message", MessageMapper.messageToMessageDto(savedMessage));
-        } else {
+        simpMessagingTemplate.convertAndSend("/topic/chats/" + chatId + "/message", MessageMapper.messageToMessageDto(savedMessage));
+        if(friends.size() == 2) {
             Friend friend = friends.stream()
                     .filter(s -> !Objects.equals(s.getUser().getId(), user.getId()))
                     .findFirst()
                     .orElseThrow(FRIEND_DOES_NOT_EXIST::getError);
-
-            simpMessagingTemplate.convertAndSend("/topic/chats/" + chatId + "/private-chat-updates", MessageMapper.messageToPrivateMessageDto(savedMessage, lastReadMessage, friend));
+            simpMessagingTemplate.convertAndSend("/topic/chats/" + friend.getFriend().getId() + "/private-chat-updates", ChatMapper.friendToPrivateChatDto(friend, message, lastReadMessage));
+            simpMessagingTemplate.convertAndSend("/topic/chats/" + friend.getUser() .getId() + "/private-chat-updates", ChatMapper.friendToPrivateChatDto(friend, message, lastReadMessage));
         }
 
         lastReadMessageRepository.save(lastReadMessage);
@@ -150,15 +151,11 @@ public class ChatService {
         simpMessagingTemplate.convertAndSend("/topic/chats" + chatId + "/user-last-activity", MessageMapper.messageToLastActivityDto(user));
     }
 
-    public void updateLastReadMessage(Authentication principal, long chatId, SendMessageDto sendMessageDto) {
+    public void updateLastReadMessage(Authentication principal, long chatId, SentLastReadMessageDto sentLastReadMessageDto) {
         User user = (User) principal.getPrincipal();
 
-        LastReadMessage lastReadMessage = lastReadMessageRepository
-                .findLastReadMessageByUserIdAndChatId(user.getId(), chatId)
-                .orElseThrow(LAST_READ_MESSAGE_DOES_NOT_EXIST::getError);
-
-        Message message = lastReadMessage.getMessage();
-        message.setContent(sendMessageDto.message());
+        var lastReadMessage = lastReadMessageRepository.findLastReadMessageByUserIdAndChatId(user.getId(), chatId).orElseThrow(LAST_READ_MESSAGE_DOES_NOT_EXIST::getError);
+        var message = messageRepository.findById(sentLastReadMessageDto.messageId()).orElseThrow(MESSAGE_DOES_NOT_EXIST::getError);
 
         ZonedDateTime now = ZonedDateTime.now();
 
@@ -173,7 +170,7 @@ public class ChatService {
     }
 
     public Page<MessageDto> getChatMessages(long messageId, long chatId, int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("id").descending());
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("id").ascending());
 
         Page<Message> messages = messageRepository.getMessagesByIdLessThanEqualAndChatId(messageId, chatId, pageRequest);
 
@@ -181,7 +178,7 @@ public class ChatService {
     }
 
     public ChatStateDto getChatState(long chatId, int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("id").descending());
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("id").ascending());
 
         Page<Message> messages = messageRepository.getMessagesByChatId(chatId, pageRequest);
 
