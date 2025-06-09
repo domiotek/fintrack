@@ -42,15 +42,13 @@ services:
         condition: service_started
     networks:
       - fintrack_network
-
   fintrack_app:
     build:
       context: front
       dockerfile: Dockerfile
       args:
         API_URL: "${API_URL}"
-        IS_COOLIFY: "${IS_COOLIFY}"
-        BRANCH_NAME: "${COOLIFY_BRANCH}"
+        COOLIFY_BRANCH: "${COOLIFY_BRANCH}"
     container_name: fintrack_app
     networks:
       - fintrack_network
