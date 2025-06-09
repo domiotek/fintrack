@@ -1,0 +1,32 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <app-form-progress-bar [active]="submitting()" />
+
+  @if (this.errorCode() !== null) {
+    <app-alert-panel severity="error">{{ settingsService.getErrorMessage(this.errorCode()!) }}</app-alert-panel>
+  }
+
+  <mat-form-field appearance="outline">
+    <mat-label>Adres e-mail</mat-label>
+    <input matInput formControlName="email" title="Adres e-mail" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Imię</mat-label>
+    <input matInput formControlName="firstName" title="Imię" />
+    @if (form.get('firstName')?.hasError('required')) {
+      <mat-error>Imię jest wymagane.</mat-error>
+    }
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Nazwisko</mat-label>
+    <input matInput formControlName="lastName" title="Nazwisko" />
+    @if (form.get('lastName')?.hasError('required')) {
+      <mat-error>Nazwisko jest wymagane.</mat-error>
+    }
+  </mat-form-field>
+
+  <app-currency-selector [parentForm]="form" />
+
+  <button type="submit" mat-flat-button color="primary" [disabled]="submitting()">Zapisz zmiany</button>
+</form>

@@ -1,1 +1,27 @@
-<p>settings works!</p>
+<div class="settings-header">
+  <div class="user-info-container">
+    <app-avatar [name]="firstName()!" [surname]="lastName()!" />
+    <h1>{{ firstName() }} {{ lastName() }}</h1>
+  </div>
+</div>
+
+<div class="forms-wrapper">
+  <section>
+    <h2>Dane personalne</h2>
+    <mat-divider />
+
+    <app-personal-info-form
+      [email]="email()"
+      [currency]="currency()?.id ?? 0"
+      [firstName]="firstName() ?? ''"
+      [lastName]="lastName() ?? ''"
+    />
+  </section>
+
+  <section>
+    <h2>Zmień hasło</h2>
+    <mat-divider />
+
+    <app-change-password-form />
+  </section>
+</div>
