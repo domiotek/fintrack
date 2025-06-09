@@ -86,12 +86,7 @@ public class EventService {
 
         chatRepository.save(chat);
 
-        Event event = new Event();
-        event.setName(addEventDto.name());
-        event.setCurrency(currency);
-        event.setStartDateTime(addEventDto.startDate());
-        event.setEndDateTime(addEventDto.endDate());
-        event.setChat(chat);
+        Event event = EventMapper.addEventDtoToEvent(addEventDto, currency, chat);
 
         eventRepository.save(event);
 
@@ -257,6 +252,18 @@ public class EventService {
         Map<User, Map<User, BigDecimal>> settlements = event.getUsers().stream()
                 .map(UserEvent::getUser)
                 .collect(Collectors.toMap(user -> user, user -> new HashMap<>(), (u1, u2) -> u1));
+
+        List<User> users = event.getUsers().stream()
+                .map(UserEvent::getUser)
+                .toList();
+
+        users.forEach(user -> {
+            List<User> restOfUsers = users.stream()
+                    .filter(u -> !u.equals(user))
+                    .toList();
+
+            restOfUsers.forEach(u -> settlements.get(user).put(u, BigDecimal.ZERO));
+        });
 
         int start = 0;
         int end = entries.size() - 1;

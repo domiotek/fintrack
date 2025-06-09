@@ -61,43 +61,7 @@ public class BillService {
 
         Currency currency = event.getCurrency();
 
-        BigDecimal amountInEventCurrency = addBillEventDto.amount();
-        BigDecimal amountInUSD = currencyConverter
-                .convertFromGivenCurrencyToUSD(event.getCurrency(), amountInEventCurrency);
-
-        Bill bill = new Bill();
-        bill.setName(addBillEventDto.name());
-        bill.setDate(addBillEventDto.date());
-        bill.setAmount(amountInUSD);
-        bill.setEvent(event);
-        bill.setCurrency(currency);
-        bill.setCategory(defaultCategory);
-        bill.setPaidBy(user);
-
-        billRepository.save(bill);
-    }
-
-    public void updateUserBill(long billId, UpdateBillDto updateBillDto) {
-        User user = userProvider.getLoggedUser();
-
-        Bill bill = billRepository.findBillByIdAndUserId(billId, user.getId())
-                .orElseThrow(BILL_DOES_NOT_EXIST::getError);
-
-        if (updateBillDto.name() != null) {
-            bill.setName(updateBillDto.name());
-        }
-        if (updateBillDto.date() != null) {
-            bill.setDate(updateBillDto.date());
-        }
-        if (updateBillDto.amount() != null) {
-            bill.setAmount(updateBillDto.amount());
-        }
-        if (updateBillDto.categoryId() != null) {
-            Category category = categoryRepository.findById(updateBillDto.categoryId())
-                    .orElseThrow(CATEGORY_DOES_NOT_EXIST::getError);
-
-            bill.setCategory(category);
-        }
+        Bill bill = BillMapper.addBillEventDtoToBill(addBillEventDto, defaultCategory, event, currency, user, currencyConverter);
 
         billRepository.save(bill);
     }
@@ -150,6 +114,31 @@ public class BillService {
         return bills.map(bill -> BillMapper.billToBillDto(bill, currencyConverter, user));
     }
 
+    public void updateUserBill(long billId, UpdateBillDto updateBillDto) {
+        User user = userProvider.getLoggedUser();
+
+        Bill bill = billRepository.findBillByIdAndUserId(billId, user.getId())
+                .orElseThrow(BILL_DOES_NOT_EXIST::getError);
+
+        if (updateBillDto.name() != null) {
+            bill.setName(updateBillDto.name());
+        }
+        if (updateBillDto.date() != null) {
+            bill.setDate(updateBillDto.date());
+        }
+        if (updateBillDto.amount() != null) {
+            bill.setAmount(updateBillDto.amount());
+        }
+        if (updateBillDto.categoryId() != null) {
+            Category category = categoryRepository.findById(updateBillDto.categoryId())
+                    .orElseThrow(CATEGORY_DOES_NOT_EXIST::getError);
+
+            bill.setCategory(category);
+        }
+
+        billRepository.save(bill);
+    }
+
     public void addUserBill(AddBillDto addBillDto) {
         User user = userProvider.getLoggedUser();
 
@@ -159,7 +148,7 @@ public class BillService {
         Currency currency = currencyRepository.findById(addBillDto.currencyId())
                 .orElseThrow(CURRENCY_DOES_NOT_EXIST::getError);
 
-        Bill bill = BillMapper.addBillDtoToBill(addBillDto, category, currency, user);
+        Bill bill = BillMapper.addBillDtoToBill(addBillDto, category, currency, user, currencyConverter);
 
         billRepository.save(bill);
     }

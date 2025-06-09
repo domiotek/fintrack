@@ -18,7 +18,6 @@ spring:
       ddl-auto: create-drop
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: ${SPRING_JPA_SHOW_SQL:false}
     properties:
       hibernate:
@@ -28,6 +27,7 @@ spring:
           lob:
             non_contextual_creation: true
     open-in-view: true
+
   threads:
     virtual:
       enabled: true
