@@ -223,23 +223,23 @@ public class DataInitializer implements CommandLineRunner {
                 category7, category8, category9, category10, category11, category12));
 
         Limit limit1 = new Limit();
-        limit1.setAmount(new BigDecimal("500"));
+        limit1.setAmount(BigDecimal.valueOf(500));
         limit1.setCategory(category1);
         limit1.setStartDateTime(ZonedDateTime.now());
         Limit limit2 = new Limit();
-        limit2.setAmount(new BigDecimal("400"));
+        limit2.setAmount(BigDecimal.valueOf(400));
         limit2.setCategory(category2);
         limit2.setStartDateTime(ZonedDateTime.now());
         Limit limit3 = new Limit();
-        limit3.setAmount(new BigDecimal("800"));
+        limit3.setAmount(BigDecimal.valueOf(800));
         limit3.setCategory(category4);
         limit3.setStartDateTime(ZonedDateTime.now());
         Limit limit4 = new Limit();
-        limit4.setAmount(new BigDecimal("300"));
+        limit4.setAmount(BigDecimal.valueOf(300));
         limit4.setCategory(category5);
         limit4.setStartDateTime(ZonedDateTime.now());
         Limit limit5 = new Limit();
-        limit5.setAmount(new BigDecimal("400"));
+        limit5.setAmount(BigDecimal.valueOf(400));
         limit5.setCategory(category6);
         limit5.setStartDateTime(ZonedDateTime.now());
         limitRepository.saveAll(List.of(limit1, limit2, limit3, limit4, limit5));

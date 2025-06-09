@@ -1,11 +1,14 @@
 package com.example.fintrack.category;
 
+import com.example.fintrack.bill.Bill;
 import com.example.fintrack.category.dto.AddCategoryDto;
 import com.example.fintrack.category.dto.CategoryDto;
 import com.example.fintrack.currency.CurrencyConverter;
 import com.example.fintrack.user.User;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 import static java.util.Comparator.*;
@@ -55,18 +58,18 @@ public class CategoryMapper {
                 }))
                 .map(limit -> currencyConverter.convertFromUSDToGivenCurrency(
                         category.getUser().getCurrency(), limit.getStartDateTime().toLocalDate(), limit.getAmount()
-                ))
+                ).setScale(2, RoundingMode.HALF_UP))
                 .orElse(null);
     }
 
     private static BigDecimal calculateUserCosts(
             Category category, ZonedDateTime from, ZonedDateTime to, CurrencyConverter currencyConverter
     ) {
-        return category.getBills().stream()
+        BigDecimal sum = category.getBills().stream()
                 .filter(bill -> !bill.getDate().isBefore(from) && !bill.getDate().isAfter(to))
-                .map(bill -> currencyConverter.convertFromUSDToGivenCurrency(
-                        category.getUser().getCurrency(), bill.getDate().toLocalDate(), bill.getAmount()
-                ))
+                .map(Bill::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        return currencyConverter.convertFromUSDToGivenCurrency(category.getUser().getCurrency(), LocalDate.now(), sum);
     }
 }

@@ -51,7 +51,7 @@ public class Bill {
     @Column(nullable = false)
     private ZonedDateTime date;
 
-    @Column(nullable = false)
+    @Column(nullable = false, precision = 18, scale = 6)
     private BigDecimal amount;
 
     @Override
