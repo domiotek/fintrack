@@ -1,10 +1,6 @@
 package com.example.fintrack.message;
 
-import com.example.fintrack.chat.dto.PrivateChatLastMessageUserDto;
-import com.example.fintrack.friend.Friend;
-import com.example.fintrack.friend.FriendStatus;
 import com.example.fintrack.lastreadmessage.LastReadMessage;
-import com.example.fintrack.lastreadmessage.dto.LastReadMessageDto;
 import com.example.fintrack.message.dto.*;
 import com.example.fintrack.user.User;
 
@@ -33,7 +29,7 @@ public class MessageMapper {
                 .build();
     }
 
-    public static LastActivityDto messageToLastActivityDto(User user) {
+    public static LastActivityDto userToLastActivityDto(User user) {
         return LastActivityDto.builder()
                 .userId(user.getId())
                 .lastSeenAt(user.getLastSeenAt())
