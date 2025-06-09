@@ -1,4 +1,4 @@
-@for (item of items(); track item) {
+@for (item of items(); track item.id) {
   <div
     class="item"
     [class.selected]="isSelectable() && item.id === selectedItem()?.id"
