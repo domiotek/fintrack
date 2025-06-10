@@ -397,10 +397,10 @@ public class DataInitializer implements CommandLineRunner {
         Bill bill11 = new Bill();
         bill11.setName("Telefon");
         bill11.setDate(ZonedDateTime.now().minusHours(12));
-        bill11.setCategory(category7);
+        bill11.setCategory(category1);
         bill11.setCurrency(currency2);
         bill11.setUser(user1);
-        bill11.setAmount(BigDecimal.valueOf(245));
+        bill11.setAmount(BigDecimal.valueOf(152));
         Bill bill12 = new Bill();
         bill12.setName("Ubrania");
         bill12.setDate(ZonedDateTime.now().plusDays(2));
@@ -421,7 +421,7 @@ public class DataInitializer implements CommandLineRunner {
         bill14.setCategory(category2);
         bill14.setCurrency(currency2);
         bill14.setUser(user1);
-        bill14.setAmount(BigDecimal.valueOf(13));
+        bill14.setAmount(BigDecimal.valueOf(48));
         billRepository.saveAll(List.of(bill1, bill2, bill3, bill4, bill5, bill6, bill7, bill8, bill9, bill10,
                 bill11, bill12, bill13, bill14));
     }
