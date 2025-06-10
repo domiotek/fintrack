@@ -29,8 +29,8 @@ export class EventsWidgetComponent extends BaseWidgetComponent implements IWidge
     this.eventsService
       .getEvents(
         {
-          from: this.timeRange().from.toISO()!,
-          to: this.timeRange().to.toISO()!,
+          from: this.timeRange().from.toISO(),
+          to: this.timeRange().to.toISO(),
         },
         {
           size: 5,
@@ -49,7 +49,7 @@ export class EventsWidgetComponent extends BaseWidgetComponent implements IWidge
   }
 
   triggerAction(): void {
-    this.routingService.navigate(['/events']);
+    this.routingService.navigate(['/events'], { timeRange: this.timeRange() });
   }
 
   onSelectEvent(event: Event): void {

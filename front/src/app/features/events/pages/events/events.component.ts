@@ -98,6 +98,12 @@ export class EventsComponent implements OnInit {
   reload = signal<boolean>(false);
 
   ngOnInit(): void {
+    const routingState = this.routingService.getAndConsumeNavigationState();
+
+    if (routingState['timeRange']) {
+      this.timeRange.set(routingState['timeRange'] as TimeRange);
+    }
+
     this.filters.set({
       ...this.filters(),
       from: `${this.timeRange().from.toISO()}`,
@@ -126,15 +132,9 @@ export class EventsComponent implements OnInit {
       )
       .subscribe();
 
-    const routingState = this.routingService.getAndConsumeNavigationState();
-
     if (routingState['eventId']) {
       const eventID = routingState['eventId'];
       this.selectedEvent.set(this.events().find((e) => e.id === eventID) ?? null);
-    }
-
-    if (routingState['timeRange']) {
-      this.timeRange.set(routingState['timeRange'] as TimeRange);
     }
   }
 
