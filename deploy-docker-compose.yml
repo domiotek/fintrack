@@ -46,6 +46,7 @@ services:
     build:
       context: front
       dockerfile: Dockerfile
+      no-cache: true
       args:
         API_URL: "${API_URL}"
         COOLIFY_BRANCH: "${COOLIFY_BRANCH}"
