@@ -182,6 +182,7 @@ export class ChatComponent implements AfterViewInit, AfterViewChecked, OnDestroy
         this.updateReadIndicatorPositions();
         if (!this.loading() && !this.scrollToBottomVisible()) {
           this.scrollToBottom(false);
+          this.onMessageRead(this.messages()[this.messages().length - 1]?.id || 0);
         }
       }, 0);
     });

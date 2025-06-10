@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, inject, signal, ViewContainerRef, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, signal, ViewContainerRef, OnInit, ChangeDetectorRef } from '@angular/core';
 import { SearchInputComponent } from '../../../../shared/controls/search-input/search-input.component';
 import { CustomListComponent } from '../../../../shared/components/custom-list/custom-list.component';
 import { MatIconModule } from '@angular/material/icon';
@@ -58,6 +58,7 @@ export class FriendsComponent implements OnInit {
   private readonly chatsService = inject(ChatService);
   private readonly dialog = inject(MatDialog);
   private readonly viewContainerRef = inject(ViewContainerRef);
+  private readonly changeDetectionRef = inject(ChangeDetectorRef);
 
   ngOnInit(): void {
     this.observer
@@ -83,6 +84,7 @@ export class FriendsComponent implements OnInit {
       }
 
       this.chats.set(currentChats);
+      this.changeDetectionRef.markForCheck();
     });
   }
 

@@ -7,7 +7,11 @@ export interface Chat {
   lastReadMessageId: number | null;
 }
 
+export interface Participant extends User {
+  lastSeenAt?: string;
+}
+
 export interface PrivateChat extends Chat {
   isFriend: boolean;
-  otherParticipant: User;
+  otherParticipant: Participant;
 }
