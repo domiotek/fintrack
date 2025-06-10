@@ -1,0 +1,25 @@
+:host {
+  display: contents;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  padding-top: 1em;
+  gap: 1em;
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+  position: relative;
+
+  button {
+    width: fit-content;
+    align-self: flex-end;
+  }
+}
+
+@media (width > 1024px) {
+  form {
+    max-width: unset;
+  }
+}
