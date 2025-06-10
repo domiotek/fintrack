@@ -19,15 +19,19 @@
       <div>
         <p class="gray center">Wyświetlasz kategorie zdefiniowane w {{ dateLabel() }}</p>
       </div>
-      <div class="content__list_container__list">
-        <app-custom-list
-          [items]="categories()"
-          [itemTemplate]="categoryItemTemplate"
-          [isSelectable]="true"
-          [(selectedItem)]="selectedCategory"
-          (selectEmit)="onCategorySelect($event)"
-        />
-      </div>
+      @if (!isSearching()) {
+        <div class="content__list_container__list">
+          <app-custom-list
+            [items]="categories()"
+            [itemTemplate]="categoryItemTemplate"
+            [isSelectable]="true"
+            [(selectedItem)]="selectedCategory"
+            (selectEmit)="onCategorySelect($event)"
+          />
+        </div>
+      } @else {
+        <app-spinner />
+      }
     </div>
   }
   <div class="content__selected_container" [style.display]="!isMobile() || selectedCategory() ? 'block' : 'none'">
@@ -36,6 +40,7 @@
         [category]="selectedCategory()!"
         [userCurrency]="userCurrency!"
         [isMobile]="isMobile()"
+        [date]="{from: filters().from!, to: filters().to!}"
         (goBackEmit)="onCategorySelect(null)"
       />
     } @else if (!isMobile()) {

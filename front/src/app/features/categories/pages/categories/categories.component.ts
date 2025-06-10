@@ -23,9 +23,13 @@ import { AppStateStore } from '../../../../core/store/app-state.store';
 import { CategoryDetailsComponent } from '../../components/category-details/category-details.component';
 import { NoSelectedComponent } from '../../../../shared/components/no-selected/no-selected.component';
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { tap } from 'rxjs';
+import { finalize, tap } from 'rxjs';
 import { CategoryItemComponent } from '../../../../shared/components/category-item/category-item.component';
 import { RoutingService } from '../../../../core/services/routing/routing.service';
+import { CategoryFilters } from '../../../../core/models/category/category-filters';
+import { Pagination } from '../../../../core/models/pagination/pagination';
+import { CategoriesApiRequest } from '../../../../core/models/category/get-many.model';
+import { SpinnerComponent } from '../../../../core/components/spinner/spinner.component';
 
 @Component({
   selector: 'app-categories',
@@ -42,6 +46,7 @@ import { RoutingService } from '../../../../core/services/routing/routing.servic
     AsyncPipe,
     CategoryDetailsComponent,
     NoSelectedComponent,
+    SpinnerComponent,
   ],
   templateUrl: './categories.component.html',
   styleUrl: './categories.component.scss',
@@ -63,6 +68,19 @@ export class CategoriesComponent implements OnInit {
 
   readonly isMobile = signal<boolean>(false);
   readonly selectedCategory = signal<Category | null>(null);
+
+  readonly isSearching = signal<boolean>(false);
+
+  readonly filters = signal<CategoryFilters>({
+    name: null,
+    from: '',
+    to: '',
+  });
+
+  pagination = signal<Pagination>({
+    page: 0,
+    size: 10,
+  });
 
   projection_range = computed(() => ({
     from: this.timeRange().from.startOf('month'),
@@ -106,7 +124,13 @@ export class CategoriesComponent implements OnInit {
       )
       .subscribe();
 
-    this.categoryService.getCategoriesList().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+    this.filters.set({
+      ...this.filters(),
+      from: `${this.timeRange().from.toISO()}`,
+      to: `${this.timeRange().to.toISO()}`,
+    });
+
+    this.getCategories();
 
     const routingState = this.routingService.getAndConsumeNavigationState();
 
@@ -119,25 +143,61 @@ export class CategoriesComponent implements OnInit {
       this.timeRange.set(routingState['timeRange'] as TimeRange);
     }
   }
+
   onProjectionDateChange = debounceHandler(
     (timeRange: TimeRange) => {
       this.categoryState.setTimeRange(timeRange);
       this.timeRange.set(timeRange);
+      this.filters.set({
+        ...this.filters(),
+        from: `${timeRange.from.toISO()}`,
+        to: `${timeRange.to.toISO()}`,
+      });
+
+      this.onSearch(this.filters().name ?? '');
     },
     300,
     this.destroyRef,
   );
 
-  onSearch(val: string): void {}
+  onSearch(searchValue: string): void {
+    this.filters.set({
+      ...this.filters(),
+      name: searchValue ?? null,
+    });
+    this.getCategories();
+    this.selectedCategory.set(null);
+  }
 
   onSortChange(state: SortState): void {
     this.sortState.set({ ...state });
+    this.getCategories();
   }
 
   onCategorySelect(category: Category | null): void {
     if (!category) {
       this.selectedCategory.set(null);
-      // return; sonar sie czepia
+      return;
     }
+  }
+
+  private getCategories(): void {
+    this.isSearching.set(true);
+    const req: CategoriesApiRequest = {
+      name: this.filters().name ?? '',
+      from: this.filters().from!,
+      to: this.filters().to!,
+      page: this.pagination().page,
+      size: this.pagination().size,
+      sortDirection: this.sortState().direction,
+    };
+
+    this.categoryService
+      .getCategoriesList(req)
+      .pipe(
+        finalize(() => this.isSearching.set(false)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
   }
 }

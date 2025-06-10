@@ -1,18 +1,17 @@
 import { BillsService } from './../../../../core/services/bills/bills.service';
-import { Component, DestroyRef, inject, input, OnInit, output, signal } from '@angular/core';
+import { Component, DestroyRef, inject, input, OnChanges, OnInit, output, signal, SimpleChanges } from '@angular/core';
 import { Category } from '../../../../core/models/category/category.model';
 import { CommonModule } from '@angular/common';
 import { CustomListComponent } from '../../../../shared/components/custom-list/custom-list.component';
-import { CategoryStateStore } from '../../store/category-state.store';
-import { Observable, switchMap, tap } from 'rxjs';
+import { tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Bill } from '../../../../core/models/bills/bill.model';
 import { TransactionItemComponent } from '../../../../shared/components/transaction-item/transaction-item.component';
 import { Currency } from '../../../../core/models/currency/currency.model';
 import { MatButtonModule } from '@angular/material/button';
-import { DateTime } from 'luxon';
 import { MatIconModule } from '@angular/material/icon';
-import { BasePagingResponse } from '../../../../core/models/api/paging.model';
+import { TimeRangeReq } from '../../../../core/models/time-range/time-range-req';
+import { BillsApiRequest } from '../../../../core/models/bills/get-many.model';
 
 @Component({
   selector: 'app-category-details',
@@ -20,10 +19,8 @@ import { BasePagingResponse } from '../../../../core/models/api/paging.model';
   templateUrl: './category-details.component.html',
   styleUrl: './category-details.component.scss',
 })
-export class CategoryDetailsComponent implements OnInit {
+export class CategoryDetailsComponent implements OnInit, OnChanges {
   private readonly billsService = inject(BillsService);
-
-  private readonly categoryStateStore = inject(CategoryStateStore);
 
   private readonly destroyRef = inject(DestroyRef);
 
@@ -33,6 +30,8 @@ export class CategoryDetailsComponent implements OnInit {
 
   readonly isMobile = input.required<boolean>();
 
+  readonly date = input.required<TimeRangeReq>();
+
   readonly goBackEmit = output<void>();
 
   readonly sameMonth = signal<boolean>(true);
@@ -40,8 +39,13 @@ export class CategoryDetailsComponent implements OnInit {
   readonly transactions = signal<Bill[]>([]);
 
   ngOnInit(): void {
-    this.getCategoryBills().subscribe();
-    this.handleTimeRangeChange();
+    this.getCategoryBills();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['category'] && !changes['category'].firstChange) {
+      this.getCategoryBills();
+    }
   }
 
   protected changeLimit(isExists: boolean): void {
@@ -52,22 +56,19 @@ export class CategoryDetailsComponent implements OnInit {
     this.goBackEmit.emit();
   }
 
-  private getCategoryBills(): Observable<BasePagingResponse<Bill>> {
-    return this.billsService.getBills().pipe(
-      tap((res) => {
-        this.transactions.set(res.content);
-      }),
-      takeUntilDestroyed(this.destroyRef),
-    );
-  }
+  private getCategoryBills(): void {
+    const req: BillsApiRequest = {
+      categoryId: this.category().id,
+      from: this.date().from,
+      to: this.date().to,
+    };
 
-  private handleTimeRangeChange(): void {
-    this.categoryStateStore.timeRange$
+    this.billsService
+      .getBills(req)
       .pipe(
         tap((res) => {
-          this.sameMonth.set(DateTime.now().hasSame(res.from, 'month') && DateTime.now().hasSame(res.from, 'year'));
+          this.transactions.set(res.content);
         }),
-        switchMap(() => this.getCategoryBills()),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
