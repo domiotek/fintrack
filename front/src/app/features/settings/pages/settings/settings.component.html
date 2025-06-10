@@ -13,8 +13,8 @@
     <app-personal-info-form
       [email]="email()"
       [currency]="currency()?.id ?? 0"
-      [firstName]="firstName() ?? ''"
-      [lastName]="lastName() ?? ''"
+      [(firstName)]="firstName"
+      [(lastName)]="lastName"
     />
   </section>
 
