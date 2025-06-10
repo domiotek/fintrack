@@ -1,0 +1,13 @@
+<div class="filters">
+  <app-select-operation-type [(selectedOparation)]="filters" (selectedOparationChange)="onSelectedOperationChange()" />
+</div>
+@if (shouldShow()) {
+  <app-bar-chart
+    class="widget"
+    [chartData]="data()!"
+    [tooltipLabel]="'Wartość wydatków'"
+    [color]="'rgba(148, 103, 189)'"
+  />
+} @else {
+  <app-no-data />
+}

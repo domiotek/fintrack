@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, input, model, output, TemplateRef } from '@angular/core';
+import { NoDataComponent } from '../no-data/no-data.component';
 
 @Component({
   selector: 'app-custom-list',
-  imports: [CommonModule],
+  imports: [CommonModule, NoDataComponent],
   templateUrl: './custom-list.component.html',
   styleUrl: './custom-list.component.scss',
 })

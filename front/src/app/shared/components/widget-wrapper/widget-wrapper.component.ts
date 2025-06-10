@@ -3,7 +3,7 @@ import { AfterContentInit, Component, ContentChild, DestroyRef, inject, input, s
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { take } from 'rxjs';
-import { IWidget } from '../../models/widget';
+import { IWidget } from '../../../core/models/statistics/widget';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';

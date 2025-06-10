@@ -8,7 +8,5 @@
     <ng-container *ngTemplateOutlet="itemTemplate(); context: { $implicit: item }" />
   </div>
 } @empty {
-  <div class="empty-data">
-    <p class="empty-data__text">Brak danych do wyświetlenia</p>
-  </div>
+  <app-no-data />
 }

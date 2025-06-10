@@ -1,0 +1,12 @@
+@let userCurrency = userCurrency$ | async;
+
+@if (data() && data()!.labels.length > 0 && userCurrency) {
+  <app-bar-chart
+    class="widget"
+    [chartData]="data()!"
+    [tooltipLabel]="'Wartość wydatków [' + userCurrency.code + ']'"
+    [color]="'rgba(255, 166, 0)'"
+  />
+} @else {
+  <app-no-data />
+}

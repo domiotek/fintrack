@@ -1,0 +1,9 @@
+:host {
+  display: flex;
+  height: calc(100% - 16px);
+  align-items: end;
+
+  .widget {
+    height: 350px;
+  }
+}

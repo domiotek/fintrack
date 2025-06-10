@@ -1,0 +1,13 @@
+<div class="filters">
+  <app-select-grouping [(selectedGroup)]="filters" (selectedGroupChange)="onSelectedGroupChange()" />
+</div>
+@if (data() && data()!.labels.length > 0) {
+  <app-bar-chart
+    class="widget"
+    [chartData]="data()!"
+    [tooltipLabel]="'Ilość transakcji'"
+    [color]="'rgba(44, 160, 44)'"
+  />
+} @else {
+  <app-no-data />
+}

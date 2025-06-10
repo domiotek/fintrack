@@ -1,0 +1,17 @@
+<div class="list-container">
+  <ng-scrollbar [buttons]="true" (reachedBottom)="onScrolledBottom()">
+    <app-custom-list
+      [items]="bills()"
+      [itemTemplate]="billItemTemplate"
+      [isSelectable]="true"
+      (selectEmit)="triggerAction()"
+    />
+  </ng-scrollbar>
+  @if (isLoading()) {
+    <mat-spinner class="loading-more-spinner" [diameter]="20" mode="indeterminate" />
+  }
+</div>
+
+<ng-template #billItemTemplate let-item>
+  <app-transaction-item [transaction]="item" [userCurrency]="(userCurrency$ | async)!" />
+</ng-template>

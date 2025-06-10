@@ -1,5 +1,5 @@
 import { TimeRangeReq } from '../time-range/time-range-req';
 
-export interface DashboardStatsRequest extends TimeRangeReq {
+export interface BaseStatsRequest extends TimeRangeReq {
   categoryId?: string | null;
 }
