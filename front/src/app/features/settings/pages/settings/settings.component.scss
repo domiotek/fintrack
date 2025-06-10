@@ -1,0 +1,58 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.settings-header {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2em;
+
+  .user-info-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2em;
+
+    app-avatar {
+      font-size: 4.5em;
+    }
+  }
+}
+
+.forms-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+
+  section {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+
+    mat-divider {
+      margin-bottom: 1em;
+    }
+  }
+}
+
+@media (width > 1024px) {
+  :host {
+    max-width: 1980px;
+  }
+
+  .forms-wrapper {
+    flex-direction: row;
+    justify-content: space-around;
+    gap: 2em;
+
+    section {
+      width: 100%;
+      max-width: 600px;
+    }
+  }
+}

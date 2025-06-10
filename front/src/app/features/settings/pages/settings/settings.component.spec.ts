@@ -2,6 +2,9 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SettingsComponent } from './settings.component';
 import { provideExperimentalZonelessChangeDetection } from '@angular/core';
+import { AppStateStore } from '../../../../core/store/app-state.store';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 describe('SettingsComponent', () => {
   let component: SettingsComponent;
@@ -10,7 +13,12 @@ describe('SettingsComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [SettingsComponent],
-      providers: [provideExperimentalZonelessChangeDetection()],
+      providers: [
+        provideExperimentalZonelessChangeDetection(),
+        AppStateStore,
+        provideHttpClient(),
+        provideHttpClientTesting(),
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(SettingsComponent);

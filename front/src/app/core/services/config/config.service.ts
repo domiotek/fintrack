@@ -31,6 +31,7 @@ export class ConfigService {
           userId: config.id,
           email: config.email,
           firstName: config.firstName,
+          lastName: config.lastName,
           currency: config.currency,
           isLogged: true,
         });

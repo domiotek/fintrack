@@ -1,4 +1,4 @@
-<app-avatar [name]="item().otherParticipant.firstName"></app-avatar>
+<app-avatar [name]="item().otherParticipant.firstName" [showOnline]="isAuthorActive()" [matTooltip]="activityText()" />
 <div class="middle-container" [ngClass]="{ unread: isUnread }">
   <div class="name">{{ item().otherParticipant.firstName }}</div>
   <div class="last-message">

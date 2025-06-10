@@ -3,6 +3,9 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ChatItemComponent } from './chat-item.component';
 import { provideExperimentalZonelessChangeDetection } from '@angular/core';
 import { AppStateStore } from '../../../../core/store/app-state.store';
+import { ChatService } from '../../../../core/services/chat/chat.service';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 describe('ChatItemComponent', () => {
   let component: ChatItemComponent;
@@ -11,7 +14,13 @@ describe('ChatItemComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ChatItemComponent],
-      providers: [provideExperimentalZonelessChangeDetection(), AppStateStore],
+      providers: [
+        provideExperimentalZonelessChangeDetection(),
+        AppStateStore,
+        ChatService,
+        provideHttpClient(),
+        provideHttpClientTesting(),
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ChatItemComponent);

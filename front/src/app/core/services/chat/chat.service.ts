@@ -1,5 +1,5 @@
 import { DestroyRef, inject, Injectable, OnDestroy, signal } from '@angular/core';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, skip, Subject, takeUntil } from 'rxjs';
 import { PrivateChat } from '../../models/chat/chat.model';
 import { ChatMessage } from '../../models/chat/message.model';
 import { BasePagingResponse } from '../../models/api/paging.model';
@@ -9,7 +9,10 @@ import SockJS from 'sockjs-client/dist/sockjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { AppStateStore } from '../../store/app-state.store';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { DEFAULT_CHAT_PAGE_SIZE } from '../../../shared/controls/chat/constants/chat.const';
+import {
+  DEFAULT_CHAT_ACTIVITY_CHECK_INTERVAL,
+  DEFAULT_CHAT_PAGE_SIZE,
+} from '../../../shared/controls/chat/constants/chat.const';
 import { RxStomp } from '@stomp/rx-stomp';
 import { UserTypingEvent } from '../../models/chat/user-typing-event.model';
 import { UserReadMessageEvent } from '../../models/chat/user-read-message-event.model';
@@ -28,12 +31,16 @@ export class ChatService implements OnDestroy {
   private readonly messages = new BehaviorSubject<ChatMessage[]>([]);
   private readonly lastReadMessagesMap = new BehaviorSubject<Record<number, number>>({});
   private readonly lastUserActivityMap = new BehaviorSubject<Record<number, string>>({});
+  private readonly activityCheckTicker = new Subject<void>();
+
+  private activityCheckTickerInterval: ReturnType<typeof setInterval> | null = null;
 
   readonly privateChatsUpdates$ = this.privateChatsUpdates.asObservable();
   readonly typingUsers$ = this.typingUsers.asObservable();
   readonly messages$ = this.messages.asObservable();
   readonly lastReadMessagesMap$ = this.lastReadMessagesMap.asObservable();
   readonly lastUserActivityMap$ = this.lastUserActivityMap.asObservable();
+  readonly activityTicker$ = this.activityCheckTicker.asObservable();
 
   private readonly stompClient: RxStomp;
   private readonly http = inject(HttpClient);
@@ -61,10 +68,20 @@ export class ChatService implements OnDestroy {
 
         this.privateChatsUpdates.next(chat);
       });
+
+    this.activityCheckTickerInterval = setInterval(
+      () => this.activityCheckTicker.next(),
+      DEFAULT_CHAT_ACTIVITY_CHECK_INTERVAL,
+    );
   }
 
   ngOnDestroy(): void {
     this.stompClient.deactivate();
+
+    if (this.activityCheckTickerInterval) {
+      clearInterval(this.activityCheckTickerInterval);
+      this.activityCheckTickerInterval = null;
+    }
   }
 
   getPrivateChatsList(page: number, searchQuery: string): Observable<BasePagingResponse<PrivateChat>> {
@@ -80,7 +97,7 @@ export class ChatService implements OnDestroy {
   }
 
   getUserIdsWithPrivateChat(): Observable<number[]> {
-    return this.http.get<number[]>(`${environment.apiUrl}/chats/private/user-ids`);
+    return this.http.get<number[]>(`${environment.apiUrl}/chats/private/friends-ids`);
   }
 
   getPrivateChatIdByUserId(userId: number): Observable<string> {
@@ -125,8 +142,11 @@ export class ChatService implements OnDestroy {
 
         this.stompClient
           .watch(`/topic/chats/${chatId}/user-started-typing`)
-          .pipe(takeUntilDestroyed(this.destroyRef))
+          .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this.connectedChatId.asObservable().pipe(skip(1))))
           .subscribe((message: IMessage) => {
+            // Parse the incoming message body to extract the UserTypingEvent.
+            // The use of takeUntilDestroyed ensures cleanup when the service is destroyed,
+            // while takeUntil with connectedChatId observable ensures cleanup when the selected chat changes.
             const event: UserTypingEvent = JSON.parse(message.body);
 
             if (typeof event.userId !== 'number') return;
@@ -138,7 +158,7 @@ export class ChatService implements OnDestroy {
 
         this.stompClient
           .watch(`/topic/chats/${chatId}/user-stopped-typing`)
-          .pipe(takeUntilDestroyed(this.destroyRef))
+          .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this.connectedChatId.asObservable().pipe(skip(1))))
           .subscribe((message: IMessage) => {
             const event: UserTypingEvent = JSON.parse(message.body);
 
@@ -149,7 +169,7 @@ export class ChatService implements OnDestroy {
 
         this.stompClient
           .watch(`/topic/chats/${chatId}/user-read-message`)
-          .pipe(takeUntilDestroyed(this.destroyRef))
+          .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this.connectedChatId.asObservable().pipe(skip(1))))
           .subscribe((message: IMessage) => {
             const event: UserReadMessageEvent = JSON.parse(message.body);
 
@@ -167,7 +187,7 @@ export class ChatService implements OnDestroy {
 
         this.stompClient
           .watch(`/topic/chats/${chatId}/user-last-activity`)
-          .pipe(takeUntilDestroyed(this.destroyRef))
+          .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this.connectedChatId.asObservable().pipe(skip(1))))
           .subscribe((message: IMessage) => {
             const event: UserAvailabilityEvent = JSON.parse(message.body);
 

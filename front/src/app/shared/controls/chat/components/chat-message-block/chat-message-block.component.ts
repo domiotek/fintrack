@@ -1,4 +1,15 @@
-import { Component, effect, ElementRef, inject, input, OnDestroy, OnInit, output, signal } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  effect,
+  ElementRef,
+  inject,
+  input,
+  OnDestroy,
+  OnInit,
+  output,
+  signal,
+} from '@angular/core';
 import { AvatarComponent } from '../../../../components/avatar/avatar.component';
 import { CommonModule } from '@angular/common';
 import { ChatMessageComponent } from '../chat-message/chat-message.component';
@@ -7,6 +18,8 @@ import { ChatMessage } from '../../../../../core/models/chat/message.model';
 import { DateTime } from 'luxon';
 import { ActivityTextPipe } from '../../../../pipes/activity-text.pipe';
 import { DEFAULT_CHAT_ACTIVITY_THRESHOLD } from '../../constants/chat.const';
+import { ChatService } from '../../../../../core/services/chat/chat.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-chat-message-block',
@@ -31,9 +44,8 @@ export class ChatMessageBlockComponent implements OnInit, OnDestroy {
   private observer!: IntersectionObserver;
 
   private readonly elementRef = inject(ElementRef);
-
-  private readonly updateInterval = 60000;
-  private intervalId: ReturnType<typeof setInterval> | null = null;
+  private readonly chatService = inject(ChatService);
+  private readonly destroyRef = inject(DestroyRef);
 
   private readonly activityTextPipe = new ActivityTextPipe();
 
@@ -60,22 +72,19 @@ export class ChatMessageBlockComponent implements OnInit, OnDestroy {
       this.authorActivityDateTime();
       this.generateActivityText();
     });
-
-    this.intervalId = setInterval(this.generateActivityText.bind(this), this.updateInterval);
   }
 
   ngOnInit(): void {
     this.setupObserver();
+
+    this.chatService.activityTicker$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      this.generateActivityText();
+    });
   }
 
   ngOnDestroy(): void {
     if (this.observer) {
       this.observer.disconnect();
-    }
-
-    if (this.intervalId) {
-      clearInterval(this.intervalId);
-      this.intervalId = null;
     }
   }
 

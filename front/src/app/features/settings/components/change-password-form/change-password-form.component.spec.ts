@@ -1,26 +1,29 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { EventsWidgetComponent } from './events-widget.component';
+
+import { ChangePasswordFormComponent } from './change-password-form.component';
 import { provideExperimentalZonelessChangeDetection } from '@angular/core';
-import { EventsService } from '../../../../core/services/events/events.service';
+import { SettingsService } from '../../../../core/services/settings/settings.service';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { AppStateStore } from '../../../../core/store/app-state.store';
 
-describe('EventsWidgetComponent', () => {
-  let component: EventsWidgetComponent;
-  let fixture: ComponentFixture<EventsWidgetComponent>;
+describe('ChangePasswordFormComponent', () => {
+  let component: ChangePasswordFormComponent;
+  let fixture: ComponentFixture<ChangePasswordFormComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EventsWidgetComponent],
+      imports: [ChangePasswordFormComponent],
       providers: [
         provideExperimentalZonelessChangeDetection(),
-        EventsService,
+        SettingsService,
+        AppStateStore,
         provideHttpClient(),
         provideHttpClientTesting(),
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(EventsWidgetComponent);
+    fixture = TestBed.createComponent(ChangePasswordFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

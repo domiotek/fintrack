@@ -1,26 +1,29 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { EventsWidgetComponent } from './events-widget.component';
+
+import { PersonalInfoFormComponent } from './personal-info-form.component';
 import { provideExperimentalZonelessChangeDetection } from '@angular/core';
-import { EventsService } from '../../../../core/services/events/events.service';
+import { SettingsService } from '../../../../core/services/settings/settings.service';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { AppStateStore } from '../../../../core/store/app-state.store';
 
-describe('EventsWidgetComponent', () => {
-  let component: EventsWidgetComponent;
-  let fixture: ComponentFixture<EventsWidgetComponent>;
+describe('PersonalInfoFormComponent', () => {
+  let component: PersonalInfoFormComponent;
+  let fixture: ComponentFixture<PersonalInfoFormComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EventsWidgetComponent],
+      imports: [PersonalInfoFormComponent],
       providers: [
         provideExperimentalZonelessChangeDetection(),
-        EventsService,
+        SettingsService,
+        AppStateStore,
         provideHttpClient(),
         provideHttpClientTesting(),
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(EventsWidgetComponent);
+    fixture = TestBed.createComponent(PersonalInfoFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
