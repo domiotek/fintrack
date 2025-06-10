@@ -107,7 +107,7 @@ public class BillService {
         }
 
         Sort.Direction sortDirectionSpringEnum = sortDirection.toSortDirection();
-        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(sortDirectionSpringEnum, "category"));
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(sortDirectionSpringEnum, "date", "category"));
 
         Page<Bill> bills = billRepository.findAll(billSpecification, pageRequest);
 
