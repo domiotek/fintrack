@@ -1,5 +1,5 @@
 import { DestroyRef, inject, Injectable, OnDestroy, signal } from '@angular/core';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, skip, Subject, takeUntil } from 'rxjs';
 import { PrivateChat } from '../../models/chat/chat.model';
 import { ChatMessage } from '../../models/chat/message.model';
 import { BasePagingResponse } from '../../models/api/paging.model';
@@ -80,7 +80,7 @@ export class ChatService implements OnDestroy {
   }
 
   getUserIdsWithPrivateChat(): Observable<number[]> {
-    return this.http.get<number[]>(`${environment.apiUrl}/chats/private/user-ids`);
+    return this.http.get<number[]>(`${environment.apiUrl}/chats/private/friends-ids`);
   }
 
   getPrivateChatIdByUserId(userId: number): Observable<string> {
@@ -125,8 +125,11 @@ export class ChatService implements OnDestroy {
 
         this.stompClient
           .watch(`/topic/chats/${chatId}/user-started-typing`)
-          .pipe(takeUntilDestroyed(this.destroyRef))
+          .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this.connectedChatId.asObservable().pipe(skip(1))))
           .subscribe((message: IMessage) => {
+            // Parse the incoming message body to extract the UserTypingEvent.
+            // The use of takeUntilDestroyed ensures cleanup when the service is destroyed,
+            // while takeUntil with connectedChatId observable ensures cleanup when the selected chat changes.
             const event: UserTypingEvent = JSON.parse(message.body);
 
             if (typeof event.userId !== 'number') return;
@@ -138,7 +141,7 @@ export class ChatService implements OnDestroy {
 
         this.stompClient
           .watch(`/topic/chats/${chatId}/user-stopped-typing`)
-          .pipe(takeUntilDestroyed(this.destroyRef))
+          .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this.connectedChatId.asObservable().pipe(skip(1))))
           .subscribe((message: IMessage) => {
             const event: UserTypingEvent = JSON.parse(message.body);
 
@@ -149,7 +152,7 @@ export class ChatService implements OnDestroy {
 
         this.stompClient
           .watch(`/topic/chats/${chatId}/user-read-message`)
-          .pipe(takeUntilDestroyed(this.destroyRef))
+          .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this.connectedChatId.asObservable().pipe(skip(1))))
           .subscribe((message: IMessage) => {
             const event: UserReadMessageEvent = JSON.parse(message.body);
 
@@ -167,7 +170,7 @@ export class ChatService implements OnDestroy {
 
         this.stompClient
           .watch(`/topic/chats/${chatId}/user-last-activity`)
-          .pipe(takeUntilDestroyed(this.destroyRef))
+          .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this.connectedChatId.asObservable().pipe(skip(1))))
           .subscribe((message: IMessage) => {
             const event: UserAvailabilityEvent = JSON.parse(message.body);
 
