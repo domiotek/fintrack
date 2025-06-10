@@ -24,7 +24,7 @@ export abstract class BaseWidgetComponent implements IWidget, OnInit {
   destroyRef = inject(DestroyRef);
 
   ngOnInit() {
-    this.dashboardStore.timeRange$.pipe(skip(1), takeUntilDestroyed(this.destroyRef)).subscribe((timeRange) => {
+    this.dashboardStore.timeRange$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((timeRange) => {
       this.timeRange.set(timeRange);
       this.onRefresh.next();
 

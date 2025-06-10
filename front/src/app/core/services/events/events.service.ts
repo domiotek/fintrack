@@ -14,6 +14,7 @@ import { AddBillEventRequest } from '../../models/events/add-bill-event-request'
 import { BaseApiService } from '../base-api.service';
 import { DateTime } from 'luxon';
 import { UpdateEventRequest } from '../../models/events/update-event-request';
+import { Event } from '../../models/events/event';
 
 @Injectable({
   providedIn: 'root',

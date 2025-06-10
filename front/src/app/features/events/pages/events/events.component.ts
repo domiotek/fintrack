@@ -28,6 +28,7 @@ import { Event } from '../../../../core/models/events/event';
 import { SpinnerComponent } from '../../../../core/components/spinner/spinner.component';
 import { MatDialog } from '@angular/material/dialog';
 import { AddEventDialogComponent } from '../../components/add-event-dialog/add-event-dialog.component';
+import { RoutingService } from '../../../../core/services/routing/routing.service';
 
 @Component({
   selector: 'app-events',
@@ -60,6 +61,8 @@ export class EventsComponent implements OnInit {
   viewContainerRef = inject(ViewContainerRef);
 
   private readonly destroyRef = inject(DestroyRef);
+
+  private readonly routingService = inject(RoutingService);
 
   isSearching = signal<boolean>(false);
 
@@ -95,6 +98,12 @@ export class EventsComponent implements OnInit {
   reload = signal<boolean>(false);
 
   ngOnInit(): void {
+    const routingState = this.routingService.getAndConsumeNavigationState();
+
+    if (routingState['timeRange']) {
+      this.timeRange.set(routingState['timeRange'] as TimeRange);
+    }
+
     this.filters.set({
       ...this.filters(),
       from: `${this.timeRange().from.toISO()}`,
@@ -122,6 +131,11 @@ export class EventsComponent implements OnInit {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
+
+    if (routingState['eventId']) {
+      const eventID = routingState['eventId'];
+      this.selectedEvent.set(this.events().find((e) => e.id === eventID) ?? null);
+    }
   }
 
   onSearch(searchValue: string): void {
