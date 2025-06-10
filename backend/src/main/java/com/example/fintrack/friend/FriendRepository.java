@@ -15,8 +15,4 @@ public interface FriendRepository extends JpaRepository<Friend, Long>, JpaSpecif
     Optional<Friend> findFriendByUserIdAndFriendIdAndFriendStatus(long userId, long friendId, FriendStatus friendStatus);
 
     List<Friend> findFriendsByChatId(long chatId);
-
-    @Query("SELECT f FROM Friend f JOIN User u on u.id = :userId WHERE f.friendStatus = :friendStatus")
-    List<Friend> findFriendsByUserAndFriendStatus(@Param("userId") long userId,
-                                                  @Param("friendStatus") FriendStatus friendStatus);
 }
