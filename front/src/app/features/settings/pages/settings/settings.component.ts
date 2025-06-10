@@ -37,8 +37,8 @@ export class SettingsComponent implements OnInit {
 
   ngOnInit(): void {
     this.appStateStore.appState$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((state) => {
-      this.firstName.set(state.firstName!);
-      this.lastName.set(state.lastName!);
+      this.firstName.set(state.firstName ?? '');
+      this.lastName.set(state.lastName ?? '');
       this.email.set(state.email!);
       this.currency.set(state.currency ?? null);
     });
