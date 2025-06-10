@@ -1,15 +1,4 @@
-import {
-  Component,
-  computed,
-  DestroyRef,
-  effect,
-  inject,
-  input,
-  OnDestroy,
-  OnInit,
-  output,
-  signal,
-} from '@angular/core';
+import { Component, computed, DestroyRef, effect, inject, input, OnInit, output, signal } from '@angular/core';
 import { NoSelectedComponent } from '../../../../shared/components/no-selected/no-selected.component';
 import { PrivateChat } from '../../../../core/models/chat/chat.model';
 import { CommonModule } from '@angular/common';
@@ -39,7 +28,7 @@ import { ActivityTextPipe } from '../../../../shared/pipes/activity-text.pipe';
   templateUrl: './chat-container.component.html',
   styleUrl: './chat-container.component.scss',
 })
-export class ChatContainerComponent implements OnInit, OnDestroy {
+export class ChatContainerComponent implements OnInit {
   readonly visible = input<boolean>(false);
   readonly chat = input<PrivateChat | null>(null);
   readonly isMobile = input<boolean>(false);
@@ -54,9 +43,6 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
   readonly isActive = computed(() => {
     return this.activityText() === 'teraz';
   });
-
-  private readonly updateInterval = 60000;
-  private intervalId: ReturnType<typeof setInterval> | null = null;
 
   private readonly chatService = inject(ChatService);
   private readonly appStateStore = inject(AppStateStore);
@@ -76,7 +62,7 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
       this.currentUserId.set(state.userId ?? null);
     });
 
-    this.chatService.lastUserActivityMap$.subscribe((activityMap) => {
+    this.chatService.lastUserActivityMap$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((activityMap) => {
       const isoDate = activityMap[this.otherParticipant()?.id];
       const dateTime = DateTime.fromISO(isoDate);
 
@@ -86,14 +72,9 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
       this.generateActivityText();
     });
 
-    this.intervalId = setInterval(this.generateActivityText.bind(this), this.updateInterval);
-  }
-
-  ngOnDestroy(): void {
-    if (this.intervalId) {
-      clearInterval(this.intervalId);
-      this.intervalId = null;
-    }
+    this.chatService.activityTicker$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      this.generateActivityText();
+    });
   }
 
   onGoBack(): void {

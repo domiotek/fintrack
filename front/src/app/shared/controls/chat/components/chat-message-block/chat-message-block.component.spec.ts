@@ -3,6 +3,10 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ChatMessageBlockComponent } from './chat-message-block.component';
 import { provideExperimentalZonelessChangeDetection } from '@angular/core';
 import { ChatMessage } from '../../../../../core/models/chat/message.model';
+import { ChatService } from '../../../../../core/services/chat/chat.service';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { AppStateStore } from '../../../../../core/store/app-state.store';
 
 describe('ChatMessageBlockComponent', () => {
   let component: ChatMessageBlockComponent;
@@ -11,7 +15,13 @@ describe('ChatMessageBlockComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ChatMessageBlockComponent],
-      providers: [provideExperimentalZonelessChangeDetection()],
+      providers: [
+        provideExperimentalZonelessChangeDetection(),
+        ChatService,
+        AppStateStore,
+        provideHttpClient(),
+        provideHttpClientTesting(),
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ChatMessageBlockComponent);

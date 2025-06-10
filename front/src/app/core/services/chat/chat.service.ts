@@ -9,7 +9,10 @@ import SockJS from 'sockjs-client/dist/sockjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { AppStateStore } from '../../store/app-state.store';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { DEFAULT_CHAT_PAGE_SIZE } from '../../../shared/controls/chat/constants/chat.const';
+import {
+  DEFAULT_CHAT_ACTIVITY_CHECK_INTERVAL,
+  DEFAULT_CHAT_PAGE_SIZE,
+} from '../../../shared/controls/chat/constants/chat.const';
 import { RxStomp } from '@stomp/rx-stomp';
 import { UserTypingEvent } from '../../models/chat/user-typing-event.model';
 import { UserReadMessageEvent } from '../../models/chat/user-read-message-event.model';
@@ -28,12 +31,16 @@ export class ChatService implements OnDestroy {
   private readonly messages = new BehaviorSubject<ChatMessage[]>([]);
   private readonly lastReadMessagesMap = new BehaviorSubject<Record<number, number>>({});
   private readonly lastUserActivityMap = new BehaviorSubject<Record<number, string>>({});
+  private readonly activityCheckTicker = new Subject<void>();
+
+  private activityCheckTickerInterval: ReturnType<typeof setInterval> | null = null;
 
   readonly privateChatsUpdates$ = this.privateChatsUpdates.asObservable();
   readonly typingUsers$ = this.typingUsers.asObservable();
   readonly messages$ = this.messages.asObservable();
   readonly lastReadMessagesMap$ = this.lastReadMessagesMap.asObservable();
   readonly lastUserActivityMap$ = this.lastUserActivityMap.asObservable();
+  readonly activityTicker$ = this.activityCheckTicker.asObservable();
 
   private readonly stompClient: RxStomp;
   private readonly http = inject(HttpClient);
@@ -61,10 +68,20 @@ export class ChatService implements OnDestroy {
 
         this.privateChatsUpdates.next(chat);
       });
+
+    this.activityCheckTickerInterval = setInterval(
+      () => this.activityCheckTicker.next(),
+      DEFAULT_CHAT_ACTIVITY_CHECK_INTERVAL,
+    );
   }
 
   ngOnDestroy(): void {
     this.stompClient.deactivate();
+
+    if (this.activityCheckTickerInterval) {
+      clearInterval(this.activityCheckTickerInterval);
+      this.activityCheckTickerInterval = null;
+    }
   }
 
   getPrivateChatsList(page: number, searchQuery: string): Observable<BasePagingResponse<PrivateChat>> {
