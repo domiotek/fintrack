@@ -46,10 +46,8 @@ services:
     build:
       context: front
       dockerfile: Dockerfile
-      no-cache: true
       args:
         API_URL: "${API_URL}"
-        COOLIFY_BRANCH: "${COOLIFY_BRANCH}"
     container_name: fintrack_app
     networks:
       - fintrack_network
