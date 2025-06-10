@@ -10,4 +10,6 @@ public interface LastReadMessageRepository extends JpaRepository<LastReadMessage
     Optional<LastReadMessage> findLastReadMessageByUserIdAndChatId(long userId, long chatId);
 
     List<LastReadMessage> findLastReadMessagesByChatId(long chatId);
+
+    boolean existsByUserIdAndChatId(long userId, long chatId);
 }

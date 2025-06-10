@@ -1,8 +1,11 @@
 package com.example.fintrack.message;
 
+import com.example.fintrack.chat.Chat;
 import com.example.fintrack.lastreadmessage.LastReadMessage;
 import com.example.fintrack.message.dto.*;
 import com.example.fintrack.user.User;
+
+import java.time.ZonedDateTime;
 
 public class MessageMapper {
 
@@ -33,6 +36,23 @@ public class MessageMapper {
         return LastActivityDto.builder()
                 .userId(user.getId())
                 .lastSeenAt(user.getLastSeenAt())
+                .build();
+    }
+
+    public static Message messageDtoToMessage(User user, Chat chat, ZonedDateTime now, MessageType messageType, String content) {
+        Message message = new Message();
+        message.setSentBy(user);
+        message.setChat(chat);
+        message.setSendTime(now);
+        message.setMessageType(messageType);
+        message.setContent(content);
+
+        return message;
+    }
+
+    public static MessageTypingDto messageToMessageTypingDto(User user) {
+        return MessageTypingDto.builder()
+                .userId(user.getId())
                 .build();
     }
 }

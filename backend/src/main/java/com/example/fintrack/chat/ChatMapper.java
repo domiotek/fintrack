@@ -26,7 +26,7 @@ public class ChatMapper {
                         .sentAt(message.getSendTime())
                         .build()
                 )
-                .lastReadMessageId(lastReadMessage.getId())
+                .lastReadMessageId(lastReadMessage.getMessage().getId())
                 .isFriend(friend.getFriendStatus() == FriendStatus.ACCEPTED)
                 .otherParticipant(PrivateChatFriendDto.builder()
                         .id(friend.getFriend().getId())
