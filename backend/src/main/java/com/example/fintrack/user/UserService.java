@@ -64,8 +64,8 @@ public class UserService implements UserDetailsService {
     public void updatePassword(PasswordDto passwordDto) {
         User user = userProvider.getLoggedUser();
 
-        if (!user.getPassword().equals(passwordEncoder.encode(passwordDto.oldPassword()))) {
-            throw BAD_CREDENTIALS.getError();
+        if (!passwordEncoder.matches(passwordDto.oldPassword(), user.getPassword())) {
+            throw INVALID_PASSWORD.getError();
         }
 
         user.setPassword(passwordEncoder.encode(passwordDto.newPassword()));
