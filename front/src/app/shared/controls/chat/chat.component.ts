@@ -160,6 +160,7 @@ export class ChatComponent implements AfterViewInit, AfterViewChecked, OnDestroy
 
     this.chatService.connectToChat(this.chatId()).then(() => {
       this.loading.set(false);
+      this.onMessageRead(this.messages()[this.messages().length - 1]?.id || 0);
     });
 
     document.addEventListener('visibilitychange', this.visibilityChangeEventDispatcher.bind(this));
@@ -182,7 +183,6 @@ export class ChatComponent implements AfterViewInit, AfterViewChecked, OnDestroy
         this.updateReadIndicatorPositions();
         if (!this.loading() && !this.scrollToBottomVisible()) {
           this.scrollToBottom(false);
-          this.onMessageRead(this.messages()[this.messages().length - 1]?.id || 0);
         }
       }, 0);
     });
