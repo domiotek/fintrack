@@ -46,7 +46,7 @@ export class AddBillDialogComponent implements OnInit {
     date: new FormControl<string>(DateTime.now().toISODate(), Validators.required),
     time: new FormControl<string>(DateTime.now().toFormat('HH:mm'), Validators.required),
     amount: new FormControl<number>(0, { validators: [Validators.required, Validators.min(0.01)] }),
-    categoryId: new FormControl<number | null>(null, { validators: [Validators.required] }),
+    categoryId: new FormControl<number | null>(1, { validators: [Validators.required] }),
     currencyId: new FormControl<number>(0, { validators: [Validators.required] }),
   });
 
