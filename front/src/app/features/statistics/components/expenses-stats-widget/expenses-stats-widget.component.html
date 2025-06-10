@@ -1,0 +1,23 @@
+@let userCurrency = userCurrency$ | async;
+
+<div class="filters">
+  <mat-slide-toggle [(ngModel)]="isTotalSpending">Skumulowana wartość</mat-slide-toggle>
+  <app-select-grouping [(selectedGroup)]="filters" (selectedGroupChange)="onSelectedGroupChange()" />
+</div>
+@if (data() && data()!.labels.length > 0 && userCurrency) {
+  @if (isTotalSpending()) {
+    <app-line-chart
+      class="widget"
+      [chartData]="totalSpendingData()!"
+      [tooltipLabel]="'Wartość wydatków [' + userCurrency.code + ']'"
+    />
+  } @else {
+    <app-bar-chart
+      class="widget"
+      [chartData]="data()!"
+      [tooltipLabel]="'Wartość wydatków [' + userCurrency.code + ']'"
+    />
+  }
+} @else {
+  <app-no-data />
+}

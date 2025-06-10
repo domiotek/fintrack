@@ -64,7 +64,7 @@ export class LineChartComponent implements OnInit, OnChanges {
             label: this.tooltipLabel(),
             data: this.chartData().data,
             backgroundColor: (context: any) => {
-              const bgColor = ['rgba(20, 105, 192, 0.6)', 'rgba(20, 105, 192, 0.15)'];
+              const bgColor = ['rgba(25,55,109, 0.4)', 'rgba(25,55,109, 0.15)'];
 
               if (!context.chart.chartArea) {
                 return;
@@ -81,8 +81,8 @@ export class LineChartComponent implements OnInit, OnChanges {
 
               return gradientBg;
             },
-            pointHoverBackgroundColor: 'rgba(20, 105, 192, 1)',
-            borderColor: 'rgba(20, 105, 192, 1)',
+            pointHoverBackgroundColor: 'rgba(25,55,109, 1)',
+            borderColor: 'rgba(25,55,109, 1)',
             borderWidth: 1,
             pointRadius: 4,
             fill: true,

@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { TimeRange } from '../../../../core/models/time-range/time-range';
-import { WidgetWrapperComponent } from '../../components/widget-wrapper/widget-wrapper.component';
 import { SpendingSummaryWidgetComponent } from '../../components/spending-summary-widget/spending-summary-widget.component';
 import { SpendingsWidgetComponent } from '../../components/spendings-widget/spendings-widget.component';
 import { EventsWidgetComponent } from '../../components/events-widget/events-widget.component';
@@ -16,6 +15,7 @@ import { callDebounced as debounceHandler } from '../../../../utils/debouncer';
 import { DateTime } from 'luxon';
 import { MatDialog } from '@angular/material/dialog';
 import { AddBillDialogComponent } from '../../components/add-bill-dialog/add-bill-dialog.component';
+import { WidgetWrapperComponent } from '../../../../shared/components/widget-wrapper/widget-wrapper.component';
 
 @Component({
   selector: 'app-dashboard',

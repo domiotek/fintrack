@@ -1,0 +1,24 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: end;
+  justify-content: center;
+  min-height: 150px;
+
+  .filters {
+    margin-top: -42px;
+  }
+
+  .widget {
+    height: 350px;
+  }
+}
+
+@media (width < 768px) {
+  :host {
+    .filters {
+      margin-top: 0;
+    }
+  }
+}

@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { IWidget } from '../../models/widget';
+import { IWidget } from '../../../../core/models/statistics/widget';
 import { BaseWidgetComponent } from '../base-widget/base-widget.component';
 import { StatisticsService } from '../../../../core/services/statistics/statistics.service';
 import { DashboardStats } from '../../../../core/models/statistics/dashboard-stats';

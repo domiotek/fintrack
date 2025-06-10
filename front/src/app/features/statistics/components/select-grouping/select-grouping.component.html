@@ -1,0 +1,8 @@
+<mat-form-field appearance="outline">
+  <mat-label>Grupuj po</mat-label>
+  <mat-select [(ngModel)]="selectedGroup">
+    @for (group of groups(); track group) {
+      <mat-option [value]="group.value">{{ group.label }}</mat-option>
+    }
+  </mat-select>
+</mat-form-field>

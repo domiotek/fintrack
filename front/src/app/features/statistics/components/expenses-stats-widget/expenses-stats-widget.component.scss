@@ -1,0 +1,31 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: end;
+  justify-content: center;
+  min-height: 150px;
+
+  .filters {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    align-items: baseline;
+    margin-top: -42px;
+  }
+
+  .widget {
+    height: 350px;
+  }
+}
+
+@media (width < 768px) {
+  :host {
+    align-items: stretch;
+
+    .filters {
+      margin-top: 0;
+      flex-direction: column;
+    }
+  }
+}

@@ -1,1 +1,34 @@
-<p>statistics works!</p>
+<div class="header">
+  <app-time-range-selector
+    [customRangeAllowed]="true"
+    [initialTimeRange]="projectionRange()"
+    [constraints]="rangeConstraints()"
+    (timeRangeChange)="onProjectionDateChange($event)"
+  />
+</div>
+
+<div class="content">
+  <div class="widget-row">
+    <app-widget-wrapper header="Wydatki względem dni tygodnia">
+      <app-all-bills-widget #widgetContent />
+    </app-widget-wrapper>
+
+    <app-widget-wrapper header="Wydatki względem kategorii">
+      <app-categories-stats-widget #widgetContent />
+    </app-widget-wrapper>
+  </div>
+
+  <app-widget-wrapper header="Wydatki">
+    <app-expenses-stats-widget #widgetContent />
+  </app-widget-wrapper>
+
+  <div class="widget-row">
+    <app-widget-wrapper header="Wydatki względem dni tygodnia">
+      <app-day-of-week-stats-widget #widgetContent />
+    </app-widget-wrapper>
+
+    <app-widget-wrapper header="Liczba rachunków">
+      <app-transactions-stats-widget #widgetContent />
+    </app-widget-wrapper>
+  </div>
+</div>

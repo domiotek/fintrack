@@ -1,29 +1,27 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { StatisticsComponent } from './statistics.component';
+import { TransactionsStatsWidgetComponent } from './transactions-stats-widget.component';
 import { provideExperimentalZonelessChangeDetection } from '@angular/core';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { AppStateStore } from '../../../../core/store/app-state.store';
-import { provideLuxonDateAdapter } from '@angular/material-luxon-adapter';
 
-describe('StatisticsComponent', () => {
-  let component: StatisticsComponent;
-  let fixture: ComponentFixture<StatisticsComponent>;
+describe('TransactionsStatsWidgetComponent', () => {
+  let component: TransactionsStatsWidgetComponent;
+  let fixture: ComponentFixture<TransactionsStatsWidgetComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [StatisticsComponent],
       providers: [
         provideExperimentalZonelessChangeDetection(),
         provideHttpClient(),
         provideHttpClientTesting(),
-        provideLuxonDateAdapter(),
         AppStateStore,
       ],
+      imports: [TransactionsStatsWidgetComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(StatisticsComponent);
+    fixture = TestBed.createComponent(TransactionsStatsWidgetComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
