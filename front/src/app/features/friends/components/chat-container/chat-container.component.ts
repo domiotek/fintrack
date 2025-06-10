@@ -62,7 +62,7 @@ export class ChatContainerComponent implements OnInit {
       this.currentUserId.set(state.userId ?? null);
     });
 
-    this.chatService.lastUserActivityMap$.subscribe((activityMap) => {
+    this.chatService.lastUserActivityMap$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((activityMap) => {
       const isoDate = activityMap[this.otherParticipant()?.id];
       const dateTime = DateTime.fromISO(isoDate);
 
