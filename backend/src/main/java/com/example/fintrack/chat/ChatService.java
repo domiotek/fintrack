@@ -113,9 +113,7 @@ public class ChatService {
                         LastReadMessage friendLastReadMessage = lastReadMessageRepository
                                 .findLastReadMessageByUserIdAndChatId(f.getUser().getId(), f.getChat().getId())
                                 .orElseThrow(LAST_READ_MESSAGE_DOES_NOT_EXIST::getError);
-                        friendLastReadMessage.setMessage(savedMessage);
                         simpMessagingTemplate.convertAndSend("/topic/chats/" + f.getUser().getId() + "/private-chat-updates", ChatMapper.friendToPrivateChatDto(f, savedMessage, friendLastReadMessage));
-                        lastReadMessageRepository.save(friendLastReadMessage);
                     }
                 });
     }
