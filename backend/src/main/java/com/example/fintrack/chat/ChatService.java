@@ -33,7 +33,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Objects;
 
 import static com.example.fintrack.exception.BusinessErrorCodes.*;
 import static com.example.fintrack.friend.FriendSpecification.*;
@@ -173,7 +172,7 @@ public class ChatService {
     }
 
     public Page<MessageDto> getChatMessages(long messageId, long chatId, int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("id").ascending());
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("id").descending());
 
         Page<Message> messages = messageRepository.getMessagesByIdLessThanEqualAndChatId(messageId, chatId, pageRequest);
 
@@ -207,7 +206,7 @@ public class ChatService {
     }
 
     public ChatStateDto getChatState(long chatId, int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("id").ascending());
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("id").descending());
 
         Page<Message> messages = messageRepository.getMessagesByChatId(chatId, pageRequest);
 
