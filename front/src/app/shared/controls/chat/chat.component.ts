@@ -158,9 +158,10 @@ export class ChatComponent implements AfterViewInit, AfterViewChecked, OnDestroy
       this.currentUserId.set(state.userId);
     });
 
-    this.chatService.connectToChat(this.chatId()).then(() => {
+    this.chatService.connectToChat(this.chatId()).then((state) => {
       this.loading.set(false);
       this.onMessageRead(this.messages()[this.messages().length - 1]?.id || 0);
+      this.hasMorePages.set(state.messages.page.totalPages > state.messages.page.number);
     });
 
     document.addEventListener('visibilitychange', this.visibilityChangeEventDispatcher.bind(this));
@@ -215,7 +216,7 @@ export class ChatComponent implements AfterViewInit, AfterViewChecked, OnDestroy
 
   onScrolledTop() {
     if (this.loading() || !this.hasMorePages()) return;
-    this.fetchAndMergeMessages();
+    this.fetchMoreMessages();
   }
 
   onScrollerContentUpdate() {
@@ -254,7 +255,7 @@ export class ChatComponent implements AfterViewInit, AfterViewChecked, OnDestroy
     return blockLastMessageSentAt <= myLastReadMessageSentAt;
   }
 
-  private fetchAndMergeMessages(): void {
+  private fetchMoreMessages(): void {
     this.loading.set(true);
     this.scrollSnapMessageId.set(this.messages()[0]?.id || null);
 
