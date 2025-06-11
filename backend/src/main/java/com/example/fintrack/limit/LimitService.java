@@ -9,6 +9,8 @@ import com.example.fintrack.user.User;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.ZonedDateTime;
+
 import static com.example.fintrack.exception.BusinessErrorCodes.CATEGORY_DOES_NOT_EXIST;
 import static com.example.fintrack.exception.BusinessErrorCodes.LIMIT_DOES_NOT_EXIST;
 import static java.util.Comparator.*;
@@ -28,26 +30,19 @@ public class LimitService {
         Category category = categoryRepository.findCategoryByIdAndUserId(categoryId, user.getId())
                 .orElseThrow(CATEGORY_DOES_NOT_EXIST::getError);
 
+        ZonedDateTime now = ZonedDateTime.now();
+
         if(!category.getLimits().isEmpty()) {
             Limit lastLimit = category.getLimits().stream()
                     .max(comparing(Limit::getId))
                     .orElseThrow(LIMIT_DOES_NOT_EXIST::getError);
 
-            lastLimit.setEndDateTime(addLimitDto.startDateTime());
+            lastLimit.setEndDateTime(now);
             limitRepository.save(lastLimit);
         }
 
-        Limit limit = LimitMapper.addLimitDtoToLimit(addLimitDto, category, currencyConverter);
+        Limit limit = LimitMapper.addLimitDtoToLimit(addLimitDto, category, currencyConverter, now);
 
         limitRepository.save(limit);
-    }
-
-    public void deleteLimit(long categoryId, long limitId) {
-        User user = userProvider.getLoggedUser();
-
-        Limit limit = limitRepository.findLimitByIdAndCategoryIdAndCategoryUserId(limitId, categoryId, user.getId())
-                .orElseThrow(LIMIT_DOES_NOT_EXIST::getError);
-
-        limitRepository.delete(limit);
     }
 }

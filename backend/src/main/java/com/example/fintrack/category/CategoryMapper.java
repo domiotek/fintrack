@@ -42,7 +42,7 @@ public class CategoryMapper {
     private static BigDecimal getLatestLimitAmount(
             Category category, ZonedDateTime from, ZonedDateTime to, CurrencyConverter currencyConverter
     ) {
-        return category.getLimits().stream()
+        BigDecimal limitAmount = category.getLimits().stream()
                 .filter(l -> {
                     if (!l.getStartDateTime().isAfter(to)) {
                         if (l.getEndDateTime() == null) {
@@ -61,7 +61,13 @@ public class CategoryMapper {
                 .map(limit -> currencyConverter.convertFromUSDToGivenCurrency(
                         category.getUser().getCurrency(), limit.getStartDateTime().toLocalDate(), limit.getAmount()
                 ).setScale(2, RoundingMode.HALF_UP))
-                .orElse(null);
+                .orElse(BigDecimal.ZERO);
+
+        if (limitAmount.equals(BigDecimal.ZERO)) {
+            return null;
+        } else {
+            return limitAmount;
+        }
     }
 
     private static BigDecimal calculateUserCosts(
