@@ -6,10 +6,12 @@
     <div class="color_label" [style.backgroundColor]="category()!.color"></div>
     <p class="title">{{ category()!.name }}</p>
   </div>
-  <div class="actions-container">
-    <button mat-button (click)="editCategory()"><span>Edytuj</span></button>
-    <button mat-button (click)="deleteCategory()"><span class="red">Usuń</span></button>
-  </div>
+  @if (!category()!.isDefault) {
+    <div class="actions-container">
+      <button mat-button (click)="editCategory()"><span>Edytuj</span></button>
+      <button mat-button (click)="deleteCategory()"><span class="red">Usuń</span></button>
+    </div>
+  }
 </div>
 <div class="summary_container">
   <div class="summary_container__title">

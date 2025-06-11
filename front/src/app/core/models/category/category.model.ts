@@ -4,4 +4,5 @@ export interface Category {
   color: string;
   limit?: number;
   userCosts: number;
+  isDefault: boolean;
 }
