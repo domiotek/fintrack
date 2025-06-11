@@ -6,11 +6,13 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { BasePagingResponse } from '../../models/api/paging.model';
 import { DateTime } from 'luxon';
+import { CategoryRequest } from '../../models/category/category-request';
+import { BaseApiService } from '../base-api.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class CategoryService {
+export class CategoryService extends BaseApiService {
   private readonly apiUrl = `${environment.apiUrl}/categories`;
   private readonly categories = signal<Category[]>([]);
 
@@ -35,5 +37,17 @@ export class CategoryService {
         this.categories.set(res.content || []);
       }),
     );
+  }
+
+  createCategory(req: CategoryRequest): Observable<void> {
+    return this.httpClient.post<void>(`${this.apiUrl}`, req);
+  }
+
+  updateCategory(id: number, req: CategoryRequest): Observable<void> {
+    return this.httpClient.put<void>(`${this.apiUrl}/${id}`, req);
+  }
+
+  deleteCategory(id: number): Observable<void> {
+    return this.httpClient.delete<void>(`${this.apiUrl}/${id}`);
   }
 }

@@ -30,6 +30,8 @@ import { CategoryFilters } from '../../../../core/models/category/category-filte
 import { Pagination } from '../../../../core/models/pagination/pagination';
 import { CategoriesApiRequest } from '../../../../core/models/category/get-many.model';
 import { SpinnerComponent } from '../../../../core/components/spinner/spinner.component';
+import { MatDialog } from '@angular/material/dialog';
+import { ManageCategoryDialogComponent } from '../../components/manage-category-dialog/manage-category-dialog.component';
 
 @Component({
   selector: 'app-categories',
@@ -63,6 +65,8 @@ export class CategoriesComponent implements OnInit {
   private readonly observer = inject(BreakpointObserver);
 
   private readonly routingService = inject(RoutingService);
+
+  private readonly dialog = inject(MatDialog);
 
   readonly timeRange = signal<TimeRange>(EMPTY_CATEGORY_STATE.timeRange);
 
@@ -178,6 +182,43 @@ export class CategoriesComponent implements OnInit {
     if (!category) {
       this.selectedCategory.set(null);
       return;
+    }
+  }
+
+  protected addCategory(): void {
+    const dialogRef = this.dialog.open(ManageCategoryDialogComponent, {
+      width: '600px',
+    });
+
+    dialogRef
+      .afterClosed()
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        tap((res) => {
+          if (res) {
+            this.pagination.set({
+              page: 0,
+              size: 10,
+            });
+            this.getCategories();
+          }
+        }),
+      )
+      .subscribe();
+  }
+
+  protected onCategoryUpdated(action: 'update' | 'deletion'): void {
+    if (action === 'deletion') {
+      this.selectedCategory.set(null);
+      this.pagination.set({
+        page: 0,
+        size: 10,
+      });
+      this.selectedCategory.set(null);
+      this.getCategories();
+    } else {
+      const currentCategory = this.selectedCategory();
+      this.categories.set(this.categories().map((c) => (c.id === currentCategory?.id ? currentCategory : c)));
     }
   }
 

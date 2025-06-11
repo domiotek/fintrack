@@ -7,7 +7,7 @@
     [constraints]="rangeConstraints()"
     (timeRangeChange)="onProjectionDateChange($event)"
   />
-  <button type="button" mat-flat-button><mat-icon>add</mat-icon> Dodaj kategorię</button>
+  <button type="button" mat-flat-button (click)="addCategory()"><mat-icon>add</mat-icon> Dodaj kategorię</button>
 </div>
 <div class="content">
   @if (!isMobile() || !selectedCategory()) {
@@ -37,11 +37,12 @@
   <div class="content__selected_container" [style.display]="!isMobile() || selectedCategory() ? 'block' : 'none'">
     @if (selectedCategory()) {
       <app-category-details
-        [category]="selectedCategory()!"
+        [(category)]="selectedCategory"
         [userCurrency]="userCurrency!"
         [isMobile]="isMobile()"
-        [date]="{from: filters().from!, to: filters().to!}"
+        [date]="{ from: filters().from!, to: filters().to! }"
         (goBackEmit)="onCategorySelect(null)"
+        (categoryUpdated)="onCategoryUpdated($event)"
       />
     } @else if (!isMobile()) {
       <app-no-selected placeholder="Nie wybrano kategorii" />

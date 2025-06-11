@@ -7,9 +7,10 @@
   .header {
     display: flex;
     flex-direction: column-reverse;
-    gap: 4em;
+    gap: 16px;
     justify-content: space-between;
     flex-shrink: 0;
+    padding-bottom: 16px;
 
     button {
       padding: 1.75em;
