@@ -22,6 +22,7 @@ public class CategoryMapper {
                 .id(category.getId())
                 .name(category.getName())
                 .color(category.getColor())
+                .isDefault(category.getIsDefault())
                 .limit(getLatestLimitAmount(category, from, to, currencyConverter))
                 .userCosts(calculateUserCosts(category, from, to, currencyConverter))
                 .build();
@@ -33,6 +34,7 @@ public class CategoryMapper {
         category.setName(addCategoryDto.name());
         category.setColor(addCategoryDto.color());
         category.setUser(user);
+        category.setIsDefault(false);
 
         return category;
     }
