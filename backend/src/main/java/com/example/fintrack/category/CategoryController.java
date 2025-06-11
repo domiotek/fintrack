@@ -41,26 +41,6 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @PostMapping("/{category-id}/limits")
-    public ResponseEntity<Void> addLimitToCategory(
-            @PathVariable("category-id") long categoryId,
-            AddLimitDto addLimitDto
-    ) {
-        limitService.addLimit(categoryId, addLimitDto);
-
-        return ResponseEntity.noContent().build();
-    }
-
-    @DeleteMapping("/{category-id}/limits/{limit-id}")
-    public ResponseEntity<Void> deleteLimitFromCategory(
-            @PathVariable("category-id") long categoryId,
-            @PathVariable("limit-id") long limitId
-    ) {
-        limitService.deleteLimit(categoryId, limitId);
-
-        return ResponseEntity.noContent().build();
-    }
-
     @PutMapping("/{category-id}")
     public ResponseEntity<Void> updateCategory(
             @PathVariable("category-id") long categoryId,
@@ -74,6 +54,16 @@ public class CategoryController {
     @DeleteMapping("/{category-id}")
     public ResponseEntity<Void> deleteCategory(@PathVariable("category-id") long categoryId) {
         categoryService.deleteCategory(categoryId);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{category-id}/limits")
+    public ResponseEntity<Void> addLimitToCategory(
+            @PathVariable("category-id") long categoryId,
+            AddLimitDto addLimitDto
+    ) {
+        limitService.addLimit(categoryId, addLimitDto);
 
         return ResponseEntity.noContent().build();
     }

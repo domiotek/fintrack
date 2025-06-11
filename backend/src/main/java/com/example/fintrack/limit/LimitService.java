@@ -45,13 +45,4 @@ public class LimitService {
 
         limitRepository.save(limit);
     }
-
-    public void deleteLimit(long categoryId, long limitId) {
-        User user = userProvider.getLoggedUser();
-
-        Limit limit = limitRepository.findLimitByIdAndCategoryIdAndCategoryUserId(limitId, categoryId, user.getId())
-                .orElseThrow(LIMIT_DOES_NOT_EXIST::getError);
-
-        limitRepository.delete(limit);
-    }
 }
