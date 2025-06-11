@@ -52,7 +52,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{category-id}/limits/{limit-id}")
-    public ResponseEntity<Void> addLimitToCategory(
+    public ResponseEntity<Void> deleteLimitFromCategory(
             @PathVariable("category-id") long categoryId,
             @PathVariable("limit-id") long limitId
     ) {
