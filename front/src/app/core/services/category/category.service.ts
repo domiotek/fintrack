@@ -8,6 +8,7 @@ import { BasePagingResponse } from '../../models/api/paging.model';
 import { DateTime } from 'luxon';
 import { CategoryRequest } from '../../models/category/category-request';
 import { BaseApiService } from '../base-api.service';
+import { LimitRequest } from '../../models/category/limit-request';
 
 @Injectable({
   providedIn: 'root',
@@ -22,7 +23,7 @@ export class CategoryService extends BaseApiService {
     return this.categories;
   }
 
-  getCategoriesList(request?: CategoriesApiRequest): Observable<BasePagingResponse<Category>> {
+  getCategoriesList(request?: CategoriesApiRequest, loadMore = true): Observable<BasePagingResponse<Category>> {
     const timeRange = {
       from: DateTime.now().startOf('month'),
       to: DateTime.now().endOf('month'),
@@ -34,7 +35,11 @@ export class CategoryService extends BaseApiService {
 
     return this.httpClient.get<BasePagingResponse<Category>>(`${this.apiUrl}`, { params }).pipe(
       tap((res) => {
-        this.categories.set(res.content || []);
+        if (loadMore) {
+          this.categories.set([...this.categories(), ...(res.content || [])]);
+        } else {
+          this.categories.set(res.content || []);
+        }
       }),
     );
   }
@@ -49,5 +54,9 @@ export class CategoryService extends BaseApiService {
 
   deleteCategory(id: number): Observable<void> {
     return this.httpClient.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  addLimit(id: number, req: LimitRequest): Observable<void> {
+    return this.httpClient.post<void>(`${this.apiUrl}/${id}/limits`, req);
   }
 }

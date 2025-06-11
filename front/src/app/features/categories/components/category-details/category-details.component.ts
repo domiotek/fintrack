@@ -10,6 +10,7 @@ import {
   output,
   signal,
   SimpleChanges,
+  ViewContainerRef,
 } from '@angular/core';
 import { Category } from '../../../../core/models/category/category.model';
 import { CommonModule } from '@angular/common';
@@ -28,6 +29,7 @@ import { ManageCategoryDialogComponent } from '../manage-category-dialog/manage-
 import { ConfirmationDialogComponent } from '../../../../shared/components/confirmation-dialog/confirmation-dialog.component';
 import { ConfirmationDialogData } from '../../../../core/models/dialog/confirmation-dialog-data';
 import { CategoryService } from '../../../../core/services/category/category.service';
+import { ManageLimitDialogComponent } from '../manage-limit-dialog/manage-limit-dialog.component';
 
 @Component({
   selector: 'app-category-details',
@@ -43,6 +45,8 @@ export class CategoryDetailsComponent implements OnInit, OnChanges {
   private readonly dialog = inject(MatDialog);
 
   private readonly categoryService = inject(CategoryService);
+
+  private readonly viewContainerRef = inject(ViewContainerRef);
 
   readonly category = model.required<Category | null>();
 
@@ -71,7 +75,25 @@ export class CategoryDetailsComponent implements OnInit, OnChanges {
   }
 
   protected changeLimit(isExists: boolean): void {
-    console.log('Change limit', isExists);
+    const dialogRef = this.dialog.open(ManageLimitDialogComponent, {
+      width: '600px',
+      viewContainerRef: this.viewContainerRef,
+      data: this.category(),
+    });
+
+    dialogRef
+      .afterClosed()
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        tap((res) => {
+          if (res) {
+            const updatedCategory = { ...this.category()!, limit: res.amount };
+            this.category.set(updatedCategory);
+            this.categoryUpdated.emit('update');
+          }
+        }),
+      )
+      .subscribe();
   }
 
   protected goBack(): void {

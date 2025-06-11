@@ -32,6 +32,9 @@ import { CategoriesApiRequest } from '../../../../core/models/category/get-many.
 import { SpinnerComponent } from '../../../../core/components/spinner/spinner.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ManageCategoryDialogComponent } from '../../components/manage-category-dialog/manage-category-dialog.component';
+import { NgScrollReached } from 'ngx-scrollbar/reached-event';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { NgScrollbarModule } from 'ngx-scrollbar';
 
 @Component({
   selector: 'app-categories',
@@ -49,6 +52,9 @@ import { ManageCategoryDialogComponent } from '../../components/manage-category-
     CategoryDetailsComponent,
     NoSelectedComponent,
     SpinnerComponent,
+    NgScrollbarModule,
+    NgScrollReached,
+    MatProgressSpinnerModule,
   ],
   templateUrl: './categories.component.html',
   styleUrl: './categories.component.scss',
@@ -75,10 +81,24 @@ export class CategoriesComponent implements OnInit {
 
   readonly isSearching = signal<boolean>(false);
 
+  readonly loadMore = signal<boolean>(false);
+
   readonly filters = signal<CategoryFilters>({
     name: null,
     from: '',
     to: '',
+  });
+
+  readonly paginationInfo = signal<{
+    size: number;
+    number: number;
+    totalElements: number;
+    totalPages: number;
+  }>({
+    size: 10,
+    number: 0,
+    totalElements: 0,
+    totalPages: 0,
   });
 
   pagination = signal<Pagination>({
@@ -222,8 +242,22 @@ export class CategoriesComponent implements OnInit {
     }
   }
 
-  private getCategories(): void {
-    this.isSearching.set(true);
+  onScrolledBottom() {
+    if (this.paginationInfo().totalPages > this.pagination().page + 1) {
+      this.pagination.update((prev) => ({
+        ...prev,
+        page: prev.page + 1,
+      }));
+      this.getCategories(true);
+    }
+  }
+
+  private getCategories(loadMore = false): void {
+    if (loadMore) {
+      this.loadMore.set(true);
+    } else {
+      this.isSearching.set(true);
+    }
     const req: CategoriesApiRequest = {
       name: this.filters().name ?? '',
       from: this.filters().from!,
@@ -234,9 +268,18 @@ export class CategoriesComponent implements OnInit {
     };
 
     this.categoryService
-      .getCategoriesList(req)
+      .getCategoriesList(req, loadMore)
       .pipe(
-        finalize(() => this.isSearching.set(false)),
+        tap((res) => {
+          this.paginationInfo.set(res.page);
+        }),
+        finalize(() => {
+          if (loadMore) {
+            this.loadMore.set(false);
+          } else {
+            this.isSearching.set(false);
+          }
+        }),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
