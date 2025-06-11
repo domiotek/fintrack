@@ -134,7 +134,7 @@ export class ChatService implements OnDestroy {
 
         this.stompClient
           .watch(`/topic/chats/${chatId}/message`)
-          .pipe(takeUntilDestroyed(this.destroyRef))
+          .pipe(takeUntilDestroyed(this.destroyRef), takeUntil(this.connectedChatId.asObservable().pipe(skip(1))))
           .subscribe((message: IMessage) => {
             const chatMessage: ChatMessage = JSON.parse(message.body);
             this.messages.next([...this.messages.value, chatMessage]);
