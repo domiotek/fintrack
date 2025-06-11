@@ -1,3 +1,4 @@
+import { Category } from '../models/category/category.model';
 import { Currency } from '../models/currency/currency.model';
 import { Event } from '../models/events/event';
 import { EventBill, EventCurrency } from '../models/events/event-bill';
@@ -62,4 +63,13 @@ export const mocked_summary: EventSummary = {
 export const mocked_chartData: Stats = {
   labels: ['1', '2', '3', '4', '5'],
   data: [10, 20, 30, 40, 50],
+};
+
+export const mocked_category: Category = {
+  id: 1,
+  name: 'Test Category',
+  color: 'blue',
+  limit: 100,
+  userCosts: 50,
+  isDefault: false,
 };
