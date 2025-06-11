@@ -122,7 +122,7 @@ export class AddBillDialogComponent implements OnInit {
 
     this.billsService.addBill(billData).subscribe({
       complete: () => {
-        this.dialogRef.close();
+        this.dialogRef.close(true);
         this.submitting.set(false);
       },
       error: (err) => {

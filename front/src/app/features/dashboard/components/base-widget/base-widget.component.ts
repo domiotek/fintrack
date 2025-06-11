@@ -1,4 +1,4 @@
-import { Observable, ReplaySubject, skip } from 'rxjs';
+import { combineLatest, Observable, ReplaySubject } from 'rxjs';
 import { IWidget, IWidgetConfig } from '../../../../core/models/statistics/widget';
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { TimeRange } from '../../../../core/models/time-range/time-range';
@@ -24,12 +24,14 @@ export abstract class BaseWidgetComponent implements IWidget, OnInit {
   destroyRef = inject(DestroyRef);
 
   ngOnInit() {
-    this.dashboardStore.timeRange$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((timeRange) => {
-      this.timeRange.set(timeRange);
-      this.onRefresh.next();
+    combineLatest([this.dashboardStore.timeRange$, this.dashboardStore.refresh$])
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(([timeRange]) => {
+        this.timeRange.set(timeRange);
+        this.onRefresh.next();
 
-      this.loadData();
-    });
+        this.loadData();
+      });
 
     this.loadData();
   }
