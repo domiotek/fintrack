@@ -21,7 +21,7 @@ public class Chat {
     @GeneratedValue
     private Long id;
 
-    @OneToOne(mappedBy = "chat")
+    @OneToOne(mappedBy = "chat", fetch = FetchType.LAZY)
     private Event event;
 
     @OneToMany(mappedBy = "chat")
