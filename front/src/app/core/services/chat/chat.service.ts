@@ -1,5 +1,5 @@
 import { DestroyRef, inject, Injectable, OnDestroy, signal } from '@angular/core';
-import { BehaviorSubject, Observable, skip, Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, map, Observable, skip, Subject, takeUntil, tap } from 'rxjs';
 import { PrivateChat } from '../../models/chat/chat.model';
 import { ChatMessage } from '../../models/chat/message.model';
 import { BasePagingResponse } from '../../models/api/paging.model';
@@ -104,14 +104,14 @@ export class ChatService implements OnDestroy {
     return this.http.get<string>(`${environment.apiUrl}/chats/private/${userId}`);
   }
 
-  connectToChat(chatId: string): Promise<void> {
+  connectToChat(chatId: string): Promise<ChatState> {
     return new Promise((resolve) => {
       this.connectedChatId.next(chatId);
 
-      const params = new HttpParams().set('amount', DEFAULT_CHAT_PAGE_SIZE.toString());
+      const params = new HttpParams().set('size', DEFAULT_CHAT_PAGE_SIZE.toString());
 
       this.http.get<ChatState>(`${environment.apiUrl}/chats/${chatId}/state`, { params }).subscribe((state) => {
-        this.messages.next(state.messages.content);
+        this.messages.next(state.messages.content.reverse());
         this.lastReadMessagesMap.next(
           state.lastReadMessages.reduce(
             (acc, curr) => {
@@ -201,7 +201,7 @@ export class ChatService implements OnDestroy {
             });
           });
 
-        resolve();
+        resolve(state);
       });
     });
   }
@@ -222,12 +222,19 @@ export class ChatService implements OnDestroy {
 
     params = params.set('size', DEFAULT_CHAT_PAGE_SIZE.toString());
 
-    return this.http.get<BasePagingResponse<ChatMessage>>(
-      `${environment.apiUrl}/chats/${this.connectedChatId.value}/messages`,
-      {
+    return this.http
+      .get<BasePagingResponse<ChatMessage>>(`${environment.apiUrl}/chats/${this.connectedChatId.value}/messages`, {
         params,
-      },
-    );
+      })
+      .pipe(
+        map((response) => ({
+          ...response,
+          content: response.content.splice(1).reverse(),
+        })),
+        tap((response) => {
+          this.messages.next([...response.content, ...this.messages.value]);
+        }),
+      );
   }
 
   signalStartedTyping(): void {
