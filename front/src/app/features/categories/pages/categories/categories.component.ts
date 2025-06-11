@@ -201,7 +201,6 @@ export class CategoriesComponent implements OnInit {
   onCategorySelect(category: Category | null): void {
     if (!category) {
       this.selectedCategory.set(null);
-      return;
     }
   }
 
