@@ -6,6 +6,7 @@ import com.example.fintrack.category.dto.CategoryDto;
 import com.example.fintrack.category.dto.UpdateCategoryDto;
 import com.example.fintrack.limit.LimitService;
 import com.example.fintrack.utils.enums.SortDirection;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -61,7 +62,7 @@ public class CategoryController {
     @PostMapping("/{category-id}/limits")
     public ResponseEntity<Void> addLimitToCategory(
             @PathVariable("category-id") long categoryId,
-            AddLimitDto addLimitDto
+            @RequestBody @Valid AddLimitDto addLimitDto
     ) {
         limitService.addLimit(categoryId, addLimitDto);
 
