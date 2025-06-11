@@ -71,12 +71,18 @@ export class DashboardComponent implements OnInit {
   );
 
   openAddBillDialog() {
-    this.dialog.open(AddBillDialogComponent, {
+    const dialogRef = this.dialog.open(AddBillDialogComponent, {
       width: '600px',
       data: {
         timeRange: this.timeRange(),
       },
       viewContainerRef: this.viewContainerRef,
+    });
+
+    dialogRef.afterClosed().subscribe((addedBill) => {
+      if (addedBill) {
+        this.dashboardState.refreshWidgets();
+      }
     });
   }
 }
