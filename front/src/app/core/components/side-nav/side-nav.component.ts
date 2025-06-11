@@ -7,7 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { filter, tap } from 'rxjs';
+import { filter, take, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ROUTE_TITLES } from '../../constants/navigation/route-titles';
 import { NavigationEnd, Router } from '@angular/router';
@@ -69,6 +69,16 @@ export class SideNavComponent implements OnInit, AfterViewInit {
           this.isCollapsed.set(res.matches);
         }),
         takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
+
+    this.observer
+      .observe('(max-width: 1024px)')
+      .pipe(
+        tap((res) => {
+          this.isCollapsed.set(res.matches);
+        }),
+        take(1),
       )
       .subscribe();
 
