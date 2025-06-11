@@ -9,6 +9,7 @@ public record CategoryDto(
         Long id,
         String name,
         String color,
+        Boolean isDefault,
         BigDecimal limit,
         BigDecimal userCosts
 ) {
