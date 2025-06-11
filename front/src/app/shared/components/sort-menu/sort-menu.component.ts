@@ -34,7 +34,7 @@ export class SortMenuComponent {
 
   readonly state = model<SortState>({
     value: 'name',
-    direction: 'asc',
+    direction: 'ASC',
   });
 
   readonly sortChange = output<SortState>();
@@ -63,7 +63,7 @@ export class SortMenuComponent {
 
     this.localState.set({
       ...this.localState(),
-      direction: val ? 'asc' : 'desc',
+      direction: val ? 'ASC' : 'DESC',
     });
   }
 }

@@ -3,9 +3,15 @@
     <button class="back-button" mat-icon-button (click)="goBack()"><mat-icon>arrow_back</mat-icon></button>
   }
   <div>
-    <div class="color_label" [style.backgroundColor]="category().color"></div>
-    <p class="title">{{ category().name }}</p>
+    <div class="color_label" [style.backgroundColor]="category()!.color"></div>
+    <p class="title">{{ category()!.name }}</p>
   </div>
+  @if (!category()!.isDefault) {
+    <div class="actions-container">
+      <button mat-button (click)="editCategory()"><span>Edytuj</span></button>
+      <button mat-button (click)="deleteCategory()"><span class="red">Usuń</span></button>
+    </div>
+  }
 </div>
 <div class="summary_container">
   <div class="summary_container__title">
@@ -14,10 +20,10 @@
   </div>
   <div class="summary_container__content">
     <p class="main_summary">
-      {{ `${category().userCosts} ${category().limit ? '/' + category().limit : ''} ${userCurrency().code}` }}
+      {{ `${category()!.userCosts} ${category()!.limit ? '/' + category()!.limit : ''} ${userCurrency().code}` }}
     </p>
     @if (sameMonth()) {
-      @if (category().limit) {
+      @if (category()!.limit) {
         <button mat-stroked-button (click)="changeLimit(true)">Edytuj limit</button>
       } @else {
         <p class="description bold">Skonfiguruj limit, aby mieć jeszcze większą kontrolę nad swoimi wydatkami.</p>

@@ -1,0 +1,47 @@
+<h2 mat-dialog-title>{{ title() }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <app-form-progress-bar [active]="submitting()" />
+
+    <div class="message-container">
+      @if (this.errorCode() !== null) {
+        <app-alert-panel severity="error">{{ categoryService.getErrorMessage(this.errorCode()!) }}</app-alert-panel>
+      }
+    </div>
+
+    <mat-form-field appearance="outline">
+      <mat-label for="name">Nazwa</mat-label>
+      <input
+        matInput
+        formControlName="name"
+        name="name"
+        type="text"
+        required
+        placeholder="Wprowadź nazwę wydarzenia"
+        title="Nazwa"
+      />
+      @if (form.get('name')?.hasError('required')) {
+        <mat-error> Nazwa jest wymagana </mat-error>
+      }
+
+      @if (form.get('name')?.hasError('minlength')) {
+        <mat-error> Nazwa nie może być krótsza niż 3 znaki.</mat-error>
+      }
+    </mat-form-field>
+
+    <div class="color-picker-container">
+      <p>Wybierz kolor:</p>
+      <div class="color-picker" [style.backgroundColor]="form.get('color')?.value">
+        <input formControlName="color" name="color" type="color" title="Kolor" class="color-input" />
+      </div>
+    </div>
+
+    <mat-dialog-actions>
+      <button mat-button type="button" [disabled]="submitting()" mat-dialog-close>Anuluj</button>
+      <button mat-flat-button color="primary" type="submit" [disabled]="submitting() || !form.valid">
+        {{ submitText() }}
+      </button>
+    </mat-dialog-actions>
+  </form>
+</mat-dialog-content>

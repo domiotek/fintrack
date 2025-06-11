@@ -28,14 +28,14 @@
           (keydown.enter)="changeDirection($event, true)"
           matTooltip="Rosnąco"
         >
-          <mat-icon [class]="localState().direction === 'asc' ? 'light-blue-1' : 'light-gray-1'">arrow_upward</mat-icon>
+          <mat-icon [class]="localState().direction === 'ASC' ? 'light-blue-1' : 'light-gray-1'">arrow_upward</mat-icon>
         </span>
         <span
           (click)="changeDirection($event, false)"
           (keydown.enter)="changeDirection($event, true)"
           matTooltip="Malejąco"
         >
-          <mat-icon [class]="localState().direction === 'desc' ? 'light-blue-1' : 'light-gray-1'"
+          <mat-icon [class]="localState().direction === 'DESC' ? 'light-blue-1' : 'light-gray-1'"
             >arrow_downward</mat-icon
           >
         </span>

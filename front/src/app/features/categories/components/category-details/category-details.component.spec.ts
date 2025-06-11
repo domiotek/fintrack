@@ -41,6 +41,11 @@ describe('CategoryDetailsComponent', () => {
 
     fixture.componentRef.setInput('isMobile', false);
 
+    fixture.componentRef.setInput('date', {
+      startDate: '2025-06-01',
+      endDate: '2025-12-31',
+    });
+
     fixture.detectChanges();
   });
 

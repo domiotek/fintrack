@@ -17,7 +17,15 @@
 
   .title_container {
     display: flex;
+    justify-content: space-between;
+    width: 100%;
     gap: 16px;
+
+    .actions-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
     .back-button {
       position: absolute;
@@ -27,7 +35,6 @@
       display: flex;
       gap: 24px;
       align-items: center;
-      margin: auto;
     }
 
     .color_label {
@@ -85,5 +92,13 @@
     padding: 0;
     height: 100%;
     overflow: visible;
+
+    .title_container {
+      flex-direction: column;
+
+      div {
+        margin: auto;
+      }
+    }
   }
 }

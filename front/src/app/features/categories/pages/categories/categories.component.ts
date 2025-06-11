@@ -23,9 +23,18 @@ import { AppStateStore } from '../../../../core/store/app-state.store';
 import { CategoryDetailsComponent } from '../../components/category-details/category-details.component';
 import { NoSelectedComponent } from '../../../../shared/components/no-selected/no-selected.component';
 import { BreakpointObserver } from '@angular/cdk/layout';
-import { tap } from 'rxjs';
+import { finalize, tap } from 'rxjs';
 import { CategoryItemComponent } from '../../../../shared/components/category-item/category-item.component';
 import { RoutingService } from '../../../../core/services/routing/routing.service';
+import { CategoryFilters } from '../../../../core/models/category/category-filters';
+import { Pagination } from '../../../../core/models/pagination/pagination';
+import { CategoriesApiRequest } from '../../../../core/models/category/get-many.model';
+import { SpinnerComponent } from '../../../../core/components/spinner/spinner.component';
+import { MatDialog } from '@angular/material/dialog';
+import { ManageCategoryDialogComponent } from '../../components/manage-category-dialog/manage-category-dialog.component';
+import { NgScrollReached } from 'ngx-scrollbar/reached-event';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { NgScrollbarModule } from 'ngx-scrollbar';
 
 @Component({
   selector: 'app-categories',
@@ -42,6 +51,10 @@ import { RoutingService } from '../../../../core/services/routing/routing.servic
     AsyncPipe,
     CategoryDetailsComponent,
     NoSelectedComponent,
+    SpinnerComponent,
+    NgScrollbarModule,
+    NgScrollReached,
+    MatProgressSpinnerModule,
   ],
   templateUrl: './categories.component.html',
   styleUrl: './categories.component.scss',
@@ -59,10 +72,39 @@ export class CategoriesComponent implements OnInit {
 
   private readonly routingService = inject(RoutingService);
 
+  private readonly dialog = inject(MatDialog);
+
   readonly timeRange = signal<TimeRange>(EMPTY_CATEGORY_STATE.timeRange);
 
   readonly isMobile = signal<boolean>(false);
   readonly selectedCategory = signal<Category | null>(null);
+
+  readonly isSearching = signal<boolean>(false);
+
+  readonly loadMore = signal<boolean>(false);
+
+  readonly filters = signal<CategoryFilters>({
+    name: null,
+    from: '',
+    to: '',
+  });
+
+  readonly paginationInfo = signal<{
+    size: number;
+    number: number;
+    totalElements: number;
+    totalPages: number;
+  }>({
+    size: 10,
+    number: 0,
+    totalElements: 0,
+    totalPages: 0,
+  });
+
+  pagination = signal<Pagination>({
+    page: 0,
+    size: 10,
+  });
 
   projection_range = computed(() => ({
     from: this.timeRange().from.startOf('month'),
@@ -106,7 +148,13 @@ export class CategoriesComponent implements OnInit {
       )
       .subscribe();
 
-    this.categoryService.getCategoriesList().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
+    this.filters.set({
+      ...this.filters(),
+      from: `${this.timeRange().from.toISO()}`,
+      to: `${this.timeRange().to.toISO()}`,
+    });
+
+    this.getCategories();
 
     const routingState = this.routingService.getAndConsumeNavigationState();
 
@@ -119,25 +167,120 @@ export class CategoriesComponent implements OnInit {
       this.timeRange.set(routingState['timeRange'] as TimeRange);
     }
   }
+
   onProjectionDateChange = debounceHandler(
     (timeRange: TimeRange) => {
       this.categoryState.setTimeRange(timeRange);
       this.timeRange.set(timeRange);
+      this.filters.set({
+        ...this.filters(),
+        from: `${timeRange.from.toISO()}`,
+        to: `${timeRange.to.toISO()}`,
+      });
+
+      this.onSearch(this.filters().name ?? '');
     },
     300,
     this.destroyRef,
   );
 
-  onSearch(val: string): void {}
+  onSearch(searchValue: string): void {
+    this.filters.set({
+      ...this.filters(),
+      name: searchValue ?? null,
+    });
+    this.getCategories();
+    this.selectedCategory.set(null);
+  }
 
   onSortChange(state: SortState): void {
     this.sortState.set({ ...state });
+    this.getCategories();
   }
 
   onCategorySelect(category: Category | null): void {
     if (!category) {
       this.selectedCategory.set(null);
-      // return; sonar sie czepia
     }
+  }
+
+  protected addCategory(): void {
+    const dialogRef = this.dialog.open(ManageCategoryDialogComponent, {
+      width: '600px',
+    });
+
+    dialogRef
+      .afterClosed()
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        tap((res) => {
+          if (res) {
+            this.pagination.set({
+              page: 0,
+              size: 10,
+            });
+            this.getCategories();
+          }
+        }),
+      )
+      .subscribe();
+  }
+
+  protected onCategoryUpdated(action: 'update' | 'deletion'): void {
+    if (action === 'deletion') {
+      this.selectedCategory.set(null);
+      this.pagination.set({
+        page: 0,
+        size: 10,
+      });
+      this.selectedCategory.set(null);
+      this.getCategories();
+    } else {
+      const currentCategory = this.selectedCategory();
+      this.categories.set(this.categories().map((c) => (c.id === currentCategory?.id ? currentCategory : c)));
+    }
+  }
+
+  onScrolledBottom() {
+    if (this.paginationInfo().totalPages > this.pagination().page + 1) {
+      this.pagination.update((prev) => ({
+        ...prev,
+        page: prev.page + 1,
+      }));
+      this.getCategories(true);
+    }
+  }
+
+  private getCategories(loadMore = false): void {
+    if (loadMore) {
+      this.loadMore.set(true);
+    } else {
+      this.isSearching.set(true);
+    }
+    const req: CategoriesApiRequest = {
+      name: this.filters().name ?? '',
+      from: this.filters().from!,
+      to: this.filters().to!,
+      page: this.pagination().page,
+      size: this.pagination().size,
+      sortDirection: this.sortState().direction,
+    };
+
+    this.categoryService
+      .getCategoriesList(req, loadMore)
+      .pipe(
+        tap((res) => {
+          this.paginationInfo.set(res.page);
+        }),
+        finalize(() => {
+          if (loadMore) {
+            this.loadMore.set(false);
+          } else {
+            this.isSearching.set(false);
+          }
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe();
   }
 }
