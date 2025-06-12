@@ -64,10 +64,9 @@ export class ChatListComponent implements OnInit {
 
       if (existingChatIndex !== -1) {
         currentChats.splice(existingChatIndex, 1);
-        currentChats.unshift(chat);
-      } else {
-        currentChats.unshift(chat);
       }
+
+      currentChats.unshift(chat);
 
       this.chats.set(currentChats);
       this.changeDetectionRef.markForCheck();
