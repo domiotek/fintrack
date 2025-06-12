@@ -21,7 +21,7 @@ public class Chat {
     @GeneratedValue
     private Long id;
 
-    @OneToOne(mappedBy = "chat", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "chat")
     private Event event;
 
     @OneToMany(mappedBy = "chat")
@@ -43,11 +43,11 @@ public class Chat {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Chat chat)) return false;
-        return Objects.equals(id, chat.id) && Objects.equals(event, chat.event);
+        return Objects.equals(id, chat.id) && Objects.equals(isStarted, chat.isStarted);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, event);
+        return Objects.hash(id, isStarted);
     }
 }

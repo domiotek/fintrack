@@ -59,11 +59,11 @@ public class User implements UserDetails {
     @ToString.Exclude
     private Set<Bill> paidBills;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user")
     @ToString.Exclude
     private Set<Friend> friends;
 
-    @OneToMany(mappedBy = "friend", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "friend")
     @ToString.Exclude
     private Set<Friend> friendOf;
 
