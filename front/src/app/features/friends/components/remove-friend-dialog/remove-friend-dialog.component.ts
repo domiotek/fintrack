@@ -83,22 +83,26 @@ export class RemoveFriendDialogComponent implements OnInit {
     dialogRef.afterClosed().subscribe((accepted) => {
       if (!accepted) return;
 
-      this.processing.set(true);
+      this.removeFriend(user);
+    });
+  }
 
-      this.friendSevice.removeFriend(user.id).subscribe({
-        next: () => {
-          this.processing.set(false);
-          this.friends.update((currentFriends) => currentFriends.filter((friend) => friend.id !== user.id));
-          this.selectedUser.set(null);
-          this.snackBar.open('Znajomy został usunięty.', 'Zamknij', {
-            duration: 3000,
-          });
-        },
-        error: () => {
-          this.processing.set(false);
-          this.snackBar.open('Nie udało się usunąć znajomego. Spróbuj ponownie.', 'Zamknij');
-        },
-      });
+  private removeFriend(user: User) {
+    this.processing.set(true);
+
+    this.friendSevice.removeFriend(user.id).subscribe({
+      next: () => {
+        this.processing.set(false);
+        this.friends.update((currentFriends) => currentFriends.filter((friend) => friend.id !== user.id));
+        this.selectedUser.set(null);
+        this.snackBar.open('Znajomy został usunięty.', 'Zamknij', {
+          duration: 3000,
+        });
+      },
+      error: () => {
+        this.processing.set(false);
+        this.snackBar.open('Nie udało się usunąć znajomego. Spróbuj ponownie.', 'Zamknij');
+      },
     });
   }
 }
