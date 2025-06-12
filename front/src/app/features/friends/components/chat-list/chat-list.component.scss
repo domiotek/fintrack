@@ -1,0 +1,51 @@
+@use '../../../../styles/variables' as *;
+
+:host {
+  display: contents;
+}
+
+.chats-list-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+
+  .chats-list-header {
+    display: flex;
+    gap: 0.5em;
+  }
+
+  .chats-list {
+    position: relative;
+    .loading-more-spinner {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 0;
+    }
+  }
+}
+
+.colored-icon-button {
+  color: $light-blue-1;
+}
+
+app-search-input {
+  width: 100%;
+}
+
+@media (width > 600px) {
+  .chats-list-header {
+    max-width: 60vw;
+  }
+}
+
+@media (width > 768px) {
+  .chats-list-container {
+    max-width: 30vw;
+  }
+
+  .chats-list {
+    overflow: hidden;
+  }
+}

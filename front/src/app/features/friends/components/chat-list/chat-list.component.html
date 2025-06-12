@@ -1,0 +1,32 @@
+<div class="chats-list-container">
+  <div class="chats-list-header">
+    <app-search-input placeholder="Wyszukaj po nazwie" (emitSearch)="onSearch($event)" [(ngModel)]="searchValue" />
+    <button class="colored-icon-button" type="button" mat-icon-button (click)="openCreateChatDialog()">
+      <mat-icon>add</mat-icon>
+    </button>
+    <button class="colored-icon-button" type="button" mat-icon-button (click)="openRemoveFriendDialog()">
+      <mat-icon>manage_accounts</mat-icon>
+    </button>
+  </div>
+
+  <div class="chats-list">
+    @if (isLoading() && currentPage() === 0) {
+      <app-spinner />
+    } @else {
+      <ng-scrollbar [buttons]="true" (reachedBottom)="onScrolledBottom()">
+        <app-custom-list
+          [items]="chats()"
+          [itemTemplate]="categoryItemTemplate"
+          [isSelectable]="true"
+          [(selectedItem)]="selectedChat"
+          (selectEmit)="onChatSelect($event)"
+        />
+      </ng-scrollbar>
+      <mat-spinner class="loading-more-spinner" [diameter]="20" mode="indeterminate" *ngIf="isLoading()"></mat-spinner>
+    }
+  </div>
+</div>
+
+<ng-template #categoryItemTemplate let-item>
+  <app-chat-item [item]="item" />
+</ng-template>
