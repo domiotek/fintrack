@@ -72,13 +72,12 @@ export class ChatComponent implements AfterViewInit, AfterViewChecked, OnDestroy
   readonly scrollToBottomVisible = signal<boolean>(false);
   readonly typingUsers = signal<string[]>([]);
   readonly messages = signal<ChatMessage[]>([]);
-  readonly lastReadMessagesMap = signal<Record<number, number>>({});
+  readonly lastReadMessagesMap = signal<Record<number, number | null>>({});
   readonly lastUserActivityTime = signal<Record<number, string>>({});
   readonly messagesWithReadIndicators = signal<Record<string, number[]>>({});
   readonly currentUserId = signal<number | null>(null);
   readonly scrollSnapMessageId = signal<number | null>(null);
   readonly loading = signal<boolean>(true);
-  readonly hasMorePages = signal<boolean>(false);
   readonly isWindowActive = signal<boolean>(!document.hidden && document.hasFocus());
 
   readonly myLastReadMessageId = computed(() => {
@@ -161,7 +160,6 @@ export class ChatComponent implements AfterViewInit, AfterViewChecked, OnDestroy
     this.chatService.connectToChat(this.chatId()).then((state) => {
       this.loading.set(false);
       this.onMessageRead(this.messages()[this.messages().length - 1]?.id || 0);
-      this.hasMorePages.set(state.messages.page.totalPages > state.messages.page.number);
     });
 
     document.addEventListener('visibilitychange', this.visibilityChangeEventDispatcher.bind(this));
@@ -215,7 +213,7 @@ export class ChatComponent implements AfterViewInit, AfterViewChecked, OnDestroy
   }
 
   onScrolledTop() {
-    if (this.loading() || !this.hasMorePages()) return;
+    if (this.loading() || !this.chatService.hasMorePages()) return;
     this.fetchMoreMessages();
   }
 
@@ -260,7 +258,6 @@ export class ChatComponent implements AfterViewInit, AfterViewChecked, OnDestroy
     this.scrollSnapMessageId.set(this.messages()[0]?.id || null);
 
     this.chatService.getNextChatMessages(this.scrollSnapMessageId()).subscribe((messagesResponse) => {
-      this.hasMorePages.set(messagesResponse.page.totalPages > messagesResponse.page.number);
       this.loading.set(false);
     });
   }

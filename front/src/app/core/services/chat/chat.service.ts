@@ -18,6 +18,11 @@ import { UserTypingEvent } from '../../models/chat/user-typing-event.model';
 import { UserReadMessageEvent } from '../../models/chat/user-read-message-event.model';
 import { UserAvailabilityEvent } from '../../models/chat/user-availability-event.model';
 import { ChatState } from '../../models/chat/chat-state.model';
+import {
+  GenericSocketRequest,
+  PostMessageRequest,
+  UpdateLastReadMessageRequest,
+} from '../../models/chat/socket-requests.model';
 
 @Injectable({
   providedIn: 'root',
@@ -29,7 +34,7 @@ export class ChatService implements OnDestroy {
   private readonly privateChatsUpdates = new Subject<PrivateChat>();
   private readonly typingUsers = new BehaviorSubject<number[]>([]);
   private readonly messages = new BehaviorSubject<ChatMessage[]>([]);
-  private readonly lastReadMessagesMap = new BehaviorSubject<Record<number, number>>({});
+  private readonly lastReadMessagesMap = new BehaviorSubject<Record<number, number | null>>({});
   private readonly lastUserActivityMap = new BehaviorSubject<Record<number, string>>({});
   private readonly activityCheckTicker = new Subject<void>();
 
@@ -41,6 +46,7 @@ export class ChatService implements OnDestroy {
   readonly lastReadMessagesMap$ = this.lastReadMessagesMap.asObservable();
   readonly lastUserActivityMap$ = this.lastUserActivityMap.asObservable();
   readonly activityTicker$ = this.activityCheckTicker.asObservable();
+  readonly hasMorePages = signal<boolean>(false);
 
   private readonly stompClient: RxStomp;
   private readonly http = inject(HttpClient);
@@ -111,6 +117,8 @@ export class ChatService implements OnDestroy {
       const params = new HttpParams().set('size', DEFAULT_CHAT_PAGE_SIZE.toString());
 
       this.http.get<ChatState>(`${environment.apiUrl}/chats/${chatId}/state`, { params }).subscribe((state) => {
+        this.hasMorePages.set(state.messages.page.totalPages - 1 > state.messages.page.number);
+
         this.messages.next(state.messages.content.reverse());
         this.lastReadMessagesMap.next(
           state.lastReadMessages.reduce(
@@ -118,7 +126,7 @@ export class ChatService implements OnDestroy {
               acc[curr.userId] = curr.messageId;
               return acc;
             },
-            {} as Record<number, number>,
+            {} as Record<number, number | null>,
           ),
         );
 
@@ -206,13 +214,6 @@ export class ChatService implements OnDestroy {
     });
   }
 
-  sendMessage(message: string) {
-    return this.stompClient.publish({
-      destination: `/app/chats/${this.connectedChatId.value}/post-message`,
-      body: message,
-    });
-  }
-
   getNextChatMessages(lastFetchedMessageId: number | null): Observable<BasePagingResponse<ChatMessage>> {
     let params = new HttpParams();
 
@@ -229,35 +230,65 @@ export class ChatService implements OnDestroy {
       .pipe(
         map((response) => ({
           ...response,
-          content: response.content.splice(1).reverse(),
+          content: response.content.slice(1).reverse(),
         })),
         tap((response) => {
+          this.hasMorePages.set(response.page.totalPages - 1 > response.page.number);
           this.messages.next([...response.content, ...this.messages.value]);
         }),
       );
   }
 
+  sendMessage(message: string) {
+    if (!this.ensureConnected()) return;
+
+    const postMessageRequest: PostMessageRequest = {
+      message,
+      userId: this.currentUserId()!,
+    };
+
+    return this.stompClient.publish({
+      destination: `/app/chats/${this.connectedChatId.value}/post-message`,
+      body: JSON.stringify(postMessageRequest),
+    });
+  }
+
   signalStartedTyping(): void {
     if (!this.ensureConnected()) return;
 
+    const request: GenericSocketRequest = {
+      userId: this.currentUserId()!,
+    };
+
     this.stompClient.publish({
       destination: `/app/chats/${this.connectedChatId.value}/started-typing`,
+      body: JSON.stringify(request),
     });
   }
 
   signalStoppedTyping(): void {
     if (!this.ensureConnected()) return;
 
+    const request: GenericSocketRequest = {
+      userId: this.currentUserId()!,
+    };
+
     this.stompClient.publish({
       destination: `/app/chats/${this.connectedChatId.value}/stopped-typing`,
+      body: JSON.stringify(request),
     });
   }
 
   updateLastActivity(): void {
     if (!this.ensureConnected()) return;
 
+    const request: GenericSocketRequest = {
+      userId: this.currentUserId()!,
+    };
+
     this.stompClient.publish({
       destination: `/app/chats/${this.connectedChatId.value}/report-last-activity`,
+      body: JSON.stringify(request),
     });
   }
 
@@ -266,10 +297,15 @@ export class ChatService implements OnDestroy {
 
     const lastReadMessages = this.lastReadMessagesMap.value;
 
+    const request: UpdateLastReadMessageRequest = {
+      messageId,
+      userId: this.currentUserId()!,
+    };
+
     if (lastReadMessages[this.currentUserId()!] !== messageId) {
       this.stompClient.publish({
         destination: `/app/chats/${this.connectedChatId.value}/update-last-read-message`,
-        body: JSON.stringify({ messageId }),
+        body: JSON.stringify(request),
       });
     }
   }

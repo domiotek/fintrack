@@ -1,5 +1,5 @@
 export interface LastReadMessage {
   userId: number;
-  messageId: number;
+  messageId: number | null;
   readTime: string;
 }
