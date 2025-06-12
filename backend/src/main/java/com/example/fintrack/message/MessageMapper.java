@@ -50,9 +50,9 @@ public class MessageMapper {
         return message;
     }
 
-    public static MessageTypingDto messageToMessageTypingDto(User user) {
+    public static MessageTypingDto messageToMessageTypingDto(Long userId) {
         return MessageTypingDto.builder()
-                .userId(user.getId())
+                .userId(userId)
                 .build();
     }
 }

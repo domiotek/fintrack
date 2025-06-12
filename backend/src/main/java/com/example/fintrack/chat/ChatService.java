@@ -2,6 +2,7 @@ package com.example.fintrack.chat;
 
 import com.example.fintrack.chat.dto.ChatStateDto;
 import com.example.fintrack.chat.dto.PrivateChatDto;
+import com.example.fintrack.chat.dto.SentUserDto;
 import com.example.fintrack.friend.Friend;
 import com.example.fintrack.friend.FriendRepository;
 import com.example.fintrack.friend.FriendStatus;
@@ -14,21 +15,18 @@ import com.example.fintrack.message.Message;
 import com.example.fintrack.message.MessageMapper;
 import com.example.fintrack.message.MessageRepository;
 import com.example.fintrack.message.MessageType;
-import com.example.fintrack.message.dto.LastActivityDto;
-import com.example.fintrack.message.dto.MessageDto;
-import com.example.fintrack.message.dto.MessageTypingDto;
-import com.example.fintrack.message.dto.ReadMessageDto;
+import com.example.fintrack.message.dto.*;
 import com.example.fintrack.security.service.UserProvider;
 import com.example.fintrack.user.User;
 import com.example.fintrack.user.UserRepository;
 import com.example.fintrack.userevent.UserEvent;
+import com.example.fintrack.userevent.UserEventRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
@@ -49,9 +47,10 @@ public class ChatService {
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final ChatRepository chatRepository;
     private final UserRepository userRepository;
+    private final UserEventRepository userEventRepository;
 
-    public void sendMessage(Authentication principal, long chatId, String content) {
-        User user = (User) principal.getPrincipal();
+    public void sendMessage(long chatId, SentMessageDto sentMessageDto) {
+        User user = userRepository.findById(sentMessageDto.userId()).orElseThrow(USER_DOES_NOT_EXIST::getError);
 
         Chat chat = chatRepository.findById(chatId).orElseThrow(CHAT_DOES_NOT_EXIST::getError);
         if (!chat.getIsStarted()) {
@@ -62,7 +61,7 @@ public class ChatService {
 
         ZonedDateTime now = ZonedDateTime.now();
 
-        Message message = MessageMapper.messageDtoToMessage(user, chat, now, MessageType.USER, content);
+        Message message = MessageMapper.messageDtoToMessage(user, chat, now, MessageType.USER, sentMessageDto.message());
         Message savedMessage =  messageRepository.save(message);
 
         simpMessagingTemplate.convertAndSend(
@@ -96,24 +95,20 @@ public class ChatService {
         }
     }
 
-    public void startTyping(Authentication principal, long chatId) {
-        User user = (User) principal.getPrincipal();
-
-        MessageTypingDto startTypingDto = MessageMapper.messageToMessageTypingDto(user);
+    public void startTyping(long chatId, SentUserDto sentUserDto) {
+        MessageTypingDto startTypingDto = MessageMapper.messageToMessageTypingDto(sentUserDto.userId());
 
         simpMessagingTemplate.convertAndSend("/topic/chats/" + chatId + "/user-started-typing", startTypingDto);
     }
 
-    public void stopTyping(Authentication principal, long chatId) {
-        User user = (User) principal.getPrincipal();
-
-        MessageTypingDto stopTypingDto = MessageMapper.messageToMessageTypingDto(user);
+    public void stopTyping(long chatId, SentUserDto sentUserDto) {
+        MessageTypingDto stopTypingDto = MessageMapper.messageToMessageTypingDto(sentUserDto.userId());
 
         simpMessagingTemplate.convertAndSend("/topic/chats/" + chatId + "/user-stopped-typing", stopTypingDto);
     }
 
-    public void reportLastActivity(Authentication principal, long chatId) {
-        User user = (User) principal.getPrincipal();
+    public void reportLastActivity(long chatId, SentUserDto sentUserDto) {
+        User user = userRepository.findById(sentUserDto.userId()).orElseThrow(USER_DOES_NOT_EXIST::getError);
 
         user.setLastSeenAt(ZonedDateTime.now());
         userRepository.save(user);
@@ -121,8 +116,8 @@ public class ChatService {
         simpMessagingTemplate.convertAndSend("/topic/chats/" + chatId + "/user-last-activity", MessageMapper.userToLastActivityDto(user));
     }
 
-    public void updateLastReadMessage(Authentication principal, long chatId, SentLastReadMessageDto sentLastReadMessageDto) {
-        User user = (User) principal.getPrincipal();
+    public void updateLastReadMessage(long chatId, SentLastReadMessageDto sentLastReadMessageDto) {
+        User user = userRepository.findById(sentLastReadMessageDto.userId()).orElseThrow(USER_DOES_NOT_EXIST::getError);
 
         Message message = messageRepository.findById(sentLastReadMessageDto.messageId())
                 .orElseThrow(MESSAGE_DOES_NOT_EXIST::getError);
@@ -155,6 +150,10 @@ public class ChatService {
     }
 
     public Page<MessageDto> getChatMessages(long messageId, long chatId, int page, int size) {
+        if (userNotBelongsToChat(chatId)) {
+            throw CHAT_DOES_NOT_EXIST.getError();
+        }
+
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by("id").descending());
 
         Page<Message> messages = messageRepository.getMessagesByIdLessThanEqualAndChatId(messageId, chatId, pageRequest);
@@ -189,6 +188,10 @@ public class ChatService {
     }
 
     public ChatStateDto getChatState(long chatId, int page, int size) {
+        if (userNotBelongsToChat(chatId)) {
+            throw CHAT_DOES_NOT_EXIST.getError();
+        }
+
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by("id").descending());
 
         Page<Message> messages = messageRepository.getMessagesByChatId(chatId, pageRequest);
@@ -247,4 +250,15 @@ public class ChatService {
         return friend.getChat().getId();
     }
 
+    private boolean userNotBelongsToChat(long chatId) {
+        User user = userProvider.getLoggedUser();
+
+        Chat chat = chatRepository.findById(chatId).orElseThrow(CHAT_DOES_NOT_EXIST::getError);
+
+        if (chat.getEvent() != null) {
+            return !userEventRepository.existsUserEventByUserIdAndEventId(user.getId(), chat.getEvent().getId());
+        } else {
+            return !friendRepository.existsFriendByUserIdAndChatId(user.getId(), chatId);
+        }
+    }
 }

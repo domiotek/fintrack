@@ -1,6 +1,7 @@
 package com.example.fintrack.message.dto;
 
-public record SendMessageDto(
+public record SentMessageDto(
+        Long userId,
         String message
 ) {
 }
