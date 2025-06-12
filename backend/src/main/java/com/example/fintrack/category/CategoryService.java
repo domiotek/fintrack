@@ -36,7 +36,8 @@ public class CategoryService {
         User user = userProvider.getLoggedUser();
 
         PageRequest pageRequest = PageRequest.of(page, size);
-        Page<Category> categories = categoryRepository.test(user.getId(), name, pageRequest);
+        Page<Category> categories = categoryRepository
+                .findCategoriesByUserIdAndNameSortedByMostSpendingDescending(user.getId(), name, pageRequest);
 
         return categories.map(category -> CategoryMapper.categoryToCategoryDto(category, from, to, currencyConverter));
     }
