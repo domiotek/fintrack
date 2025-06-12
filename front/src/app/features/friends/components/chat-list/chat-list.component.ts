@@ -63,7 +63,8 @@ export class ChatListComponent implements OnInit {
       const existingChatIndex = currentChats.findIndex((c) => c.id === chat.id);
 
       if (existingChatIndex !== -1) {
-        currentChats[existingChatIndex] = chat;
+        currentChats.splice(existingChatIndex, 1);
+        currentChats.unshift(chat);
       } else {
         currentChats.unshift(chat);
       }
