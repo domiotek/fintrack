@@ -88,6 +88,11 @@ export class RemoveFriendDialogComponent implements OnInit {
       this.friendSevice.removeFriend(user.id).subscribe({
         next: () => {
           this.processing.set(false);
+          this.friends.update((currentFriends) => currentFriends.filter((friend) => friend.id !== user.id));
+          this.selectedUser.set(null);
+          this.snackBar.open('Znajomy został usunięty.', 'Zamknij', {
+            duration: 3000,
+          });
         },
         error: () => {
           this.processing.set(false);
