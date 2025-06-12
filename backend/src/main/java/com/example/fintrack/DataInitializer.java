@@ -318,7 +318,35 @@ public class DataInitializer implements CommandLineRunner {
         lastReadMessage2.setReadTime(ZonedDateTime.now().minusHours(1).minusMinutes(5));
         lastReadMessage2.setChat(chat1);
         lastReadMessage2.setUser(user2);
-        lastReadMessageRepository.saveAll(List.of(lastReadMessage1, lastReadMessage2));
+        LastReadMessage lastReadMessage3 = new LastReadMessage();
+        lastReadMessage3.setChat(chat2);
+        lastReadMessage3.setUser(user1);
+        LastReadMessage lastReadMessage4 = new LastReadMessage();
+        lastReadMessage4.setChat(chat2);
+        lastReadMessage4.setUser(user3);
+        LastReadMessage lastReadMessage5 = new LastReadMessage();
+        lastReadMessage5.setChat(chat3);
+        lastReadMessage5.setUser(user1);
+        LastReadMessage lastReadMessage6 = new LastReadMessage();
+        lastReadMessage6.setChat(chat3);
+        lastReadMessage6.setUser(user2);
+        LastReadMessage lastReadMessage7 = new LastReadMessage();
+        lastReadMessage7.setChat(chat3);
+        lastReadMessage7.setUser(user3);
+        LastReadMessage lastReadMessage8 = new LastReadMessage();
+        lastReadMessage8.setChat(chat4);
+        lastReadMessage8.setUser(user1);
+        LastReadMessage lastReadMessage9 = new LastReadMessage();
+        lastReadMessage9.setChat(chat4);
+        lastReadMessage9.setUser(user2);
+        LastReadMessage lastReadMessage10 = new LastReadMessage();
+        lastReadMessage10.setChat(chat5);
+        lastReadMessage10.setUser(user2);
+        LastReadMessage lastReadMessage11 = new LastReadMessage();
+        lastReadMessage11.setChat(chat5);
+        lastReadMessage11.setUser(user3);
+        lastReadMessageRepository.saveAll(List.of(lastReadMessage1, lastReadMessage2, lastReadMessage3, lastReadMessage4,
+                lastReadMessage5, lastReadMessage6, lastReadMessage7, lastReadMessage8, lastReadMessage9, lastReadMessage10, lastReadMessage11));
 
         Bill bill1 = new Bill();
         bill1.setName("Restauracja");

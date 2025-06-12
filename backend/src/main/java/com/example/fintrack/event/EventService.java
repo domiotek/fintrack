@@ -9,6 +9,8 @@ import com.example.fintrack.currency.CurrencyRepository;
 import com.example.fintrack.event.dto.*;
 import com.example.fintrack.event.enums.EventSortField;
 import com.example.fintrack.event.enums.EventStatus;
+import com.example.fintrack.lastreadmessage.LastReadMessage;
+import com.example.fintrack.lastreadmessage.LastReadMessageRepository;
 import com.example.fintrack.security.service.UserProvider;
 import com.example.fintrack.user.User;
 import com.example.fintrack.user.UserRepository;
@@ -42,6 +44,7 @@ public class EventService {
     private final CurrencyConverter currencyConverter;
     private final UserRepository userRepository;
     private final ChatRepository chatRepository;
+    private final LastReadMessageRepository lastReadMessageRepository;
 
     public Page<EventDto> getUserEvents(
             String name, EventStatus eventStatus,
@@ -88,7 +91,7 @@ public class EventService {
 
         Event event = EventMapper.addEventDtoToEvent(addEventDto, currency, chat);
 
-        eventRepository.save(event);
+        Event savedEvent = eventRepository.save(event);
 
         User loggedUser = userProvider.getLoggedUser();
 
@@ -101,18 +104,34 @@ public class EventService {
 
         List<User> additionalUsers = userRepository.findAllById(addEventDto.usersIds());
 
-        List<UserEvent> userEvents = additionalUsers.stream()
+        List<UserEvent> additionalUserEvents = additionalUsers.stream()
                 .filter(user -> !user.equals(loggedUser))
                 .map(user -> {
                     UserEvent userEvent = new UserEvent();
-                    userEvent.setEvent(event);
+                    userEvent.setEvent(savedEvent);
                     userEvent.setUser(user);
                     userEvent.setIsFounder(false);
                     return userEvent;
                 })
                 .toList();
 
-        userEventRepository.saveAll(userEvents);
+        userEventRepository.saveAll(additionalUserEvents);
+
+        List<UserEvent> userEvents = userEventRepository.findUserEventsByEventId(savedEvent.getId());
+
+        List<LastReadMessage> lastReadMessages = userEvents.stream()
+                .map(UserEvent::getUser)
+                .map(u -> {
+                    LastReadMessage lastReadMessage = new LastReadMessage();
+
+                    lastReadMessage.setChat(chat);
+                    lastReadMessage.setUser(u);
+
+                    return lastReadMessage;
+                })
+                .toList();
+
+        lastReadMessageRepository.saveAll(lastReadMessages);
     }
 
     public void updateEvent(long eventId, UpdateEventDto updateEventDto) {

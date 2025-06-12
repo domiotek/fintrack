@@ -12,6 +12,11 @@ import com.example.fintrack.message.Message;
 public class ChatMapper {
 
     public static PrivateChatDto friendToPrivateChatDto(Friend friend, Message message, LastReadMessage lastReadMessage) {
+        Long messageId = null;
+        if (lastReadMessage.getMessage() != null) {
+            messageId = lastReadMessage.getMessage().getId();
+        }
+
         return PrivateChatDto.builder()
                 .id(friend.getChat().getId())
                 .lastMessage(PrivateChatLastMessageDto.builder()
@@ -26,7 +31,7 @@ public class ChatMapper {
                         .sentAt(message.getSendTime())
                         .build()
                 )
-                .lastReadMessageId(lastReadMessage.getMessage().getId())
+                .lastReadMessageId(messageId)
                 .isFriend(friend.getFriendStatus() == FriendStatus.ACCEPTED)
                 .otherParticipant(PrivateChatFriendDto.builder()
                         .id(friend.getFriend().getId())

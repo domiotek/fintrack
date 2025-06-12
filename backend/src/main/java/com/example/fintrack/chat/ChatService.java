@@ -50,7 +50,7 @@ public class ChatService {
     private final ChatRepository chatRepository;
     private final UserRepository userRepository;
 
-    public void sendMessage(Authentication principal, long chatId, String sendMessage) {
+    public void sendMessage(Authentication principal, long chatId, String content) {
         User user = (User) principal.getPrincipal();
 
         Chat chat = chatRepository.findById(chatId).orElseThrow(CHAT_DOES_NOT_EXIST::getError);
@@ -62,55 +62,37 @@ public class ChatService {
 
         ZonedDateTime now = ZonedDateTime.now();
 
-        Message savedMessage = mapAndSaveMessage(user, chat, now, sendMessage);
-        LastReadMessage lastReadMessage = updateOrCreateLastReadMessage(user, chat, now, savedMessage);
+        Message message = MessageMapper.messageDtoToMessage(user, chat, now, MessageType.USER, content);
+        Message savedMessage =  messageRepository.save(message);
 
-        simpMessagingTemplate.convertAndSend("/topic/chats/" + chatId + "/message", MessageMapper.messageToMessageDto(savedMessage));
+        simpMessagingTemplate.convertAndSend(
+                "/topic/chats/" + chatId + "/message", MessageMapper.messageToMessageDto(message)
+        );
 
-        List<Friend> friendsInChat = friendRepository.findFriendsByChatId(chatId);
-        if(friendsInChat.size() == 2) {
-            updatePrivateChatParticipants(friendsInChat, user, savedMessage, lastReadMessage);
-        }
-
-        lastReadMessageRepository.save(lastReadMessage);
-    }
-
-    private LastReadMessage updateOrCreateLastReadMessage(User user, Chat chat, ZonedDateTime now, Message savedMessage) {
-        boolean existsLastReadMessage = lastReadMessageRepository.existsByUserIdAndChatId(user.getId(), chat.getId());
-
-        LastReadMessage lastReadMessage;
-        if(!existsLastReadMessage) {
-            lastReadMessage = new LastReadMessage();
-            lastReadMessage.setChat(chat);
-            lastReadMessage.setUser(user);
-        } else {
-            lastReadMessage = lastReadMessageRepository.findLastReadMessageByUserIdAndChatId(user.getId(), chat.getId())
-                    .orElseThrow(LAST_READ_MESSAGE_DOES_NOT_EXIST::getError);
-        }
+        LastReadMessage lastReadMessage = lastReadMessageRepository.findLastReadMessageByUserIdAndChatId(user.getId(), chatId)
+                .orElseThrow(LAST_READ_MESSAGE_DOES_NOT_EXIST::getError);
 
         lastReadMessage.setMessage(savedMessage);
         lastReadMessage.setReadTime(now);
 
-        return lastReadMessage;
-    }
+        lastReadMessageRepository.save(lastReadMessage);
 
-    private Message mapAndSaveMessage(User user, Chat chat, ZonedDateTime now, String sendMessage) {
-        Message message = MessageMapper.messageDtoToMessage(user, chat, now, MessageType.USER, sendMessage);
+        List<LastReadMessage> lastReadMessages = lastReadMessageRepository.findLastReadMessagesByChatId(chatId);
 
-        return messageRepository.save(message);
-    }
-
-    private void updatePrivateChatParticipants(List<Friend> friends, User user, Message savedMessage, LastReadMessage lastReadMessage) {
-        friends.forEach(f -> {
-            if(f.getUser().getId().equals(user.getId())) {
-                simpMessagingTemplate.convertAndSend("/topic/chats/" + f.getUser().getId() + "/private-chat-updates", ChatMapper.friendToPrivateChatDto(f, savedMessage, lastReadMessage));
-            } else {
-                LastReadMessage friendLastReadMessage = lastReadMessageRepository
-                        .findLastReadMessageByUserIdAndChatId(f.getUser().getId(), f.getChat().getId())
+        List<Friend> friends = friendRepository.findFriendsByChatId(chatId);
+        if (!friends.isEmpty()) {
+            friends.forEach(friend -> {
+                LastReadMessage userLastReadMessage = lastReadMessages.stream()
+                        .filter(lrm -> lrm.getUser().equals(friend.getUser()))
+                        .findFirst()
                         .orElseThrow(LAST_READ_MESSAGE_DOES_NOT_EXIST::getError);
-                simpMessagingTemplate.convertAndSend("/topic/chats/" + f.getUser().getId() + "/private-chat-updates", ChatMapper.friendToPrivateChatDto(f, savedMessage, friendLastReadMessage));
-            }
-        });
+
+                simpMessagingTemplate.convertAndSend(
+                        "/topic/chats/" + friend.getUser().getId() + "/private-chat-updates",
+                        ChatMapper.friendToPrivateChatDto(friend, message, userLastReadMessage)
+                );
+            });
+        }
     }
 
     public void startTyping(Authentication principal, long chatId) {
@@ -141,31 +123,34 @@ public class ChatService {
     public void updateLastReadMessage(Authentication principal, long chatId, SentLastReadMessageDto sentLastReadMessageDto) {
         User user = (User) principal.getPrincipal();
 
-        Chat chat = chatRepository.findById(chatId).orElseThrow(CHAT_DOES_NOT_EXIST::getError);
-
         Message message = messageRepository.findById(sentLastReadMessageDto.messageId())
                 .orElseThrow(MESSAGE_DOES_NOT_EXIST::getError);
 
-        LastReadMessage lastReadMessage = updateOrCreateLastReadMessage(user, chat, ZonedDateTime.now(), message);
-        ReadMessageDto readMessageDto = MessageMapper.messageToReadMessageDto(user.getId(), lastReadMessage);
+        LastReadMessage lastReadMessage = lastReadMessageRepository
+                .findLastReadMessageByUserIdAndChatId(user.getId(), chatId)
+                .orElseThrow(LAST_READ_MESSAGE_DOES_NOT_EXIST::getError);
+
+        lastReadMessage.setMessage(message);
+        lastReadMessage.setReadTime(ZonedDateTime.now());
+
+        LastReadMessage savedLastReadMessage = lastReadMessageRepository.save(lastReadMessage);
+
+        ReadMessageDto readMessageDto = MessageMapper.messageToReadMessageDto(user.getId(), savedLastReadMessage);
 
         simpMessagingTemplate.convertAndSend("/topic/chats/" + chatId + "/user-read-message", readMessageDto);
 
-        List<Friend> friendsInChat = friendRepository.findFriendsByChatId(chatId);
-        if(friendsInChat.size() == 2) {
-            notifyPrivateChatUpdateAfterUserLastReadMessage(friendsInChat, user, lastReadMessage);
+        List<Friend> friends = friendRepository.findFriendsByChatId(chatId);
+        if (!friends.isEmpty()) {
+            Friend friend = friends.stream()
+                    .filter(f -> f.getUser().equals(user))
+                    .findFirst()
+                    .orElseThrow(FRIEND_DOES_NOT_EXIST::getError);
+
+            simpMessagingTemplate.convertAndSend(
+                    "/topic/chats/" + friend.getUser().getId() + "/private-chat-updates",
+                    ChatMapper.friendToPrivateChatDto(friend, lastReadMessage.getMessage(), lastReadMessage)
+            );
         }
-
-        lastReadMessageRepository.save(lastReadMessage);
-    }
-
-    private void notifyPrivateChatUpdateAfterUserLastReadMessage(List<Friend> friends, User user, LastReadMessage lastReadMessage) {
-        Friend friend = friends.stream()
-                .filter(f -> f.getUser().getId().equals(user.getId()))
-                .findFirst()
-                .orElseThrow(FRIEND_DOES_NOT_EXIST::getError);
-
-        simpMessagingTemplate.convertAndSend("/topic/chats/" + friend.getUser().getId() + "/private-chat-updates", ChatMapper.friendToPrivateChatDto(friend, lastReadMessage.getMessage(), lastReadMessage));
     }
 
     public Page<MessageDto> getChatMessages(long messageId, long chatId, int page, int size) {
