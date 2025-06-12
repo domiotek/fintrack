@@ -69,7 +69,8 @@ public class ChatService {
                 "/topic/chats/" + chatId + "/message", MessageMapper.messageToMessageDto(message)
         );
 
-        LastReadMessage lastReadMessage = lastReadMessageRepository.findLastReadMessageByUserIdAndChatId(user.getId(), chatId)
+        LastReadMessage lastReadMessage = lastReadMessageRepository
+                .findLastReadMessageByUserIdAndChatId(user.getId(), chatId)
                 .orElseThrow(LAST_READ_MESSAGE_DOES_NOT_EXIST::getError);
 
         lastReadMessage.setMessage(savedMessage);
