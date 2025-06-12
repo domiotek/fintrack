@@ -25,7 +25,7 @@ public class LastReadMessage {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "message_id", nullable = false)
+    @JoinColumn(name = "message_id")
     private Message message;
 
     @ManyToOne
@@ -33,10 +33,9 @@ public class LastReadMessage {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "chat_id")
+    @JoinColumn(name = "chat_id", nullable = false)
     private Chat chat;
 
-    @Column(nullable = false)
     private ZonedDateTime readTime;
 
     @Override

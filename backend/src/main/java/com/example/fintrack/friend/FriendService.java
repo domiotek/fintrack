@@ -6,6 +6,8 @@ import com.example.fintrack.friend.dto.AcceptFriendRequest;
 import com.example.fintrack.friend.dto.FriendDto;
 import com.example.fintrack.friend.dto.FriendRequestDto;
 import com.example.fintrack.friend.dto.SendFriendRequestDto;
+import com.example.fintrack.lastreadmessage.LastReadMessage;
+import com.example.fintrack.lastreadmessage.LastReadMessageRepository;
 import com.example.fintrack.security.service.UserProvider;
 import com.example.fintrack.user.User;
 import com.example.fintrack.user.UserRepository;
@@ -28,6 +30,7 @@ public class FriendService {
     private final UserProvider userProvider;
     private final UserRepository userRepository;
     private final ChatRepository chatRepository;
+    private final LastReadMessageRepository lastReadMessageRepository;
 
     public List<FriendRequestDto> getFriendRequests() {
         User user = userProvider.getLoggedUser();
@@ -92,6 +95,16 @@ public class FriendService {
         friend2.setChat(chat);
 
         friendRepository.saveAll(List.of(friend1, friend2));
+
+        LastReadMessage lastReadMessage1 = new LastReadMessage();
+        lastReadMessage1.setChat(chat);
+        lastReadMessage1.setUser(user);
+
+        LastReadMessage lastReadMessage2 = new LastReadMessage();
+        lastReadMessage2.setChat(chat);
+        lastReadMessage2.setUser(friend);
+
+        lastReadMessageRepository.saveAll(List.of(lastReadMessage1, lastReadMessage2));
     }
 
     public void acceptFriendRequest(long friendId, AcceptFriendRequest acceptFriendRequest) {

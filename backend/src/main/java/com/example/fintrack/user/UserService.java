@@ -6,6 +6,8 @@ import com.example.fintrack.currency.Currency;
 import com.example.fintrack.currency.CurrencyRepository;
 import com.example.fintrack.event.Event;
 import com.example.fintrack.event.EventRepository;
+import com.example.fintrack.lastreadmessage.LastReadMessage;
+import com.example.fintrack.lastreadmessage.LastReadMessageRepository;
 import com.example.fintrack.security.service.UserProvider;
 import com.example.fintrack.user.dto.PasswordDto;
 import com.example.fintrack.user.dto.UpdateProfileDto;
@@ -35,6 +37,7 @@ public class UserService implements UserDetailsService {
     private final BillRepository billRepository;
     private final CurrencyRepository currencyRepository;
     private final PasswordEncoder passwordEncoder;
+    private final LastReadMessageRepository lastReadMessageRepository;
 
     public UserProfileDto getProfileInfo() {
         User user = userProvider.getLoggedUser();
@@ -75,6 +78,7 @@ public class UserService implements UserDetailsService {
 
     public void addUserToEvent(long eventId, long userId) {
         Event event = eventRepository.findById(eventId).orElseThrow(EVENT_DOES_NOT_EXIST::getError);
+
         User user = userRepository.findById(userId).orElseThrow(USER_DOES_NOT_EXIST::getError);
 
         Set<UserEvent> userEvents = event.getUsers();
@@ -92,6 +96,12 @@ public class UserService implements UserDetailsService {
         userEvent.setIsFounder(false);
 
         userEventRepository.save(userEvent);
+
+        LastReadMessage lastReadMessage = new LastReadMessage();
+        lastReadMessage.setUser(user);
+        lastReadMessage.setChat(event.getChat());
+
+        lastReadMessageRepository.save(lastReadMessage);
     }
 
     public void deleteUserFromEvent(long eventId, long userId) {
