@@ -230,7 +230,7 @@ export class ChatService implements OnDestroy {
       .pipe(
         map((response) => ({
           ...response,
-          content: response.content.splice(1).reverse(),
+          content: response.content.slice(1).reverse(),
         })),
         tap((response) => {
           this.hasMorePages.set(response.page.totalPages - 1 > response.page.number);
