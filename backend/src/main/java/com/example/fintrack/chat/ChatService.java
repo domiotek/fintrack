@@ -168,16 +168,10 @@ public class ChatService {
     public Page<PrivateChatDto> getPrivateChats(String search, int page, int size) {
         User user = userProvider.getLoggedUser();
 
-        Specification<Friend> friendSpecification = hasUserId(user.getId())
-                .and(hasFriendStatus(FriendStatus.ACCEPTED).or(hasFriendStatus(FriendStatus.DELETED)))
-                .and(hasChatStarted(true));
-        if (search != null) {
-            friendSpecification = friendSpecification.and(hasFriendContainingText(search));
-        }
-
         PageRequest pageRequest = PageRequest.of(page, size);
 
-        Page<Friend> friends = friendRepository.findAll(friendSpecification, pageRequest);
+        Page<Friend> friends = friendRepository
+                .findFriends(user.getId(), FriendStatus.ACCEPTED, FriendStatus.DELETED, search, pageRequest);
 
         return friends.map(friend -> {
             LastReadMessage lastReadMessage = lastReadMessageRepository
