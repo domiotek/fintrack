@@ -18,10 +18,12 @@ import { ChatItemComponent } from '../chat-item/chat-item.component';
 import { FormsModule } from '@angular/forms';
 import { FriendsStateStore } from '../../store/friends-state.store';
 import { MatButtonModule } from '@angular/material/button';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-chat-list',
   imports: [
+    CommonModule,
     FormsModule,
     MatButtonModule,
     MatIconModule,
