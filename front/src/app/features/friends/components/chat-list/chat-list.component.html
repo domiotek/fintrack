@@ -13,7 +13,7 @@
     @if (isLoading() && currentPage() === 0) {
       <app-spinner />
     } @else {
-      <ng-scrollbar [buttons]="true" (reachedBottom)="onScrolledBottom()">
+      <ng-scrollbar [buttons]="true" (reachedBottom)="onScrolledBottom()" orientation="vertical">
         <app-custom-list
           [items]="chats()"
           [itemTemplate]="categoryItemTemplate"

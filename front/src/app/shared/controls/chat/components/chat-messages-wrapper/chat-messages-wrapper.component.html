@@ -1,0 +1,31 @@
+<ng-scrollbar
+  externalContentWrapper=".chat-content"
+  appearance="compact"
+  [buttons]="true"
+  (reachedTop)="onScrolledTop()"
+  (droppedBottom)="this.scrollToBottomVisible.set(true)"
+  (reachedBottom)="this.scrollToBottomVisible.set(false)"
+  (afterInit)="scrollToBottom(true)"
+  (afterUpdate)="onScrollerContentUpdate()"
+  [droppedBottomOffset]="droppedBottomOffset"
+  #scrollbarRef="ngScrollbar"
+>
+  <div class="chat-content">
+    <app-chat-blocks-wrapper
+      [messages]="messages()"
+      [currentUserId]="currentUserId()"
+      [lastUserActivityTime]="lastUserActivityTime()"
+      [messagesWithReadIndicators]="messagesWithReadIndicators()"
+      [myLastReadMessageId]="myLastReadMessageId()"
+      (messageReadEmit)="tryReadMessage($event)"
+    />
+
+    <div class="read-indicators">
+      @for (participant of otherChatParticipants(); track participant.id) {
+        <div #readIndicatorRef [attr.data-id]="participant.id" class="read-indicator">
+          <app-avatar [name]="participant.firstName" />
+        </div>
+      }
+    </div>
+  </div>
+</ng-scrollbar>

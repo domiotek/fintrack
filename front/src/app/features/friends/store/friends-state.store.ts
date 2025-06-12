@@ -15,4 +15,8 @@ export class FriendsStateStore extends ComponentStore<IFriendsState> {
     ...state,
     selectedChat: chat,
   }));
+
+  readonly reset = this.updater(() => ({
+    ...EMPTY_FRIENDS_STATE,
+  }));
 }

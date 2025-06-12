@@ -5,47 +5,11 @@
     <mat-spinner diameter="50" mode="indeterminate" />
   </div>
 } @else {
-  <ng-scrollbar
-    externalContentWrapper=".chat-content"
-    appearance="compact"
-    [buttons]="true"
-    (reachedTop)="onScrolledTop()"
-    (droppedBottom)="this.scrollToBottomVisible.set(true)"
-    (reachedBottom)="this.scrollToBottomVisible.set(false)"
-    (afterInit)="scrollToBottom(true)"
-    (afterUpdate)="onScrollerContentUpdate()"
-    [droppedBottomOffset]="droppedBottomOffset"
-    #scrollbarRef="ngScrollbar"
-  >
-    <div class="chat-content">
-      @for (block of messageBlocks(); track $index) {
-        @if (block.type === 'system') {
-          <app-chat-system-message [attr.data-message-id]="block.id">{{ block.message }}</app-chat-system-message>
-        } @else {
-          <app-chat-message-block
-            [type]="block.perspective"
-            [messages]="block.messages"
-            [name]="block.name"
-            [surname]="block.surname"
-            [readIndicators]="messagesWithReadIndicators()"
-            [finalized]="isMessageBlockFinalized(block.messages[block.messages.length - 1])"
-            [authorActivityDateTime]="block.lastActivityDateTime"
-            [isWindowActive]="isWindowActive()"
-            (messageReadEmit)="onMessageRead($event)"
-          />
-        }
-      } @empty {
-        To początek czatu. Napisz coś, aby rozpocząć rozmowę!
-      }
-      <div class="read-indicators">
-        @for (participant of otherChatParticipants(); track participant.id) {
-          <div #readIndicatorRef [attr.data-id]="participant.id" class="read-indicator">
-            <app-avatar [name]="participant.firstName" />
-          </div>
-        }
-      </div>
-    </div>
-  </ng-scrollbar>
+  <app-chat-messages-wrapper
+    #messagesWrapper
+    [chatParticipants]="chatParticipants()"
+    [currentUserId]="currentUserId()"
+  />
 }
 
 <app-typing-indicator [typingUsers]="typingUsers()" />
@@ -55,7 +19,7 @@
   [ngClass]="{ visible: scrollToBottomVisible() }"
   type="button"
   mat-mini-fab
-  (click)="scrollToBottom()"
+  (click)="messagesWrapper.scrollToBottom()"
 >
   <mat-icon>keyboard_double_arrow_down</mat-icon>
 </button>

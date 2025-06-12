@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, inject, signal, ViewContainerRef, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, signal, ViewContainerRef, OnInit, OnDestroy } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { tap } from 'rxjs';
@@ -30,7 +30,7 @@ import { FriendsStateStore } from '../../store/friends-state.store';
   templateUrl: './friends.component.html',
   styleUrl: './friends.component.scss',
 })
-export class FriendsComponent implements OnInit {
+export class FriendsComponent implements OnInit, OnDestroy {
   readonly isMobile = signal<boolean>(false);
 
   private readonly store = inject(FriendsStateStore);
@@ -51,6 +51,10 @@ export class FriendsComponent implements OnInit {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
+  }
+
+  ngOnDestroy(): void {
+    this.store.reset();
   }
 
   openAddFriendDialog(): void {

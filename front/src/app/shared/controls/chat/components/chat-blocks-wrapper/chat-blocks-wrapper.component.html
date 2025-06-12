@@ -1,0 +1,19 @@
+@for (block of messageBlocks(); track $index) {
+  @if (block.type === 'system') {
+    <app-chat-system-message [attr.data-message-id]="block.id">{{ block.message }}</app-chat-system-message>
+  } @else {
+    <app-chat-message-block
+      [type]="block.perspective"
+      [messages]="block.messages"
+      [name]="block.name"
+      [surname]="block.surname"
+      [readIndicators]="messagesWithReadIndicators()"
+      [finalized]="isMessageBlockFinalized(block.messages[block.messages.length - 1])"
+      [authorActivityDateTime]="block.lastActivityDateTime"
+      [isWindowActive]="isWindowActive()"
+      (messageReadEmit)="onMessageRead($event)"
+    />
+  }
+} @empty {
+  To początek czatu. Napisz coś, aby rozpocząć rozmowę!
+}
