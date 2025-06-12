@@ -50,8 +50,9 @@ public class FriendService {
         Specification<Friend> friendSpecification = hasUserIdAndFriendId(user.getId(), friendId);
 
         List<Friend> friends = friendRepository.findAll(friendSpecification);
+        friends.forEach(friend -> friend.setFriendStatus(FriendStatus.DELETED));
 
-        friendRepository.deleteAll(friends);
+        friendRepository.saveAll(friends);
     }
 
     public void sendFriendRequest(SendFriendRequestDto sendFriendRequestDto) {
@@ -71,40 +72,53 @@ public class FriendService {
         Specification<Friend> friendSpecification = hasUserIdAndFriendId(user.getId(), friend.getId());
 
         List<Friend> friends = friendRepository.findAll(friendSpecification);
+
         if (!friends.isEmpty()) {
-            throw ALREADY_FRIENDS.getError();
+            friends.forEach(f -> {
+                if (f.getFriendStatus() == FriendStatus.ACCEPTED) {
+                    throw ALREADY_FRIENDS.getError();
+                }
+
+                if (f.getUser().equals(user)) {
+                    f.setFriendStatus(FriendStatus.REQUESTED);
+                } else {
+                    f.setFriendStatus(FriendStatus.PENDING);
+                }
+            });
+
+            friendRepository.saveAll(friends);
+        } else {
+            Chat chat = new Chat();
+            chat.setIsStarted(false);
+
+            chatRepository.save(chat);
+
+            Friend friend1 = new Friend();
+            friend1.setUser(user);
+            friend1.setFriend(friend);
+            friend1.setFriendStatus(FriendStatus.REQUESTED);
+            friend1.setCreatedAt(ZonedDateTime.now());
+            friend1.setChat(chat);
+
+            Friend friend2 = new Friend();
+            friend2.setUser(friend);
+            friend2.setFriend(user);
+            friend2.setFriendStatus(FriendStatus.PENDING);
+            friend2.setCreatedAt(ZonedDateTime.now());
+            friend2.setChat(chat);
+
+            friendRepository.saveAll(List.of(friend1, friend2));
+
+            LastReadMessage lastReadMessage1 = new LastReadMessage();
+            lastReadMessage1.setChat(chat);
+            lastReadMessage1.setUser(user);
+
+            LastReadMessage lastReadMessage2 = new LastReadMessage();
+            lastReadMessage2.setChat(chat);
+            lastReadMessage2.setUser(friend);
+
+            lastReadMessageRepository.saveAll(List.of(lastReadMessage1, lastReadMessage2));
         }
-
-        Chat chat = new Chat();
-        chat.setIsStarted(false);
-
-        chatRepository.save(chat);
-
-        Friend friend1 = new Friend();
-        friend1.setUser(user);
-        friend1.setFriend(friend);
-        friend1.setFriendStatus(FriendStatus.REQUESTED);
-        friend1.setCreatedAt(ZonedDateTime.now());
-        friend1.setChat(chat);
-
-        Friend friend2 = new Friend();
-        friend2.setUser(friend);
-        friend2.setFriend(user);
-        friend2.setFriendStatus(FriendStatus.PENDING);
-        friend2.setCreatedAt(ZonedDateTime.now());
-        friend2.setChat(chat);
-
-        friendRepository.saveAll(List.of(friend1, friend2));
-
-        LastReadMessage lastReadMessage1 = new LastReadMessage();
-        lastReadMessage1.setChat(chat);
-        lastReadMessage1.setUser(user);
-
-        LastReadMessage lastReadMessage2 = new LastReadMessage();
-        lastReadMessage2.setChat(chat);
-        lastReadMessage2.setUser(friend);
-
-        lastReadMessageRepository.saveAll(List.of(lastReadMessage1, lastReadMessage2));
     }
 
     public void acceptFriendRequest(long friendId, AcceptFriendRequest acceptFriendRequest) {
