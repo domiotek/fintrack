@@ -148,6 +148,7 @@ export class ChatComponent implements AfterViewInit, AfterViewChecked, OnDestroy
   private readonly activityUpdateTimer = signal<ReturnType<typeof setInterval> | null>(null);
 
   private readonly chatService = inject(ChatService);
+  private readonly store = inject(ChatStateStore);
   private readonly appStateStore = inject(AppStateStore);
   private readonly destroyRef = inject(DestroyRef);
   private readonly renderer = inject(Renderer2);
@@ -206,6 +207,9 @@ export class ChatComponent implements AfterViewInit, AfterViewChecked, OnDestroy
     document.removeEventListener('visibilitychange', this.visibilityChangeEventDispatcher.bind(this));
     window.removeEventListener('focus', this.visibilityChangeEventDispatcher.bind(this));
     window.removeEventListener('blur', this.visibilityChangeEventDispatcher.bind(this));
+
+    this.chatService.disconnectFromChat();
+    this.store.reset();
   }
 
   onSendMessage(message: string): void {

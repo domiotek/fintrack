@@ -82,6 +82,7 @@ export class ChatService implements OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.disconnectFromChat();
     this.stompClient.deactivate();
 
     if (this.activityCheckTickerInterval) {
@@ -212,6 +213,14 @@ export class ChatService implements OnDestroy {
         resolve(state);
       });
     });
+  }
+
+  disconnectFromChat(): void {
+    this.connectedChatId.next(null);
+    this.messages.next([]);
+    this.typingUsers.next([]);
+    this.lastReadMessagesMap.next({});
+    this.lastUserActivityMap.next({});
   }
 
   getNextChatMessages(lastFetchedMessageId: number | null): Observable<BasePagingResponse<ChatMessage>> {
