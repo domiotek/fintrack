@@ -9,13 +9,13 @@ RUN npm ci --ignore-scripts
 COPY . .
 
 ARG API_URL
-ARG COOLIFY_DEPLOY_URL
+ARG COOLIFY_URL
 
 ENV API_URL=$API_URL
-ENV COOLIFY_DEPLOY_URL=$COOLIFY_DEPLOY_URL
+ENV COOLIFY_URL=$COOLIFY_URL
 
-RUN if [ -n "$COOLIFY_DEPLOY_URL" ]; then \
-        PR_ID=$(echo "$COOLIFY_DEPLOY_URL" | sed -n 's|^\([0-9]*\)\..*|\1|p'); \
+RUN if [ -n "$COOLIFY_URL" ]; then \
+        PR_ID=$(echo "$COOLIFY_URL" | sed -n 's|^\([0-9]*\)\..*|\1|p'); \
         if [ -n "$PR_ID" ] && [ "$PR_ID" != "" ]; then \
             PROTOCOL=$(echo "$API_URL" | sed -n 's|^\(https\?\)://.*|\1|p'); \
             DOMAIN=$(echo "$API_URL" | sed -n 's|^https\?://\([^/]*\).*|\1|p'); \
