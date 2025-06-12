@@ -2,16 +2,16 @@ package com.example.fintrack.chat;
 
 import com.example.fintrack.chat.dto.ChatStateDto;
 import com.example.fintrack.chat.dto.PrivateChatDto;
+import com.example.fintrack.chat.dto.SentUserDto;
 import com.example.fintrack.lastreadmessage.dto.SentLastReadMessageDto;
 import com.example.fintrack.message.dto.MessageDto;
-import com.example.fintrack.message.dto.SendMessageDto;
+import com.example.fintrack.message.dto.SentMessageDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,28 +24,28 @@ public class ChatController {
     private final ChatService chatService;
 
     @MessageMapping("/chats/{chat-id}/post-message")
-    public void sendMessage(Authentication principal, @DestinationVariable("chat-id") long chatId, @Payload String sendMessage) {
-        chatService.sendMessage(principal, chatId, sendMessage);
+    public void sendMessage(@DestinationVariable("chat-id") long chatId, @Payload SentMessageDto sendMessageDto) {
+        chatService.sendMessage(chatId, sendMessageDto);
     }
 
     @MessageMapping("/chats/{chat-id}/started-typing")
-    public void startTyping(Authentication principal, @DestinationVariable("chat-id") long chatId) {
-        chatService.startTyping(principal, chatId);
+    public void startTyping(@DestinationVariable("chat-id") long chatId, @Payload SentUserDto sentUserDto) {
+        chatService.startTyping(chatId, sentUserDto);
     }
 
     @MessageMapping("chats/{chat-id}/stopped-typing")
-    public void stopTyping(Authentication principal, @DestinationVariable("chat-id") long chatId) {
-        chatService.stopTyping(principal, chatId);
+    public void stopTyping(@DestinationVariable("chat-id") long chatId, @Payload SentUserDto sentUserDto) {
+        chatService.stopTyping(chatId, sentUserDto);
     }
 
     @MessageMapping("/chats/{chat-id}/report-last-activity")
-    public void reportLastActivity(Authentication principal, @DestinationVariable("chat-id") long chatId) {
-        chatService.reportLastActivity(principal, chatId);
+    public void reportLastActivity(@DestinationVariable("chat-id") long chatId, @Payload SentUserDto sentUserDto) {
+        chatService.reportLastActivity(chatId, sentUserDto);
     }
 
     @MessageMapping("/chats/{chat-id}/update-last-read-message")
-    public void updateLastReadMessage(Authentication principal, @DestinationVariable("chat-id") long chatId, @Payload SentLastReadMessageDto messageId) {
-        chatService.updateLastReadMessage(principal, chatId, messageId);
+    public void updateLastReadMessage(@DestinationVariable("chat-id") long chatId, @Payload SentLastReadMessageDto sentLastReadMessageDto) {
+        chatService.updateLastReadMessage(chatId, sentLastReadMessageDto);
     }
 
     @GetMapping("/private")
