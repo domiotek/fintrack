@@ -50,6 +50,8 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   readonly loading = this.store.loading;
   readonly scrollSnapMessageId = this.store.scrollSnapMessageId;
 
+  private readonly visibilityChangeHandler = this.visibilityChangeEventDispatcher.bind(this);
+
   ngAfterViewInit(): void {
     this.appStateStore.appState$.subscribe((state) => {
       this.currentUserId.set(state.userId);
@@ -60,9 +62,9 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
       this.messagesWrapper.tryReadLastMessage();
     });
 
-    document.addEventListener('visibilitychange', this.visibilityChangeEventDispatcher.bind(this));
-    window.addEventListener('focus', this.visibilityChangeEventDispatcher.bind(this));
-    window.addEventListener('blur', this.visibilityChangeEventDispatcher.bind(this));
+    document.addEventListener('visibilitychange', this.visibilityChangeHandler);
+    window.addEventListener('focus', this.visibilityChangeHandler);
+    window.addEventListener('blur', this.visibilityChangeHandler);
     this.setupActivityUpdateTimer();
 
     this.chatService.typingUsers$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((typingUsers) => {
@@ -76,9 +78,9 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.teardownActivityUpdateTimer();
-    document.removeEventListener('visibilitychange', this.visibilityChangeEventDispatcher.bind(this));
-    window.removeEventListener('focus', this.visibilityChangeEventDispatcher.bind(this));
-    window.removeEventListener('blur', this.visibilityChangeEventDispatcher.bind(this));
+    document.removeEventListener('visibilitychange', this.visibilityChangeHandler);
+    window.removeEventListener('focus', this.visibilityChangeHandler);
+    window.removeEventListener('blur', this.visibilityChangeHandler);
 
     this.chatService.disconnectFromChat();
     this.store.reset();
