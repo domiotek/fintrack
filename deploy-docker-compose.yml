@@ -48,7 +48,7 @@ services:
       dockerfile: Dockerfile
       args:
         API_URL: "${API_URL}"
-        COOLIFY_URL: "${COOLIFY_URL}"
+        COOLIFY_DEPLOY_URL: "${COOLIFY_URL}"
         COOLIFY_FQDN: "${COOLIFY_FQDN}"
     container_name: fintrack_app
     networks:
