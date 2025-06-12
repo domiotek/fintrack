@@ -41,6 +41,7 @@ export class ChatService implements OnDestroy {
   readonly lastReadMessagesMap$ = this.lastReadMessagesMap.asObservable();
   readonly lastUserActivityMap$ = this.lastUserActivityMap.asObservable();
   readonly activityTicker$ = this.activityCheckTicker.asObservable();
+  readonly hasMorePages = signal<boolean>(false);
 
   private readonly stompClient: RxStomp;
   private readonly http = inject(HttpClient);
@@ -111,6 +112,8 @@ export class ChatService implements OnDestroy {
       const params = new HttpParams().set('size', DEFAULT_CHAT_PAGE_SIZE.toString());
 
       this.http.get<ChatState>(`${environment.apiUrl}/chats/${chatId}/state`, { params }).subscribe((state) => {
+        this.hasMorePages.set(state.messages.page.totalPages - 1 > state.messages.page.number);
+
         this.messages.next(state.messages.content.reverse());
         this.lastReadMessagesMap.next(
           state.lastReadMessages.reduce(
@@ -232,6 +235,7 @@ export class ChatService implements OnDestroy {
           content: response.content.splice(1).reverse(),
         })),
         tap((response) => {
+          this.hasMorePages.set(response.page.totalPages - 1 > response.page.number);
           this.messages.next([...response.content, ...this.messages.value]);
         }),
       );
