@@ -69,12 +69,12 @@ public class Event {
         if (this == o) return true;
         if (!(o instanceof Event event)) return false;
         return Objects.equals(id, event.id) && Objects.equals(currency, event.currency) &&
-                Objects.equals(name, event.name) && Objects.equals(startDateTime, event.startDateTime) &&
-                Objects.equals(endDateTime, event.endDateTime);
+                Objects.equals(chat, event.chat) && Objects.equals(name, event.name) &&
+                Objects.equals(startDateTime, event.startDateTime) && Objects.equals(endDateTime, event.endDateTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, currency, name, startDateTime, endDateTime);
+        return Objects.hash(id, currency, chat, name, startDateTime, endDateTime);
     }
 }
