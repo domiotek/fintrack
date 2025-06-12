@@ -26,5 +26,9 @@ public interface CategoryRepository extends JpaRepository<Category, Long>, JpaSp
     GROUP BY c.id
     ORDER BY COALESCE(SUM(b.amount), 0) DESC
     """)
-    Page<Category> findCategoriesByUserIdAndNameSortedByMostSpendingDescending(@Param("userId") long userId, @Param("name") String name, Pageable pageable);
+    Page<Category> findCategoriesByUserIdAndNameSortedByMostSpendingDescending(
+            @Param("userId") long userId,
+            @Param("name") String name,
+            Pageable pageable
+    );
 }
