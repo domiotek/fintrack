@@ -1,8 +1,5 @@
-<span
-  >{{ name()[0] | uppercase }}
-  @if (surname()) {
-    {{ surname()![0] | uppercase }}
-  }
+<span>
+  {{ `${name()[0] | uppercase}${surname()? (surname()![0] | uppercase):'' }` }}
 </span>
 
 @if (showOnline()) {
