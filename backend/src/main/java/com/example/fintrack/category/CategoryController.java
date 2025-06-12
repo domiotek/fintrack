@@ -5,7 +5,6 @@ import com.example.fintrack.limit.dto.AddLimitDto;
 import com.example.fintrack.category.dto.CategoryDto;
 import com.example.fintrack.category.dto.UpdateCategoryDto;
 import com.example.fintrack.limit.LimitService;
-import com.example.fintrack.utils.enums.SortDirection;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,11 +27,10 @@ public class CategoryController {
             @RequestParam(required = false) String name,
             @RequestParam ZonedDateTime from,
             @RequestParam ZonedDateTime to,
-            @RequestParam(defaultValue = "ASC") SortDirection sortDirection,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        return ResponseEntity.ok().body(categoryService.getCategories(name, from, to, sortDirection, page, size));
+        return ResponseEntity.ok().body(categoryService.getCategories(name, from, to,  page, size));
     }
 
     @PostMapping

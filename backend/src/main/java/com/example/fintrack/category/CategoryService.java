@@ -8,18 +8,14 @@ import com.example.fintrack.category.dto.UpdateCategoryDto;
 import com.example.fintrack.currency.CurrencyConverter;
 import com.example.fintrack.security.service.UserProvider;
 import com.example.fintrack.user.User;
-import com.example.fintrack.utils.enums.SortDirection;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
 import java.util.List;
 
-import static com.example.fintrack.category.CategorySpecification.*;
 import static com.example.fintrack.exception.BusinessErrorCodes.*;
 import static com.example.fintrack.exception.BusinessErrorCodes.CANNOT_DELETE_DEFAULT_CATEGORY;
 import static com.example.fintrack.exception.BusinessErrorCodes.CATEGORY_DOES_NOT_EXIST;
@@ -35,18 +31,13 @@ public class CategoryService {
     private final BillRepository billRepository;
 
     public Page<CategoryDto> getCategories(
-            String name, ZonedDateTime from, ZonedDateTime to, SortDirection sortOrder, int page, int size
+            String name, ZonedDateTime from, ZonedDateTime to, int page, int size
     ) {
         User user = userProvider.getLoggedUser();
 
-        Specification<Category> categorySpecification = hasUserId(user.getId());
-        if(name != null) {
-            categorySpecification = categorySpecification.and(hasCategoryName(name));
-        }
-
-        Sort.Direction sortDirection = sortOrder.toSortDirection();
-        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(sortDirection, "name"));
-        Page<Category> categories = categoryRepository.findAll(categorySpecification, pageRequest);
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<Category> categories = categoryRepository
+                .findCategoriesByUserIdAndNameSortedByMostSpendingDescending(user.getId(), name, pageRequest);
 
         return categories.map(category -> CategoryMapper.categoryToCategoryDto(category, from, to, currencyConverter));
     }
