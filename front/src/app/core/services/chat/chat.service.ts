@@ -29,7 +29,7 @@ export class ChatService implements OnDestroy {
   private readonly privateChatsUpdates = new Subject<PrivateChat>();
   private readonly typingUsers = new BehaviorSubject<number[]>([]);
   private readonly messages = new BehaviorSubject<ChatMessage[]>([]);
-  private readonly lastReadMessagesMap = new BehaviorSubject<Record<number, number>>({});
+  private readonly lastReadMessagesMap = new BehaviorSubject<Record<number, number | null>>({});
   private readonly lastUserActivityMap = new BehaviorSubject<Record<number, string>>({});
   private readonly activityCheckTicker = new Subject<void>();
 
@@ -121,7 +121,7 @@ export class ChatService implements OnDestroy {
               acc[curr.userId] = curr.messageId;
               return acc;
             },
-            {} as Record<number, number>,
+            {} as Record<number, number | null>,
           ),
         );
 

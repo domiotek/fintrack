@@ -72,7 +72,7 @@ export class ChatComponent implements AfterViewInit, AfterViewChecked, OnDestroy
   readonly scrollToBottomVisible = signal<boolean>(false);
   readonly typingUsers = signal<string[]>([]);
   readonly messages = signal<ChatMessage[]>([]);
-  readonly lastReadMessagesMap = signal<Record<number, number>>({});
+  readonly lastReadMessagesMap = signal<Record<number, number | null>>({});
   readonly lastUserActivityTime = signal<Record<number, string>>({});
   readonly messagesWithReadIndicators = signal<Record<string, number[]>>({});
   readonly currentUserId = signal<number | null>(null);
