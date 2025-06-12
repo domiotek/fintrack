@@ -31,7 +31,7 @@ public interface FriendRepository extends JpaRepository<Friend, Long>, JpaSpecif
     GROUP BY f.id
     ORDER BY MAX(COALESCE(m.sendTime, '1970-01-01')) DESC
     """)
-    Page<Friend> findFriends(
+    Page<Friend> findFriendsByUserIdAndFriendsStatusesAndSearch(
             @Param("userId") long userId,
             @Param("friendStatus1") FriendStatus friendStatus1,
             @Param("friendStatus2") FriendStatus friendStatus2,
