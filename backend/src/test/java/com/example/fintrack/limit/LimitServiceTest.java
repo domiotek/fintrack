@@ -23,8 +23,8 @@ class LimitServiceTest {
 
     @Mock private LimitRepository limitRepository;
     @Mock private UserProvider userProvider;
-    @Mock private CurrencyConverter currencyConverter;
     @Mock private CategoryRepository categoryRepository;
+    @Mock private CurrencyConverter currencyConverter;
 
     @InjectMocks private LimitService limitService;
 
@@ -36,6 +36,8 @@ class LimitServiceTest {
         user = new User();
         user.setId(1L);
         when(userProvider.getLoggedUser()).thenReturn(user);
+        when(currencyConverter.convertFromGivenCurrencyToUSD(any(), any()))
+                .thenAnswer(invocation -> invocation.getArgument(1));
     }
 
     @Test

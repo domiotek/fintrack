@@ -25,8 +25,7 @@ import java.time.format.TextStyle;
 import java.util.*;
 
 import static com.example.fintrack.bill.BillSpecification.*;
-import static com.example.fintrack.bill.BillSpecification.hasCategoryId;
-import static java.util.Comparator.*;
+import static java.util.Comparator.comparing;
 
 @Service
 @RequiredArgsConstructor

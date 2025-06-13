@@ -17,8 +17,6 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 import static com.example.fintrack.exception.BusinessErrorCodes.*;
-import static com.example.fintrack.exception.BusinessErrorCodes.CANNOT_DELETE_DEFAULT_CATEGORY;
-import static com.example.fintrack.exception.BusinessErrorCodes.CATEGORY_DOES_NOT_EXIST;
 
 
 @Service

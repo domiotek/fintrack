@@ -5,7 +5,10 @@ import com.example.fintrack.friend.Friend;
 import com.example.fintrack.lastreadmessage.LastReadMessage;
 import com.example.fintrack.message.Message;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.util.Objects;
 import java.util.Set;

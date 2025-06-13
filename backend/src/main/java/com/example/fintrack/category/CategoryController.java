@@ -1,10 +1,10 @@
 package com.example.fintrack.category;
 
 import com.example.fintrack.category.dto.AddCategoryDto;
-import com.example.fintrack.limit.dto.AddLimitDto;
 import com.example.fintrack.category.dto.CategoryDto;
 import com.example.fintrack.category.dto.UpdateCategoryDto;
 import com.example.fintrack.limit.LimitService;
+import com.example.fintrack.limit.dto.AddLimitDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

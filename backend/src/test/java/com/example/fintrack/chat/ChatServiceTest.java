@@ -3,12 +3,8 @@ package com.example.fintrack.chat;
 import com.example.fintrack.friend.Friend;
 import com.example.fintrack.friend.FriendRepository;
 import com.example.fintrack.friend.FriendStatus;
-import com.example.fintrack.lastreadmessage.LastReadMessage;
-import com.example.fintrack.lastreadmessage.LastReadMessageRepository;
-import com.example.fintrack.message.Message;
 import com.example.fintrack.message.MessageRepository;
 import com.example.fintrack.message.dto.SentMessageDto;
-import com.example.fintrack.security.service.UserProvider;
 import com.example.fintrack.user.User;
 import com.example.fintrack.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,11 +24,8 @@ import static org.mockito.Mockito.*;
 class ChatServiceTest {
 
     @Mock private FriendRepository friendRepository;
-    @Mock private UserProvider userProvider;
-    @Mock private LastReadMessageRepository lastReadMessageRepository;
     @Mock private MessageRepository messageRepository;
     @Mock private SimpMessagingTemplate simpMessagingTemplate;
-    @Mock private ChatRepository chatRepository;
     @Mock private UserRepository userRepository;
 
     @InjectMocks private ChatService chatService;
