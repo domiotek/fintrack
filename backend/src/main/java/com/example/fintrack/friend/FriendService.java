@@ -2,6 +2,7 @@ package com.example.fintrack.friend;
 
 import com.example.fintrack.chat.Chat;
 import com.example.fintrack.chat.ChatRepository;
+import com.example.fintrack.chat.ChatService;
 import com.example.fintrack.friend.dto.AcceptFriendRequest;
 import com.example.fintrack.friend.dto.FriendDto;
 import com.example.fintrack.friend.dto.FriendRequestDto;
@@ -31,6 +32,7 @@ public class FriendService {
     private final UserRepository userRepository;
     private final ChatRepository chatRepository;
     private final LastReadMessageRepository lastReadMessageRepository;
+    private final ChatService chatService;
 
     public List<FriendRequestDto> getFriendRequests() {
         User user = userProvider.getLoggedUser();
@@ -53,6 +55,8 @@ public class FriendService {
         friends.forEach(friend -> friend.setFriendStatus(FriendStatus.DELETED));
 
         friendRepository.saveAll(friends);
+
+        chatService.sendPrivateChatUpdatesFriend(friends);
     }
 
     public void sendFriendRequest(SendFriendRequestDto sendFriendRequestDto) {
@@ -136,6 +140,8 @@ public class FriendService {
         friends.forEach(friend -> friend.setFriendStatus(FriendStatus.ACCEPTED));
 
         friendRepository.saveAll(friends);
+
+        chatService.sendPrivateChatUpdatesFriend(friends);
     }
 
     public List<FriendDto> getFriends(String search) {

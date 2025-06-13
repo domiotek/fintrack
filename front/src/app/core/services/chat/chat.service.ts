@@ -29,6 +29,7 @@ import {
 })
 export class ChatService implements OnDestroy {
   private readonly currentUserId = signal<number | null>(null);
+  private readonly connectedChatReadonlyState = signal<boolean>(false);
 
   private readonly connectedChatId = new BehaviorSubject<string | null>(null);
   private readonly privateChatsUpdates = new Subject<PrivateChat>();
@@ -111,9 +112,10 @@ export class ChatService implements OnDestroy {
     return this.http.get<string>(`${environment.apiUrl}/chats/private/${userId}`);
   }
 
-  connectToChat(chatId: string): Promise<ChatState> {
+  connectToChat(chatId: string, readonly = false): Promise<ChatState> {
     return new Promise((resolve) => {
       this.connectedChatId.next(chatId);
+      this.connectedChatReadonlyState.set(readonly);
 
       const params = new HttpParams().set('size', DEFAULT_CHAT_PAGE_SIZE.toString());
 
@@ -140,6 +142,8 @@ export class ChatService implements OnDestroy {
             {} as Record<number, string>,
           ),
         );
+
+        if (readonly) return;
 
         this.stompClient
           .watch(`/topic/chats/${chatId}/message`)
@@ -320,6 +324,11 @@ export class ChatService implements OnDestroy {
   }
 
   private ensureConnected(): boolean {
-    return this.connectedChatId.value !== null && this.currentUserId() !== null && this.stompClient.connected();
+    return (
+      this.connectedChatId.value !== null &&
+      this.currentUserId() !== null &&
+      this.stompClient.connected() &&
+      !this.connectedChatReadonlyState()
+    );
   }
 }

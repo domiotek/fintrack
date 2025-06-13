@@ -57,10 +57,12 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
       this.currentUserId.set(state.userId);
     });
 
-    this.chatService.connectToChat(this.chatId()).then(() => {
+    this.chatService.connectToChat(this.chatId(), this.readonly()).then(() => {
       this.store.setLoading(false);
       this.messagesWrapper.tryReadLastMessage();
     });
+
+    if (this.readonly()) return;
 
     document.addEventListener('visibilitychange', this.visibilityChangeHandler);
     window.addEventListener('focus', this.visibilityChangeHandler);

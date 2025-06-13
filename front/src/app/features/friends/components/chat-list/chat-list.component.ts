@@ -68,6 +68,10 @@ export class ChatListComponent implements OnInit {
 
       currentChats.unshift(chat);
 
+      if (this.selectedChat()?.id === chat.id && this.selectedChat()?.isFriend !== chat.isFriend) {
+        this.store.setSelectedChat(chat);
+      }
+
       this.chats.set(currentChats);
       this.changeDetectionRef.markForCheck();
     });
