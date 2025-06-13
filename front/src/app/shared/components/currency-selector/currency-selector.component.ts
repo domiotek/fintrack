@@ -31,8 +31,13 @@ export class CurrencySelectorComponent implements OnInit {
 
   currencies: Currency[] = [];
 
-  get formControl() {
-    return this.parentForm()?.get(this.inputName() ?? '') as FormControl;
+  get formControl(): FormControl | null {
+    const form = this.parentForm();
+    const controlName = this.inputName();
+    if (!form || !controlName) {
+      return null;
+    }
+    return form.get(controlName) as FormControl;
   }
 
   ngOnInit(): void {

@@ -40,6 +40,8 @@ export class ManageCategoryDialogComponent implements OnInit {
     color: new FormControl<string | null>(null, { validators: [Validators.required] }),
   });
 
+  colorValue = signal<string>('#000000');
+
   errorCode = signal<ApiErrorCode | null>(null);
   submitting = signal<boolean>(false);
 
@@ -54,7 +56,17 @@ export class ManageCategoryDialogComponent implements OnInit {
         name: this.data.name,
         color: this.data.color,
       });
+      this.colorValue.set(this.data.color || '#000000');
     }
+
+    this.form
+      .get('color')
+      ?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((color) => {
+        if (color) {
+          this.colorValue.set(color);
+        }
+      });
   }
 
   onSubmit(): void {

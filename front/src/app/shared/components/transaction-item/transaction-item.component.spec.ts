@@ -49,4 +49,49 @@ describe('TransactionItemComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+  it('should display transaction name', () => {
+    const nameElement = fixture.nativeElement.querySelector('.info_top .bold');
+    expect(nameElement?.textContent).toContain('Groceries at Supermarket');
+  });
+  it('should display transaction amount', () => {
+    const amountElement = fixture.nativeElement.querySelector('.main_amount');
+    expect(amountElement?.textContent).toContain('125.5');
+  });
+
+  it('should display transaction date', () => {
+    expect(component.transaction().date).toBe('2025-05-25');
+  });
+
+  it('should display category information', () => {
+    const category = component.transaction().category;
+    expect(category.name).toBe('Food');
+    expect(category.color).toBe('#4CAF50');
+  });
+
+  it('should handle different transaction amounts', () => {
+    fixture.componentRef.setInput('transaction', {
+      ...component.transaction(),
+      amount: 250.75,
+    });
+
+    expect(component.transaction().amount).toBe(250.75);
+  });
+
+  it('should handle different categories', () => {
+    const newCategory = {
+      id: 2,
+      name: 'Transportation',
+      color: '#FF5722',
+      limit: 300,
+      spendLimit: 200,
+    };
+
+    fixture.componentRef.setInput('transaction', {
+      ...component.transaction(),
+      category: newCategory,
+    });
+
+    expect(component.transaction().category.name).toBe('Transportation');
+    expect(component.transaction().category.color).toBe('#FF5722');
+  });
 });

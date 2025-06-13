@@ -3,7 +3,7 @@ export enum StatsOperations {
   AVERAGE = 'AVERAGE',
 }
 
-export type StatsOperationType = keyof typeof StatsOperations;
+export type StatsOperationType = StatsOperations;
 
 export const StatsOparationsItems: { label: string; value: StatsOperationType }[] = [
   { label: 'Suma', value: StatsOperations.SUM },

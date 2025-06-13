@@ -24,8 +24,57 @@ describe('CustomListComponent', () => {
 
     fixture.detectChanges();
   });
-
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should accept items input', () => {
+    const testItems = [{ id: 1, name: 'Test' }];
+    fixture.componentRef.setInput('items', testItems);
+
+    expect(component.items()).toEqual(testItems);
+  });
+
+  it('should have default isSelectable as false', () => {
+    fixture.componentRef.setInput('isSelectable', undefined);
+
+    expect(component.isSelectable()).toBeFalsy();
+  });
+
+  it('should accept isSelectable input', () => {
+    fixture.componentRef.setInput('isSelectable', true);
+
+    expect(component.isSelectable()).toBeTruthy();
+  });
+
+  it('should initialize with no selected item', () => {
+    expect(component.selectedItem()).toBeNull();
+  });
+
+  it('should emit selectEmit when item is clicked', () => {
+    spyOn(component.selectEmit, 'emit');
+    const testItem = { id: 1, name: 'Test' };
+
+    component.onItemClick(testItem);
+
+    expect(component.selectEmit.emit).toHaveBeenCalledWith(testItem);
+  });
+
+  it('should set selected item when isSelectable is true and item is clicked', () => {
+    fixture.componentRef.setInput('isSelectable', true);
+    const testItem = { id: 1, name: 'Test' };
+
+    component.onItemClick(testItem);
+
+    expect(component.selectedItem()).toEqual(testItem);
+  });
+
+  it('should not set selected item when isSelectable is false', () => {
+    fixture.componentRef.setInput('isSelectable', false);
+    const testItem = { id: 1, name: 'Test' };
+
+    component.onItemClick(testItem);
+
+    expect(component.selectedItem()).toBeNull();
   });
 });
