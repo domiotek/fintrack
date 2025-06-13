@@ -32,7 +32,7 @@
 
     <div class="color-picker-container">
       <p>Wybierz kolor:</p>
-      <div class="color-picker" [style.backgroundColor]="form.get('color')?.value">
+      <div class="color-picker" [style.backgroundColor]="colorValue()">
         <input formControlName="color" name="color" type="color" title="Kolor" class="color-input" />
       </div>
     </div>

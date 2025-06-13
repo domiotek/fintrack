@@ -49,7 +49,7 @@ export class LineChartComponent implements OnInit, OnChanges {
     }
   }
 
-  private generateChart(): void {
+  generateChart(): void {
     const minY = 0;
     const maxY = Math.max(...this.chartData().data) * 1.1;
 

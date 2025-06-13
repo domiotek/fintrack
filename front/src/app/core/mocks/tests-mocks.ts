@@ -68,7 +68,7 @@ export const mocked_chartData: Stats = {
 export const mocked_category: Category = {
   id: 1,
   name: 'Test Category',
-  color: 'blue',
+  color: '#0000ff',
   limit: 100,
   userCosts: 50,
   isDefault: false,

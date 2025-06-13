@@ -22,16 +22,17 @@ export abstract class BaseWidgetComponent implements IWidget, OnInit {
   routingService = inject(RoutingService);
   dashboardStore = inject(DashboardStateStore);
   destroyRef = inject(DestroyRef);
-
   ngOnInit() {
-    combineLatest([this.dashboardStore.timeRange$, this.dashboardStore.refresh$])
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(([timeRange]) => {
-        this.timeRange.set(timeRange);
-        this.onRefresh.next();
+    if (this.dashboardStore.timeRange$ && this.dashboardStore.refresh$) {
+      combineLatest([this.dashboardStore.timeRange$, this.dashboardStore.refresh$])
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe(([timeRange]) => {
+          this.timeRange.set(timeRange);
+          this.onRefresh.next();
 
-        this.loadData();
-      });
+          this.loadData();
+        });
+    }
 
     this.loadData();
   }
