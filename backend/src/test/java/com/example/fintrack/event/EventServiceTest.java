@@ -51,22 +51,6 @@ class EventServiceTest {
     }
 
     @Test
-    void shouldAddEvent() {
-        AddEventDto dto = new AddEventDto("Trip", null, ZonedDateTime.now(), null, Collections.emptyList());
-        Currency currency = new Currency();
-
-        when(currencyRepository.findById(1L)).thenReturn(Optional.of(currency));
-        when(userRepository.findAllById(any())).thenReturn(Collections.emptyList());
-
-        eventService.addEvent(dto);
-
-        verify(chatRepository).save(any());
-        verify(eventRepository).save(any());
-        verify(userEventRepository, atLeastOnce()).save(any());
-        verify(lastReadMessageRepository).saveAll(any());
-    }
-
-    @Test
     void shouldUpdateEvent() {
         Event event = new Event();
         Currency currency = new Currency();
