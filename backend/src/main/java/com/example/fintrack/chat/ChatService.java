@@ -34,7 +34,7 @@ import java.util.List;
 
 import static com.example.fintrack.exception.BusinessErrorCodes.*;
 import static com.example.fintrack.friend.FriendSpecification.*;
-import static java.util.Comparator.*;
+import static java.util.Comparator.comparing;
 
 @Service
 @RequiredArgsConstructor

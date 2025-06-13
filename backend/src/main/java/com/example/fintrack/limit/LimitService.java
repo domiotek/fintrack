@@ -13,7 +13,7 @@ import java.time.ZonedDateTime;
 
 import static com.example.fintrack.exception.BusinessErrorCodes.CATEGORY_DOES_NOT_EXIST;
 import static com.example.fintrack.exception.BusinessErrorCodes.LIMIT_DOES_NOT_EXIST;
-import static java.util.Comparator.*;
+import static java.util.Comparator.comparing;
 
 @Service
 @AllArgsConstructor

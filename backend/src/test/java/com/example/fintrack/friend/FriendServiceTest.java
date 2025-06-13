@@ -1,12 +1,9 @@
 package com.example.fintrack.friend;
 
-import com.example.fintrack.chat.Chat;
 import com.example.fintrack.chat.ChatService;
 import com.example.fintrack.friend.dto.SendFriendRequestDto;
 import com.example.fintrack.security.service.UserProvider;
 import com.example.fintrack.user.User;
-import com.example.fintrack.user.UserRepository;
-import com.example.fintrack.lastreadmessage.LastReadMessageRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -15,7 +12,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Example;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -24,9 +20,7 @@ class FriendServiceTest {
 
     @Mock private FriendRepository friendRepository;
     @Mock private UserProvider userProvider;
-    @Mock private UserRepository userRepository;
     @Mock private ChatService chatService;
-    @Mock private LastReadMessageRepository lastReadMessageRepository;
 
     @InjectMocks private FriendService friendService;
 

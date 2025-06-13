@@ -11,7 +11,7 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
-import static java.util.Comparator.*;
+import static java.util.Comparator.comparing;
 
 public class CategoryMapper {
 

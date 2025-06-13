@@ -1,7 +1,7 @@
 package com.example.fintrack.authentication.dto;
 
-import com.example.fintrack.constraints.FieldsValueMatch;
 import com.example.fintrack.authentication.Password;
+import com.example.fintrack.constraints.FieldsValueMatch;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

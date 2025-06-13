@@ -4,7 +4,6 @@ import com.example.fintrack.bill.Bill;
 import com.example.fintrack.bill.BillRepository;
 import com.example.fintrack.category.dto.AddCategoryDto;
 import com.example.fintrack.category.dto.UpdateCategoryDto;
-import com.example.fintrack.currency.CurrencyConverter;
 import com.example.fintrack.security.service.UserProvider;
 import com.example.fintrack.user.User;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,23 +11,20 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class CategoryServiceTest {
 
     @Mock private CategoryRepository categoryRepository;
-    @Mock private CurrencyConverter currencyConverter;
     @Mock private UserProvider userProvider;
     @Mock private BillRepository billRepository;
 

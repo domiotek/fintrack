@@ -20,7 +20,8 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static com.example.fintrack.exception.BusinessErrorCodes.*;
+import static com.example.fintrack.exception.BusinessErrorCodes.ALREADY_FRIENDS;
+import static com.example.fintrack.exception.BusinessErrorCodes.CANNOT_INVITE_YOURSELF;
 import static com.example.fintrack.friend.FriendSpecification.*;
 
 @Service

@@ -21,6 +21,7 @@ import static org.mockito.Mockito.*;
 class CurrencyServiceTest {
 
     @Mock private RateRepository rateRepository;
+
     @InjectMocks private CurrencyService currencyService;
 
     @BeforeEach
