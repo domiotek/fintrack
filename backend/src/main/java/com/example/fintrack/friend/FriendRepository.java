@@ -22,7 +22,6 @@ public interface FriendRepository extends JpaRepository<Friend, Long>, JpaSpecif
     SELECT f FROM Friend f
     LEFT JOIN f.chat.messages m
     WHERE f.user.id = :userId
-    AND (f.friendStatus = :friendStatus1 OR f.friendStatus = :friendStatus2)
     AND f.chat.isStarted = TRUE
     AND (LOWER(f.friend.email) LIKE CONCAT('%', LOWER(:search), '%')
     OR LOWER(f.friend.firstName) LIKE CONCAT('%', LOWER(:search), '%')
@@ -33,8 +32,6 @@ public interface FriendRepository extends JpaRepository<Friend, Long>, JpaSpecif
     """)
     Page<Friend> findFriendsByUserIdAndFriendsStatusesAndSearch(
             @Param("userId") long userId,
-            @Param("friendStatus1") FriendStatus friendStatus1,
-            @Param("friendStatus2") FriendStatus friendStatus2,
             @Param("search") String search,
             Pageable pageable
     );

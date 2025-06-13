@@ -198,7 +198,7 @@ public class ChatService {
         PageRequest pageRequest = PageRequest.of(page, size);
 
         Page<Friend> friends = friendRepository
-                .findFriendsByUserIdAndFriendsStatusesAndSearch(user.getId(), FriendStatus.ACCEPTED, FriendStatus.DELETED, search, pageRequest);
+                .findFriendsByUserIdAndFriendsStatusesAndSearch(user.getId(), search, pageRequest);
 
         return friends.map(friend -> {
             LastReadMessage lastReadMessage = lastReadMessageRepository
