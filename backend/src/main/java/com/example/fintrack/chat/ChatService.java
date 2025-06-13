@@ -99,7 +99,7 @@ public class ChatService {
         });
     }
 
-    public void sendPrivateChatUpdatesFriendDeleted(List<Friend> friends) {
+    public void sendPrivateChatUpdatesFriend(List<Friend> friends) {
         long chatId = friends.stream()
                 .findFirst()
                 .map(friend -> friend.getChat().getId())

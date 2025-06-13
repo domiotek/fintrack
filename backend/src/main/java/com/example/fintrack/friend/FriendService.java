@@ -56,7 +56,7 @@ public class FriendService {
 
         friendRepository.saveAll(friends);
 
-        chatService.sendPrivateChatUpdatesFriendDeleted(friends);
+        chatService.sendPrivateChatUpdatesFriend(friends);
     }
 
     public void sendFriendRequest(SendFriendRequestDto sendFriendRequestDto) {
@@ -140,6 +140,8 @@ public class FriendService {
         friends.forEach(friend -> friend.setFriendStatus(FriendStatus.ACCEPTED));
 
         friendRepository.saveAll(friends);
+
+        chatService.sendPrivateChatUpdatesFriend(friends);
     }
 
     public List<FriendDto> getFriends(String search) {
