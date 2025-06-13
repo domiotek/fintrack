@@ -54,7 +54,7 @@ public class ChatService {
 
         List<Friend> friends = friendRepository.findFriendsByChatId(chatId);
         for (Friend friend : friends) {
-            if (friend.getFriendStatus() != FriendStatus.ACCEPTED && friend.getFriendStatus() != FriendStatus.DELETED) {
+            if (friend.getFriendStatus() != FriendStatus.ACCEPTED) {
                 return;
             }
         }
