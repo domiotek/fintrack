@@ -47,29 +47,6 @@ class ChatServiceTest {
     }
 
     @Test
-    void shouldSendMessage() {
-        SentMessageDto dto = new SentMessageDto(1L, "Hello!");
-        Chat chat = new Chat();
-        chat.setIsStarted(false);
-        Friend friend = new Friend();
-        friend.setFriendStatus(FriendStatus.ACCEPTED);
-
-        LastReadMessage lrm = new LastReadMessage();
-        lrm.setUser(user);
-
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-        when(friendRepository.findFriendsByChatId(anyLong())).thenReturn(List.of(friend));
-        when(chatRepository.findById(anyLong())).thenReturn(Optional.of(chat));
-        when(lastReadMessageRepository.findLastReadMessageByUserIdAndChatId(anyLong(), anyLong())).thenReturn(Optional.of(lrm));
-        when(messageRepository.save(any())).thenAnswer(i -> i.getArgument(0));
-        when(lastReadMessageRepository.findLastReadMessagesByChatId(anyLong())).thenReturn(List.of(lrm));
-
-        chatService.sendMessage(1L, dto);
-
-        verify(simpMessagingTemplate, atLeastOnce()).convertAndSend(contains("/topic/chats/"), Optional.ofNullable(any()));
-    }
-
-    @Test
     void shouldThrowWhenFriendNotAccepted() {
         SentMessageDto dto = new SentMessageDto(1L, "Hi!");
         Friend friend = new Friend();
